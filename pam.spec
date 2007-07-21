@@ -9,7 +9,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.7.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL or BSD
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
@@ -17,6 +17,7 @@ Source1:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source2:	other.pamd
 Source3:	system-auth.pamd
 Source4:	pam-0.99.3.0-README.update
+Source5:        config-util.pamd
 Source9:	system-auth.5
 Source10:	config-util.5
 
@@ -152,6 +153,7 @@ make install DESTDIR=$RPM_BUILD_ROOT LDCONFIG=:
 install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/other
 install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/pam.d/system-auth
+install -m 644 %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/config-util
 chmod 644 $RPM_BUILD_ROOT/etc/pam.d/{other,system-auth}
 
 # Install man pages.
@@ -190,8 +192,10 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc NEWS README.update.urpmi
 %docdir %{_docdir}/%{name}-%{version}/
+%doc %{_docdir}/%{name}-%{version}/*
 %dir /etc/pam.d
 %config(noreplace) /etc/environment
+%config(noreplace) /etc/pam.d/config-util
 %config(noreplace) /etc/pam.d/other
 %config(noreplace) /etc/pam.d/system-auth
 %config(noreplace) /etc/security/access.conf
