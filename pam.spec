@@ -142,7 +142,7 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db4" \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
-	--docdir=%{_docdir}/%{name}-%{version}
+	--docdir=%{_docdir}/%{name}
 %make
 
 %install
@@ -191,8 +191,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -f Linux-PAM.lang
 %defattr(-,root,root)
 %doc NEWS README.update.urpmi
-%docdir %{_docdir}/%{name}-%{version}/
-%doc %{_docdir}/%{name}-%{version}/*
+%docdir %{_docdir}/%{name}
 %dir /etc/pam.d
 %config(noreplace) /etc/environment
 %config(noreplace) /etc/pam.d/config-util
