@@ -8,8 +8,8 @@
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
-Version:	0.99.7.1
-Release:	%mkrel 3
+Version:	0.99.8.1
+Release:	%mkrel 1
 License:	GPL or BSD
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
@@ -23,8 +23,11 @@ Source10:	config-util.5
 
 # RedHat patches
 Patch01:	pam-0.99.7.0-redhat-modules.patch
-Patch02:	pam-0.99.7.1-console-more-displays.patch
-Patch21:	pam-0.78-unix-hpux-aging.patch
+Patch24:	pam-0.99.8.1-unix-update-helper.patch
+Patch25:	pam-0.99.7.1-unix-hpux-aging.patch
+Patch31:	pam-0.99.3.0-cracklib-try-first-pass.patch
+Patch32:	pam-0.99.3.0-tally-fail-close.patch
+Patch40:	pam-0.99.7.1-namespace-temp-logon.patch
 
 # Mandriva specific sources/patches
 
@@ -115,8 +118,11 @@ This package contains the development librairies for %{name}
 
 # (RH)
 %patch01 -p1 -b .redhat-modules
-%patch02 -p1 -b .displays
-%patch21 -p1 -b .unix-hpux-aging
+%patch24 -p1 -b .update-helper
+%patch25 -p1 -b .unix-hpux-aging
+%patch31 -p1 -b .try-first-pass
+%patch32 -p1 -b .fail-close
+%patch40 -p1 -b .temp-logon
 
 # (Mandriva)
 %patch500 -p1 -b .mdvperms
@@ -212,6 +218,7 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/pam_tally2
 %attr(4755,root,root) /sbin/pam_timestamp_check
 %attr(4755,root,root) /sbin/unix_chkpwd
+%attr(0700,root,root) /sbin/unix_update
 %dir /etc/security/console.apps
 %dir /var/run/console
 %{_mandir}/man5/*
