@@ -17,7 +17,7 @@ Source1:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source2:	other.pamd
 Source3:	system-auth.pamd
 Source4:	pam-0.99.3.0-README.update
-Source5:        config-util.pamd
+Source5:	config-util.pamd
 Source9:	system-auth.5
 Source10:	config-util.5
 
