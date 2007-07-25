@@ -181,8 +181,6 @@ install -m 644 %{SOURCE500} $RPM_BUILD_ROOT/etc/security/console.perms.d/50-mand
 # remove unpackaged .la files
 rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
 
-touch $RPM_BUILD_ROOT%{_sysconfdir}/environment
-
 %find_lang Linux-PAM
 
 %clean
