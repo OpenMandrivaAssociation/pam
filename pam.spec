@@ -13,6 +13,7 @@ Release:	%mkrel 1
 License:	GPL or BSD
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
+Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2.sign
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source4:	pam-0.99.3.0-README.update
 Source5:	other.pamd
