@@ -1,6 +1,7 @@
 %define pam_redhat_version 0.99.7-1
 
 %define libname %mklibname %name 0
+%define develname %mklibname %{name} -d
 
 %define with_prelude 0
 %{?_without_prelude: %{expand: %%global with_prelude 0}}
@@ -99,15 +100,16 @@ having to recompile programs that handle authentication.
 
 This package contains the librairies for %{name}
 
-%package -n	%{libname}-devel
+%package -n	%{develname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{version}
 Provides:	%{name}-devel = %{version}-%{release}
 Provides:	lib%{name}-devel = %{version}-%{release}
 Obsoletes:	%{name}-devel <= 0.77-9mdk
+Obsoletes:	%{mklibname %name 0 -d} <= 0.99.8.1
 
-%description -n	%{libname}-devel
+%description -n	%{develname}
 PAM (Pluggable Authentication Modules) is a system security tool that
 allows system administrators to set authentication policy without
 having to recompile programs that handle authentication.
@@ -231,7 +233,7 @@ rm -rf $RPM_BUILD_ROOT
 /%{_lib}/security/pam_filter
 %dir /%{_lib}/security
 
-%files -n %{libname}-devel
+%files -n %{develname}
 %defattr(-,root,root)
 %doc Copyright
 /%{_lib}/libpam.so
