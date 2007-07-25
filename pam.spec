@@ -160,7 +160,6 @@ install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/other
 install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/pam.d/system-auth
 install -m 644 %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/config-util
-chmod 644 $RPM_BUILD_ROOT/etc/pam.d/{other,system-auth}
 
 # Install man pages.
 install -m 644 %{SOURCE9} %{SOURCE10} $RPM_BUILD_ROOT%{_mandir}/man5/
