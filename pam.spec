@@ -13,11 +13,11 @@ Release:	%mkrel 1
 License:	GPL or BSD
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
-Source1:	pam-redhat-%{pam_redhat_version}.tar.bz2
-Source2:	other.pamd
-Source3:	system-auth.pamd
+Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source4:	pam-0.99.3.0-README.update
-Source5:	config-util.pamd
+Source5:	other.pamd
+Source6:	system-auth.pamd
+Source7:	config-util.pamd
 Source9:	system-auth.5
 Source10:	config-util.5
 
@@ -114,7 +114,7 @@ having to recompile programs that handle authentication.
 This package contains the development librairies for %{name}
 
 %prep
-%setup -q -n Linux-PAM-%{version} -a 1
+%setup -q -n Linux-PAM-%{version} -a 2
 
 # (RH)
 %patch01 -p1 -b .redhat-modules
@@ -157,9 +157,9 @@ mkdir -p $RPM_BUILD_ROOT%{_includedir}/security
 mkdir -p $RPM_BUILD_ROOT/%{_lib}/security
 make install DESTDIR=$RPM_BUILD_ROOT LDCONFIG=:
 install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
-install -m 644 %{SOURCE2} $RPM_BUILD_ROOT/etc/pam.d/other
-install -m 644 %{SOURCE3} $RPM_BUILD_ROOT/etc/pam.d/system-auth
-install -m 644 %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/config-util
+install -m 644 %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/other
+install -m 644 %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/system-auth
+install -m 644 %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/config-util
 
 # Install man pages.
 install -m 644 %{SOURCE9} %{SOURCE10} $RPM_BUILD_ROOT%{_mandir}/man5/
