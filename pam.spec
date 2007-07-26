@@ -1,7 +1,7 @@
 %define pam_redhat_version 0.99.7-1
 
 %define libname %mklibname %name 0
-%define develname %mklibname %{name} -d
+%define develname %mklibname %name -d
 
 %define with_prelude 0
 %{?_without_prelude: %{expand: %%global with_prelude 0}}
