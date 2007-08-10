@@ -20,6 +20,7 @@ Source4:	pam-0.99.3.0-README.update
 Source5:	other.pamd
 Source6:	system-auth.pamd
 Source7:	config-util.pamd
+Source8:	dlopen.sh
 Source9:	system-auth.5
 Source10:	config-util.5
 
@@ -195,6 +196,25 @@ if [ -d ${dir} ] && [ ${dir} != "modules/pam_selinux" ]; then
 		exit 1
 	fi
 fi
+done
+
+# Check for module problems.  Specifically, check that every module we just
+# installed can actually be loaded by a minimal PAM-aware application.
+/sbin/ldconfig -n $RPM_BUILD_ROOT/%{_lib}
+for module in $RPM_BUILD_ROOT/%{_lib}/security/pam*.so ; do
+	if ! env LD_LIBRARY_PATH=$RPM_BUILD_ROOT/%{_lib} \
+		 $RPM_SOURCE_DIR/dlopen.sh -ldl -lpam -L$RPM_BUILD_ROOT/%{_lib} ${module} ; then
+		echo ERROR module: ${module} cannot be loaded.
+		exit 1
+	fi
+# And for good measure, make sure that none of the modules pull in threading
+# libraries, which if loaded in a non-threaded application, can cause Very
+# Bad Things to happen.
+	if env LD_LIBRARY_PATH=$RPM_BUILD_ROOT/%{_lib} \
+	       LD_PRELOAD=$RPM_BUILD_ROOT/%{_lib}/libpam.so ldd -r ${module} | fgrep -q libpthread ; then
+		echo ERROR module: ${module} pulls threading libraries.
+		exit 1
+	fi
 done
 
 %clean
