@@ -199,6 +199,14 @@ rm -rf $RPM_BUILD_ROOT
 %post -n %libname -p /sbin/ldconfig
 %postun -n %libname -p /sbin/ldconfig
 
+%post
+if [ ! -a /var/log/faillog ] ; then
+       install -m 600 /dev/null /var/log/faillog
+fi
+if [ ! -a /var/log/tallylog ] ; then
+       install -m 600 /dev/null /var/log/tallylog
+fi
+
 %files -f Linux-PAM.lang
 %defattr(-,root,root)
 %doc NEWS README.update.urpmi
@@ -229,6 +237,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0700,root,root) /sbin/unix_update
 %dir /etc/security/console.apps
 %dir /var/run/console
+%ghost %verify(not md5 size mtime) /var/log/faillog
+%ghost %verify(not md5 size mtime) /var/log/tallylog
 %{_mandir}/man5/*
 %{_mandir}/man8/*
 
