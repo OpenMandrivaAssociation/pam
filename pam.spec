@@ -60,6 +60,7 @@ Requires(pre):	rpm-helper
 BuildRequires:	bison cracklib-devel flex
 BuildRequires:	linuxdoc-tools db4.2-devel automake1.8
 BuildRequires:	openssl-devel
+BuildRequires:	libaudit-devel
 # (blino) we don't want SE Linux, so conflicts since there is no configure switch
 BuildConflicts:	libselinux-devel
 %if %with_prelude
