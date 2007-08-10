@@ -171,6 +171,9 @@ install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/other
 install -m 644 %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/system-auth
 install -m 644 %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/config-util
+install -d -m 755 $RPM_BUILD_ROOT/var/log
+install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/faillog
+install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/tallylog
 
 # Install man pages.
 install -m 644 %{SOURCE9} %{SOURCE10} $RPM_BUILD_ROOT%{_mandir}/man5/
