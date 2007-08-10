@@ -237,29 +237,29 @@ fi
 %docdir %{_docdir}/%{name}
 %dir /etc/pam.d
 %config(noreplace) /etc/environment
-%config(noreplace) /etc/pam.d/config-util
 %config(noreplace) /etc/pam.d/other
 %config(noreplace) /etc/pam.d/system-auth
-%config(noreplace) /etc/security/access.conf
-%config(noreplace) /etc/security/chroot.conf
-%config(noreplace) /etc/security/time.conf
-%config(noreplace) /etc/security/group.conf
-%config(noreplace) /etc/security/limits.conf
-%config(noreplace) %{_sysconfdir}/security/namespace.conf
-%attr(755,root,root) %config(noreplace) %{_sysconfdir}/security/namespace.init
-%config(noreplace) /etc/security/pam_env.conf
-%config(noreplace) /etc/security/console.perms
-%config(noreplace) /etc/security/console.handlers
-%dir %{_sysconfdir}/security/console.perms.d
-%config(noreplace) /etc/security/console.perms.d/50-default.perms
-%config(noreplace) /etc/security/console.perms.d/50-mandriva.perms
+%config(noreplace) /etc/pam.d/config-util
 /sbin/pam_console_apply
 /sbin/pam_tally
 /sbin/pam_tally2
 %attr(4755,root,root) /sbin/pam_timestamp_check
 %attr(4755,root,root) /sbin/unix_chkpwd
 %attr(0700,root,root) /sbin/unix_update
-%dir /etc/security/console.apps
+%config(noreplace) %{_sysconfdir}/security/access.conf
+%config(noreplace) %{_sysconfdir}/security/chroot.conf
+%config(noreplace) %{_sysconfdir}/security/console.perms
+%config(noreplace) %{_sysconfdir}/security/console.handlers
+%config(noreplace) %{_sysconfdir}/security/group.conf
+%config(noreplace) %{_sysconfdir}/security/limits.conf
+%config(noreplace) %{_sysconfdir}/security/namespace.conf
+%attr(755,root,root) %config(noreplace) %{_sysconfdir}/security/namespace.init
+%config(noreplace) %{_sysconfdir}/security/pam_env.conf
+%config(noreplace) %{_sysconfdir}/security/time.conf
+%dir %{_sysconfdir}/security/console.apps
+%dir %{_sysconfdir}/security/console.perms.d
+%config(noreplace) %{_sysconfdir}/security/console.perms.d/50-default.perms
+%config(noreplace) %{_sysconfdir}/security/console.perms.d/50-mandriva.perms
 %dir /var/run/console
 %ghost %verify(not md5 size mtime) /var/log/faillog
 %ghost %verify(not md5 size mtime) /var/log/tallylog
