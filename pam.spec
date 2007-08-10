@@ -31,6 +31,7 @@ Patch25:	pam-0.99.7.1-unix-hpux-aging.patch
 Patch31:	pam-0.99.3.0-cracklib-try-first-pass.patch
 Patch32:	pam-0.99.3.0-tally-fail-close.patch
 Patch40:	pam-0.99.7.1-namespace-temp-logon.patch
+Patch41:	pam-0.99.8.1-namespace-init.patch
 
 # Mandriva specific sources/patches
 
@@ -131,6 +132,7 @@ This package contains the development librairies for %{name}
 %patch31 -p1 -b .try-first-pass
 %patch32 -p1 -b .fail-close
 %patch40 -p1 -b .temp-logon
+%patch41 -p1 -b .ns-init
 
 # (Mandriva)
 %patch500 -p1 -b .mdvperms
