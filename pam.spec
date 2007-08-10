@@ -38,7 +38,7 @@ Patch40:	pam-0.99.7.1-namespace-temp-logon.patch
 #         use /etc/security/console.perms.d/50-mandriva.perms whenever possible
 Source500:	pam-mandriva.perms
 #         else patch 50-default.perms
-Patch500:	Linux-PAM-0.99.6.0-mdvperms.patch
+Patch500:	Linux-PAM-0.99.8.1-mdvperms.patch
 
 # (fl) fix infinite loop
 Patch501:	pam-0.74-loop.patch
