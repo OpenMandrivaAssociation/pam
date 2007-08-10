@@ -120,7 +120,7 @@ This package contains the development librairies for %{name}
 %setup -q -n Linux-PAM-%{version} -a 2
 
 # (RH)
-%patch01 -p1 -b .redhat-modules
+%patch1 -p1 -b .redhat-modules
 %patch24 -p1 -b .update-helper
 %patch25 -p1 -b .unix-hpux-aging
 %patch31 -p1 -b .try-first-pass
