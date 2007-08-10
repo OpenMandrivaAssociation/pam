@@ -185,6 +185,10 @@ install -m 644 %{SOURCE500} $RPM_BUILD_ROOT/etc/security/console.perms.d/50-mand
 # remove unpackaged .la files
 rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
 
+for phase in auth acct passwd session ; do
+       ln -sf pam_unix.so $RPM_BUILD_ROOT/%{_lib}/security/pam_unix_${phase}.so 
+done
+
 %find_lang Linux-PAM
 
 %check
