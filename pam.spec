@@ -1,11 +1,11 @@
-%define pam_redhat_version 0.99.7-1
-
 %define libname %mklibname %name 0
 %define develname %mklibname %name -d
 
 %define with_prelude 0
 %{?_without_prelude: %{expand: %%global with_prelude 0}}
 %{?_with_prelude: %{expand: %%global with_prelude 1}}
+
+%define pam_redhat_version 0.99.8-1
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
