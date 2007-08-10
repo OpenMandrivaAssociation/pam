@@ -175,6 +175,14 @@ install -m 644 %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/config-util
 # Install man pages.
 install -m 644 %{SOURCE9} %{SOURCE10} $RPM_BUILD_ROOT%{_mandir}/man5/
 
+install -m 644 %{SOURCE500} $RPM_BUILD_ROOT/etc/security/console.perms.d/50-mandriva.perms
+
+# remove unpackaged .la files
+rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
+
+%find_lang Linux-PAM
+
+%check
 # (blino) we don't want to test if SE Linux is built, it's disabled
 # Make sure every module subdirectory gave us a module.  Yes, this is hackish.
 for dir in modules/pam_* ; do
@@ -185,13 +193,6 @@ if [ -d ${dir} ] && [ ${dir} != "modules/pam_selinux" ]; then
 	fi
 fi
 done
-
-install -m 644 %{SOURCE500} $RPM_BUILD_ROOT/etc/security/console.perms.d/50-mandriva.perms
-
-# remove unpackaged .la files
-rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
-
-%find_lang Linux-PAM
 
 %clean
 rm -rf $RPM_BUILD_ROOT
