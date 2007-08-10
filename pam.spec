@@ -52,6 +52,8 @@ Patch512:	Linux-PAM-0.99.3.0-xauth-groups.patch
 Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
 # (blino) fix parallel build (pam_console)
 Patch521:	Linux-PAM-0.99.3.0-pbuild-rh.patch
+# (blino) fix critical typo in man pages
+Patch522:	pam-0.99.8.1-contenxt-typo.patch
 
 Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires:	cracklib-dicts
@@ -138,6 +140,7 @@ This package contains the development librairies for %{name}
 %patch512 -p1 -b .xauth-groups
 %patch517 -p1 -b .enable_rt
 %patch521 -p1 -b .pbuild-rh
+%patch522 -p1 -b .contenxt
 
 mkdir -p doc/txts
 for readme in modules/pam_*/README ; do
