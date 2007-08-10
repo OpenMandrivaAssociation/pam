@@ -24,7 +24,7 @@ Source9:	system-auth.5
 Source10:	config-util.5
 
 # RedHat patches
-Patch01:	pam-0.99.7.0-redhat-modules.patch
+Patch1:	pam-0.99.7.0-redhat-modules.patch
 Patch24:	pam-0.99.8.1-unix-update-helper.patch
 Patch25:	pam-0.99.7.1-unix-hpux-aging.patch
 Patch31:	pam-0.99.3.0-cracklib-try-first-pass.patch
