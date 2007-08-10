@@ -172,6 +172,7 @@ install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
 install -m 644 %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/other
 install -m 644 %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/system-auth
 install -m 644 %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/config-util
+install -m 600 /dev/null $RPM_BUILD_ROOT%{_sysconfdir}/security/opasswd
 install -d -m 755 $RPM_BUILD_ROOT/var/log
 install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/faillog
 install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/tallylog
@@ -256,6 +257,7 @@ fi
 %attr(755,root,root) %config(noreplace) %{_sysconfdir}/security/namespace.init
 %config(noreplace) %{_sysconfdir}/security/pam_env.conf
 %config(noreplace) %{_sysconfdir}/security/time.conf
+%config(noreplace) %{_sysconfdir}/security/opasswd
 %dir %{_sysconfdir}/security/console.apps
 %dir %{_sysconfdir}/security/console.perms.d
 %config(noreplace) %{_sysconfdir}/security/console.perms.d/50-default.perms
