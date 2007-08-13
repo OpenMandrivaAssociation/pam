@@ -43,7 +43,7 @@ Source500:	pam-mandriva.perms
 Patch500:	Linux-PAM-0.99.8.1-mdvperms.patch
 
 # (fl) fix infinite loop
-Patch501:	pam-0.74-loop.patch
+Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
 Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
 Patch511:	Linux-PAM-0.99.3.0-verbose-limits.patch
@@ -137,7 +137,7 @@ This package contains the development librairies for %{name}
 
 # (Mandriva)
 %patch500 -p1 -b .mdvperms
-%patch501 -p1 -b .loop
+%patch507 -p1 -b .loop
 %patch508 -p1 -b .pamtimestampadm
 %patch511 -p1 -b .verbose-limits
 %patch512 -p1 -b .xauth-groups
