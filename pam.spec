@@ -139,6 +139,8 @@ This package contains the development librairies for %{name}
 # (Mandriva)
 %patch500 -p1 -b .mdvclasses
 %patch501 -p1 -b .mdvgroups
+# (blino) make sure devices are accessible by their group if specified
+perl -pi.660 -e 's/0600/0660/g if m|\broot\.| && !m|\B/dev/console\b|' modules/pam_console/50-default.perms
 
 %patch507 -p1 -b .loop
 %patch508 -p1 -b .pamtimestampadm
