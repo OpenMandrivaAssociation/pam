@@ -137,6 +137,7 @@ This package contains the development librairies for %{name}
 
 # (Mandriva)
 %patch500 -p1 -b .mdvperms
+exit 1
 %patch501 -p1 -b .loop
 %patch508 -p1 -b .pamtimestampadm
 %patch511 -p1 -b .verbose-limits
