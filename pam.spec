@@ -40,7 +40,8 @@ Patch41:	pam-0.99.8.1-namespace-init.patch
 #         use /etc/security/console.perms.d/50-mandriva.perms whenever possible
 Source500:	pam-mandriva.perms
 #         else patch 50-default.perms
-Patch500:	Linux-PAM-0.99.8.1-mdvperms.patch
+Patch500:	Linux-PAM-0.99.8.1-mdvclasses.patch
+Patch501:	Linux-PAM-0.99.8.1-mdvgroups.patch
 
 # (fl) fix infinite loop
 Patch507:	pam-0.74-loop.patch
@@ -136,7 +137,9 @@ This package contains the development librairies for %{name}
 %patch41 -p1 -b .ns-init
 
 # (Mandriva)
-%patch500 -p1 -b .mdvperms
+%patch500 -p1 -b .mdvclasses
+%patch501 -p1 -b .mdvgroups
+
 %patch507 -p1 -b .loop
 %patch508 -p1 -b .pamtimestampadm
 %patch511 -p1 -b .verbose-limits
