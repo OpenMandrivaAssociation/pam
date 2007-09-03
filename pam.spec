@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	GPL or BSD
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
@@ -33,6 +33,9 @@ Patch31:	pam-0.99.3.0-cracklib-try-first-pass.patch
 Patch32:	pam-0.99.3.0-tally-fail-close.patch
 Patch40:	pam-0.99.7.1-namespace-temp-logon.patch
 Patch41:	pam-0.99.8.1-namespace-init.patch
+#Patch42: not applied yet
+#Patch43: not applied
+Patch44: 	pam-0.99.7.1-namespace-homedir.patch
 
 # Mandriva specific sources/patches
 
@@ -135,6 +138,7 @@ This package contains the development librairies for %{name}
 %patch32 -p1 -b .fail-close
 %patch40 -p1 -b .temp-logon
 %patch41 -p1 -b .ns-init
+%patch44 -p1 -b .homedir
 
 # (Mandriva)
 %patch500 -p1 -b .mdvclasses
