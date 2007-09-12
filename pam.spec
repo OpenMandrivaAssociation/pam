@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 4
+Release:	%mkrel 5
 License:	GPL or BSD
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
@@ -159,7 +159,7 @@ for readme in modules/pam_*/README ; do
 	cp -f ${readme} doc/txts/README.`dirname ${readme} | sed -e 's|^modules/||'`
 done
 
-cp %{SOURCE4} README.update.urpmi
+cp %{SOURCE4} README.0.99.3.0.update.urpmi
 
 autoreconf
 
@@ -247,7 +247,7 @@ fi
 
 %files -f Linux-PAM.lang
 %defattr(-,root,root)
-%doc NEWS README.update.urpmi
+%doc NEWS README.0.99.3.0.update.urpmi
 %docdir %{_docdir}/%{name}
 %dir /etc/pam.d
 %config(noreplace) /etc/environment
