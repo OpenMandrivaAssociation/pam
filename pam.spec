@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 5
+Release:	%mkrel 6
 License:	GPL or BSD
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
@@ -29,6 +29,7 @@ Patch1:		pam-0.99.7.0-redhat-modules.patch
 Patch5:		pam-0.99.8.1-audit-no-log.patch
 Patch24:	pam-0.99.8.1-unix-update-helper.patch
 Patch25:	pam-0.99.7.1-unix-hpux-aging.patch
+Patch26:	pam-0.99.8.1-unix-blankpass.patch
 Patch31:	pam-0.99.3.0-cracklib-try-first-pass.patch
 Patch32:	pam-0.99.3.0-tally-fail-close.patch
 Patch40:	pam-0.99.7.1-namespace-temp-logon.patch
@@ -134,6 +135,7 @@ This package contains the development librairies for %{name}
 %patch5 -p1 -b .no-log
 %patch24 -p1 -b .update-helper
 %patch25 -p1 -b .unix-hpux-aging
+%patch26 -p1 -b .blankpass
 %patch31 -p1 -b .try-first-pass
 %patch32 -p1 -b .fail-close
 %patch40 -p1 -b .temp-logon
@@ -165,7 +167,7 @@ autoreconf
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db4" \
-%configure \
+%configure2_5x \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
