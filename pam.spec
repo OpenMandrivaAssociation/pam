@@ -241,10 +241,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ ! -a /var/log/faillog ] ; then
-       install -m 600 /dev/null /var/log/faillog
+       cp -a /dev/null /var/log/faillog
+       chmod 600 /var/log/faillog
 fi
 if [ ! -a /var/log/tallylog ] ; then
-       install -m 600 /dev/null /var/log/tallylog
+       cp -a /dev/null /var/log/tallylog
+       chmod 600 /var/log/tallylog
 fi
 
 %files -f Linux-PAM.lang
