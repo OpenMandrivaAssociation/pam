@@ -66,6 +66,7 @@ Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires:	cracklib-dicts
 Conflicts:	initscripts < 3.94
 Requires(pre):	rpm-helper
+Requires(post):	coreutils
 BuildRequires:	bison cracklib-devel flex
 BuildRequires:	linuxdoc-tools db4.2-devel automake1.8
 BuildRequires:	openssl-devel
@@ -241,12 +242,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ ! -a /var/log/faillog ] ; then
-       cp -a /dev/null /var/log/faillog
-       chmod 600 /var/log/faillog
+       install -m 600 /dev/null /var/log/faillog
 fi
 if [ ! -a /var/log/tallylog ] ; then
-       cp -a /dev/null /var/log/tallylog
-       chmod 600 /var/log/tallylog
+       install -m 600 /dev/null /var/log/tallylog
 fi
 
 %files -f Linux-PAM.lang
