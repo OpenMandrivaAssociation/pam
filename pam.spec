@@ -62,7 +62,6 @@ Patch521:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 # (blino) fix critical typo in man pages
 Patch522:	pam-0.99.8.1-contenxt-typo.patch
 
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires:	cracklib-dicts
 Conflicts:	initscripts < 3.94
 Requires(pre):	rpm-helper
