@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 6
+Release:	%mkrel 7
 License:	GPL or BSD
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
@@ -61,13 +61,14 @@ Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
 Patch521:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 # (blino) fix critical typo in man pages
 Patch522:	pam-0.99.8.1-contenxt-typo.patch
-
 Requires:	cracklib-dicts
 Conflicts:	initscripts < 3.94
 Requires(pre):	rpm-helper
 Requires(post):	coreutils
 BuildRequires:	bison cracklib-devel flex
-BuildRequires:	linuxdoc-tools db4.2-devel automake1.8
+BuildRequires:	linuxdoc-tools
+BuildRequires:	db_nss-devel >= 4.6
+BuildRequires:	automake1.8
 BuildRequires:	openssl-devel
 BuildRequires:	libaudit-devel
 # (blino) we don't want SE Linux, so conflicts since there is no configure switch
@@ -77,10 +78,10 @@ BuildRequires:	prelude-devel
 %else
 BuildConflicts:	prelude-devel
 %endif
-
 Obsoletes:	pamconfig
 Provides:	pamconfig
 Url:		http://www.us.kernel.org/pub/linux/libs/pam/index.html
+Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 PAM (Pluggable Authentication Modules) is a system security tool that
@@ -166,11 +167,12 @@ cp %{SOURCE4} README.0.99.3.0.update.urpmi
 autoreconf
 
 %build
-CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db4" \
+CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db_nss" \
 %configure2_5x \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
+	--with-db-uniquename=_nss \
 	--docdir=%{_docdir}/%{name}
 %make
 
