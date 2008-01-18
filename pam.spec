@@ -10,8 +10,11 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 7
-License:	GPL or BSD
+Release:	%mkrel 8
+# The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
+# as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
+# pam_rhosts_auth module is BSD with advertising
+License: BSD and GPLv2+ and BSD with advertising
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
 Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2.sign
@@ -28,15 +31,20 @@ Source10:	config-util.5
 Patch1:		pam-0.99.7.0-redhat-modules.patch
 Patch5:		pam-0.99.8.1-audit-no-log.patch
 Patch24:	pam-0.99.8.1-unix-update-helper.patch
-Patch25:	pam-0.99.7.1-unix-hpux-aging.patch
-Patch26:	pam-0.99.8.1-unix-blankpass.patch
+Patch25:	pam-0.99.8.1-unix-hpux-aging.patch
 Patch31:	pam-0.99.3.0-cracklib-try-first-pass.patch
 Patch32:	pam-0.99.3.0-tally-fail-close.patch
 Patch40:	pam-0.99.7.1-namespace-temp-logon.patch
 Patch41:	pam-0.99.8.1-namespace-init.patch
-#Patch42: not applied yet
-#Patch43: not applied
+Patch42:	pam-0.99.8.1-console-hal-handled.patch
+Patch43:	pam-0.99.8.1-console-mfd-scanners.patch
 Patch44: 	pam-0.99.7.1-namespace-homedir.patch
+#Patch45: not needed, SELinux only
+Patch46: pam-0.99.8.1-succif-in-operator.patch
+Patch47: pam-0.99.8.1-xauth-no-free.patch
+Patch48: pam-0.99.8.1-substack.patch
+Patch49: pam-0.99.8.1-tty-audit.patch
+Patch50: pam-0.99.8.1-tty-audit2.patch
 
 # Mandriva specific sources/patches
 
@@ -61,6 +69,11 @@ Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
 Patch521:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 # (blino) fix critical typo in man pages
 Patch522:	pam-0.99.8.1-contenxt-typo.patch
+# (fc) fix build when SELinux is disabled
+Patch523:	Linux-PAM-0.99.8.1-noselinux.patch
+#add missing documentation
+Source501: 	pam_tty_audit.8
+Source502:	README
 Requires:	cracklib-dicts
 Conflicts:	initscripts < 3.94
 Requires(pre):	rpm-helper
@@ -68,7 +81,6 @@ Requires(post):	coreutils
 BuildRequires:	bison cracklib-devel flex
 BuildRequires:	linuxdoc-tools
 BuildRequires:	db_nss-devel >= 4.6
-BuildRequires:	automake1.8
 BuildRequires:	openssl-devel
 BuildRequires:	libaudit-devel
 # (blino) we don't want SE Linux, so conflicts since there is no configure switch
@@ -136,12 +148,18 @@ This package contains the development librairies for %{name}
 %patch5 -p1 -b .no-log
 %patch24 -p1 -b .update-helper
 %patch25 -p1 -b .unix-hpux-aging
-%patch26 -p1 -b .blankpass
 %patch31 -p1 -b .try-first-pass
 %patch32 -p1 -b .fail-close
 %patch40 -p1 -b .temp-logon
 %patch41 -p1 -b .ns-init
+%patch42 -p1 -b .hal-handled
+%patch43 -p1 -b .mfd-scanners
 %patch44 -p1 -b .homedir
+%patch46 -p1 -b .in-operator
+%patch47 -p1 -b .no-free
+%patch48 -p0 -b .substack
+%patch49 -p1 -b .tty-audit
+%patch50 -p1 -b .tty-audit2
 
 # (Mandriva)
 %patch500 -p1 -b .mdvclasses
@@ -156,6 +174,9 @@ perl -pi.660 -e 's/0600/0660/g if m|\broot\.| && !m|\B/dev/console\b|' modules/p
 %patch517 -p1 -b .enable_rt
 %patch521 -p1 -b .pbuild-rh
 %patch522 -p1 -b .contenxt
+%patch523 -p1 -b .noselinux
+
+install -m644 %{SOURCE501} %{SOURCE502} modules/pam_tty_audit/
 
 mkdir -p doc/txts
 for readme in modules/pam_*/README ; do
@@ -164,7 +185,7 @@ done
 
 cp %{SOURCE4} README.0.99.3.0.update.urpmi
 
-autoreconf
+autoreconf -I m4
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db_nss" \
@@ -221,7 +242,7 @@ done
 /sbin/ldconfig -n $RPM_BUILD_ROOT/%{_lib}
 for module in $RPM_BUILD_ROOT/%{_lib}/security/pam*.so ; do
 	if ! env LD_LIBRARY_PATH=$RPM_BUILD_ROOT/%{_lib} \
-		 $RPM_SOURCE_DIR/dlopen.sh -ldl -lpam -L$RPM_BUILD_ROOT/%{_lib} ${module} ; then
+		 %{SOURCE8} -ldl -lpam -L$RPM_BUILD_ROOT/%{_lib} ${module} ; then
 		echo ERROR module: ${module} cannot be loaded.
 		exit 1
 	fi
