@@ -19,7 +19,7 @@ Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
 Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2.sign
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
-Source4:	pam-0.99.3.0-README.update
+Source4:	pam-0.99.8.1-README.update
 Source5:	other.pamd
 Source6:	system-auth.pamd
 Source7:	config-util.pamd
@@ -75,6 +75,7 @@ Patch523:	Linux-PAM-0.99.8.1-noselinux.patch
 Source501: 	pam_tty_audit.8
 Source502:	README
 Requires:	cracklib-dicts
+Requires:	pam_tcb
 Conflicts:	initscripts < 3.94
 Requires(pre):	rpm-helper
 Requires(post):	coreutils
@@ -83,6 +84,7 @@ BuildRequires:	linuxdoc-tools
 BuildRequires:	db_nss-devel >= 4.6
 BuildRequires:	openssl-devel
 BuildRequires:	libaudit-devel
+BuildRequires:	glibc-crypt_blowfish-devel
 # (blino) we don't want SE Linux, so conflicts since there is no configure switch
 BuildConflicts:	libselinux-devel
 %if %with_prelude
@@ -176,6 +178,14 @@ perl -pi.660 -e 's/0600/0660/g if m|\broot\.| && !m|\B/dev/console\b|' modules/p
 %patch522 -p1 -b .contenxt
 %patch523 -p1 -b .noselinux
 
+# Remove unwanted modules; pam_tcb provides pam_unix now
+for d in pam_unix; do
+    rm -rf modules/$d
+    sed -i "s,modules/$d/Makefile,," configure.in
+    sed -i "s/ $d / /" modules/Makefile.am
+done
+
+
 install -m644 %{SOURCE501} %{SOURCE502} modules/pam_tty_audit/
 
 mkdir -p doc/txts
@@ -183,7 +193,7 @@ for readme in modules/pam_*/README ; do
 	cp -f ${readme} doc/txts/README.`dirname ${readme} | sed -e 's|^modules/||'`
 done
 
-cp %{SOURCE4} README.0.99.3.0.update.urpmi
+cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
 autoreconf -I m4
 
@@ -219,9 +229,6 @@ install -m 644 %{SOURCE500} $RPM_BUILD_ROOT/etc/security/console.perms.d/50-mand
 # remove unpackaged .la files
 rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
 
-for phase in auth acct passwd session ; do
-       ln -sf pam_unix.so $RPM_BUILD_ROOT/%{_lib}/security/pam_unix_${phase}.so 
-done
 
 %find_lang Linux-PAM
 
@@ -272,7 +279,7 @@ fi
 
 %files -f Linux-PAM.lang
 %defattr(-,root,root)
-%doc NEWS README.0.99.3.0.update.urpmi
+%doc NEWS README.0.99.8.1.update.urpmi
 %docdir %{_docdir}/%{name}
 %dir /etc/pam.d
 %config(noreplace) /etc/environment
@@ -283,8 +290,6 @@ fi
 /sbin/pam_tally
 /sbin/pam_tally2
 %attr(4755,root,root) /sbin/pam_timestamp_check
-%attr(4755,root,root) /sbin/unix_chkpwd
-%attr(0700,root,root) /sbin/unix_update
 %config(noreplace) %{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
 %config(noreplace) %{_sysconfdir}/security/console.perms
