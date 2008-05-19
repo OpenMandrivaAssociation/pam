@@ -198,7 +198,7 @@ cp %{SOURCE4} README.0.99.8.1.update.urpmi
 autoreconf -I m4
 
 %build
-CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db_nss" \
+CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db_nss -D_GNU_SOURCE" \
 %configure2_5x \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
