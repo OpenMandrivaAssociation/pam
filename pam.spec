@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 9
+Release:	%mkrel 10
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 # pam_rhosts_auth module is BSD with advertising
@@ -276,6 +276,30 @@ fi
 if [ ! -a /var/log/tallylog ] ; then
        install -m 600 /dev/null /var/log/tallylog
 fi
+# system-auth.rpmnew is only generated if the user has modified the old one, which should
+# only happen in the case of non-standard auth schemes, like LDAP -- this does force a
+# particular use of sufficient vs required for pam_tcb that may not correspond with the
+# old system-auth... someone with more perl or sed mojo may want to fix this; this should
+# only ever be called once due to the tests (vdanen 05/19/2008)
+if [ -f /etc/pam.d/system-auth.rpmnew ]; then
+    if [ `grep -q tcb /etc/pam.d/system-auth; echo $?` == "1" ]; then
+        echo "Upgrading /etc/pam.d/system-auth to support tcb"
+        pushd /etc/pam.d >/dev/null 2>&1
+            cp -f system-auth system-auth.new
+            perl -pi -e 's|^auth(\s+\w+\s+)pam_unix.so.*|auth$1pam_tcb.so shadow fork nullok prefix=\$2a\$ count=8|g' system-auth.new
+            perl -pi -e 's|^account(\s+\w+\s+)pam_unix.so.*|account$1pam_tcb.so shadow fork|' system-auth.new
+            perl -pi -e 's|^password(\s+\w+\s+)pam_unix.so.*|password$1pam_tcb.so use_authtok shadow write_to=shadow fork nullok prefix=\$2a\$ count=8|' system-auth.new
+            perl -pi -e 's|^session(\s+\w+\s+)pam_unix.so.*|session$1pam_tcb.so|' system-auth.new
+            mv -f system-auth system-auth.original
+            mv -f system-auth.new system-auth
+            echo "****************************************************************************"
+            echo "Your original /etc/pam.d/system-auth has been saved as system-auth.original;"
+            echo "please double-check the changes prior to rebooting."
+            echo "****************************************************************************"
+        popd >/dev/null 2>&1
+    fi
+fi
+
 
 %files -f Linux-PAM.lang
 %defattr(-,root,root)
