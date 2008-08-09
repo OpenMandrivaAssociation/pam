@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 12
+Release:	%mkrel 13
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 # pam_rhosts_auth module is BSD with advertising
@@ -76,7 +76,8 @@ Patch523:	Linux-PAM-0.99.8.1-noselinux.patch
 Source501: 	pam_tty_audit.8
 Source502:	README
 Requires:	cracklib-dicts
-Requires:	pam_tcb
+Requires:	pam_tcb >= 1.0.2-14
+Requires:	setup >= 2.7.12-2
 Conflicts:	initscripts < 3.94
 Requires(pre):	rpm-helper
 Requires(post):	coreutils
@@ -179,12 +180,14 @@ perl -pi.660 -e 's/0600/0660/g if m|\broot\.| && !m|\B/dev/console\b|' modules/p
 %patch522 -p1 -b .contenxt
 %patch523 -p1 -b .noselinux
 
-# Remove unwanted modules; pam_tcb provides pam_unix now
-for d in pam_unix; do
-    rm -rf modules/$d
-    sed -i "s,modules/$d/Makefile,," configure.in
-    sed -i "s/ $d / /" modules/Makefile.am
-done
+# 08/08/2008 - vdanen - make pam provide pam_unix until we can work out all the issues in pam_tcb; this
+# just makes things easier but is not meant to be a permanent solution
+## Remove unwanted modules; pam_tcb provides pam_unix now
+#for d in pam_unix; do
+#    rm -rf modules/$d
+#    sed -i "s,modules/$d/Makefile,," configure.in
+#    sed -i "s/ $d / /" modules/Makefile.am
+#done
 
 
 install -m644 %{SOURCE501} %{SOURCE502} modules/pam_tty_audit/
@@ -231,6 +234,9 @@ install -m 644 %{SOURCE500} $RPM_BUILD_ROOT/etc/security/console.perms.d/50-mand
 # remove unpackaged .la files
 rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
 
+for phase in auth acct passwd session ; do	 
+	ln -sf pam_unix.so $RPM_BUILD_ROOT/%{_lib}/security/pam_unix_${phase}.so	 
+done
 
 %find_lang Linux-PAM
 
@@ -291,11 +297,13 @@ fi
 %dir /etc/pam.d
 %config(noreplace) /etc/environment
 %config(noreplace) /etc/pam.d/other
-%config(noreplace) /etc/pam.d/system-auth
+%attr(0644,root,shadow) %config(noreplace) /etc/pam.d/system-auth
 %config(noreplace) /etc/pam.d/config-util
 /sbin/pam_console_apply
 /sbin/pam_tally
 /sbin/pam_tally2
+/sbin/unix_chkpwd
+/sbin/unix_update
 %attr(4755,root,root) /sbin/pam_timestamp_check
 %config(noreplace) %{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
