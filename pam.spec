@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 15
+Release:	%mkrel 16
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 # pam_rhosts_auth module is BSD with advertising
@@ -77,10 +77,11 @@ Source501: 	pam_tty_audit.8
 Source502:	README
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
-Requires:	pam_tcb >= 1.0.2-15
+Requires:	pam_tcb >= 1.0.2-16
 Conflicts:	initscripts < 3.94
 Requires(pre):	rpm-helper
 Requires(post):	coreutils
+Requires(post):	tcb >= 1.0.2-16
 BuildRequires:	bison cracklib-devel flex
 BuildRequires:	linuxdoc-tools
 BuildRequires:	db_nss-devel >= 4.6
@@ -120,7 +121,7 @@ This is the documentation package of %{name}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
 Conflicts:	%{name} < 0.99.8.1-10mdv
-Conflicts:	pam_tcb < 1.0.2-15
+Conflicts:	pam_tcb < 1.0.2-16
 
 %description -n	%{libname}
 PAM (Pluggable Authentication Modules) is a system security tool that
@@ -288,6 +289,9 @@ if [ ! -a /var/log/faillog ] ; then
 fi
 if [ ! -a /var/log/tallylog ] ; then
        install -m 600 /dev/null /var/log/tallylog
+fi
+if [ ! "$(grep -q USE_TCB /etc/login.defs)" ]; then
+       /usr/sbin/set_tcb --auto --migrate
 fi
 
 
