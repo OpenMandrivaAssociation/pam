@@ -202,6 +202,7 @@ done
 cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
 autoreconf -I m4
+libtoolize
 
 %build
 export BROWSER=""
