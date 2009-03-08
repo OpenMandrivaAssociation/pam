@@ -155,7 +155,7 @@ This package contains the development librairies for %{name}
 %patch24 -p1 -b .update-helper
 %patch25 -p1 -b .unix-hpux-aging
 %patch31 -p1 -b .try-first-pass
-%patch32 -p1 -b .fail-close
+%patch32 -p0 -b .fail-close
 %patch40 -p1 -b .temp-logon
 %patch41 -p1 -b .ns-init
 %patch42 -p1 -b .hal-handled
