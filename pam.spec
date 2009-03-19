@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	0.99.8.1
-Release:	%mkrel 17
+Release:	%mkrel 18
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 # pam_rhosts_auth module is BSD with advertising
@@ -75,6 +75,8 @@ Patch523:	Linux-PAM-0.99.8.1-noselinux.patch
 #add missing documentation
 Source501: 	pam_tty_audit.8
 Source502:	README
+#upstream patch, fixing Bugtraq ID 34010
+Patch601:	Linux-PAM-0.99.8.1-bid-34010.patch
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
 Requires:	pam_tcb >= 1.0.2-16
@@ -181,6 +183,7 @@ perl -pi.660 -e 's/0600/0660/g if m|\broot\.| && !m|\B/dev/console\b|' modules/p
 %patch521 -p1 -b .pbuild-rh
 %patch522 -p1 -b .contenxt
 %patch523 -p1 -b .noselinux
+%patch601 -p1 -b .bid34010
 
 # 08/08/2008 - vdanen - make pam provide pam_unix until we can work out all the issues in pam_tcb; this
 # just makes things easier but is not meant to be a permanent solution
