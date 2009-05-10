@@ -45,7 +45,6 @@ Patch501:	Linux-PAM-0.99.8.1-mdvgroups.patch
 Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
 Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
-Patch511:	Linux-PAM-0.99.3.0-verbose-limits.patch
 # (fl) pam_xauth: set extra groups because in high security levels
 #      access to /usr/X11R6/bin dir is controlled by a group
 Patch512:	Linux-PAM-1.0.92-xauth-groups.patch
@@ -143,7 +142,6 @@ perl -pi.660 -e 's/0600/0660/g if m|\broot\.| && !m|\B/dev/console\b|' modules/p
 
 %patch507 -p1 -b .loop
 %patch508 -p1 -b .pamtimestampadm
-#%patch511 -p1 -b .verbose-limits
 %patch512 -p1 -b .xauth-groups
 %patch517 -p1 -b .enable_rt
 %patch521 -p1 -b .pbuild-rh
