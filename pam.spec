@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.0
-Release:	%mkrel 1
+Release:	%mkrel 2
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 # pam_rhosts_auth module is BSD with advertising
@@ -190,6 +190,8 @@ install -m 644 %{SOURCE9} %{SOURCE10} $RPM_BUILD_ROOT%{_mandir}/man5/
 # remove unpackaged .la files
 rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
 
+# no longer needed, handled by ACL in udev
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/security/console.perms.d/50-default.perms
 for phase in auth acct passwd session ; do	 
 	ln -sf pam_unix.so $RPM_BUILD_ROOT/%{_lib}/security/pam_unix_${phase}.so	 
 done
@@ -278,7 +280,6 @@ fi
 %config(noreplace) %{_sysconfdir}/security/opasswd
 %dir %{_sysconfdir}/security/console.apps
 %dir %{_sysconfdir}/security/console.perms.d
-%config(noreplace) %{_sysconfdir}/security/console.perms.d/50-default.perms
 %dir /var/run/console
 %ghost %verify(not md5 size mtime) /var/log/faillog
 %ghost %verify(not md5 size mtime) /var/log/tallylog
