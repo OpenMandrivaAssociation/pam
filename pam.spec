@@ -9,7 +9,7 @@
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
-Version:	1.0.92
+Version:	1.1.0
 Release:	%mkrel 1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
@@ -34,12 +34,6 @@ Patch2:  pam-1.0.91-std-noclose.patch
 
 # Mandriva specific sources/patches
 
-# (blino) default permission set in Mandriva
-#         use /etc/security/console.perms.d/50-mandriva.perms whenever possible
-Source500:	pam-mandriva.perms
-#         else patch 50-default.perms
-Patch500:	Linux-PAM-0.99.8.1-mdvclasses.patch
-Patch501:	Linux-PAM-0.99.8.1-mdvgroups.patch
 
 # (fl) fix infinite loop
 Patch507:	pam-0.74-loop.patch
@@ -75,7 +69,7 @@ BuildConflicts:	prelude-devel
 %endif
 Obsoletes:	pamconfig
 Provides:	pamconfig
-Url:		http://www.us.kernel.org/pub/linux/libs/pam/index.html
+Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
 Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
@@ -135,10 +129,6 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 %patch2 -p1 -b .std-noclose
 
 # (Mandriva)
-%patch500 -p1 -b .mdvclasses
-%patch501 -p1 -b .mdvgroups
-# (blino) make sure devices are accessible by their group if specified
-perl -pi.660 -e 's/0600/0660/g if m|\broot\.| && !m|\B/dev/console\b|' modules/pam_console/50-default.perms
 
 %patch507 -p1 -b .loop
 %patch508 -p1 -b .pamtimestampadm
@@ -196,8 +186,6 @@ install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/tallylog
 
 # Install man pages.
 install -m 644 %{SOURCE9} %{SOURCE10} $RPM_BUILD_ROOT%{_mandir}/man5/
-
-install -m 644 %{SOURCE500} $RPM_BUILD_ROOT/etc/security/console.perms.d/50-mandriva.perms
 
 # remove unpackaged .la files
 rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
@@ -291,7 +279,6 @@ fi
 %dir %{_sysconfdir}/security/console.apps
 %dir %{_sysconfdir}/security/console.perms.d
 %config(noreplace) %{_sysconfdir}/security/console.perms.d/50-default.perms
-%config(noreplace) %{_sysconfdir}/security/console.perms.d/50-mandriva.perms
 %dir /var/run/console
 %ghost %verify(not md5 size mtime) /var/log/faillog
 %ghost %verify(not md5 size mtime) /var/log/tallylog
