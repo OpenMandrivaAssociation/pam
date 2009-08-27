@@ -10,11 +10,10 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.0
-Release:	%mkrel 2
+Release:	%mkrel 3
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
-# pam_rhosts_auth module is BSD with advertising
-License: BSD and GPLv2+ and BSD with advertising
+License:	BSD and GPLv2+
 Group:		System/Libraries
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
 Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2.sign
@@ -31,6 +30,7 @@ Source10:	config-util.5
 # RedHat patches
 Patch1:  pam-1.0.90-redhat-modules.patch
 Patch2:  pam-1.0.91-std-noclose.patch
+Patch3:  pam-1.1.0-cracklib-authtok.patch
 
 # Mandriva specific sources/patches
 
@@ -127,6 +127,7 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 # (RH)
 %patch1 -p1 -b .redhat-modules
 %patch2 -p1 -b .std-noclose
+%patch3 -p1 -b .authok
 
 # (Mandriva)
 
