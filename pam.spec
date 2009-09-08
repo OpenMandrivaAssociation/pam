@@ -10,7 +10,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.0
-Release:	%mkrel 3
+Release:	%mkrel 4
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -31,6 +31,8 @@ Source10:	config-util.5
 Patch1:  pam-1.0.90-redhat-modules.patch
 Patch2:  pam-1.0.91-std-noclose.patch
 Patch3:  pam-1.1.0-cracklib-authtok.patch
+Patch4:  pam-1.1.0-console-nochmod.patch
+Patch5:  pam-1.1.0-notally.patch
 
 # Mandriva specific sources/patches
 
@@ -128,6 +130,8 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 %patch1 -p1 -b .redhat-modules
 %patch2 -p1 -b .std-noclose
 %patch3 -p1 -b .authok
+%patch4 -p1 -b .nochmod
+%patch5 -p1 -b .notally
 
 # (Mandriva)
 
@@ -182,7 +186,6 @@ install -m 644 %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/system-auth
 install -m 644 %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/config-util
 install -m 600 /dev/null $RPM_BUILD_ROOT%{_sysconfdir}/security/opasswd
 install -d -m 755 $RPM_BUILD_ROOT/var/log
-install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/faillog
 install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/tallylog
 
 # Install man pages.
@@ -192,7 +195,6 @@ install -m 644 %{SOURCE9} %{SOURCE10} $RPM_BUILD_ROOT%{_mandir}/man5/
 rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
 
 # no longer needed, handled by ACL in udev
-rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/security/console.perms.d/50-default.perms
 for phase in auth acct passwd session ; do	 
 	ln -sf pam_unix.so $RPM_BUILD_ROOT/%{_lib}/security/pam_unix_${phase}.so	 
 done
@@ -204,6 +206,7 @@ done
 # Make sure every module subdirectory gave us a module.  Yes, this is hackish.
 for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [ ${dir} != "modules/pam_selinux" && [ ${dir} != "modules/pam_sepermit"  ]; then
+         [ ${dir} = "modules/pam_tally" ] && continue
 	if ! ls -1 $RPM_BUILD_ROOT/%{_lib}/security/`basename ${dir}`*.so ; then
 		echo ERROR `basename ${dir}` did not build a module.
 		exit 1
@@ -241,9 +244,6 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %post
-if [ ! -a /var/log/faillog ] ; then
-       install -m 600 /dev/null /var/log/faillog
-fi
 if [ ! -a /var/log/tallylog ] ; then
        install -m 600 /dev/null /var/log/tallylog
 fi
@@ -263,7 +263,6 @@ fi
 %config(noreplace) /etc/pam.d/config-util
 /sbin/mkhomedir_helper
 /sbin/pam_console_apply
-/sbin/pam_tally
 /sbin/pam_tally2
 /sbin/unix_chkpwd
 /sbin/unix_update
@@ -282,7 +281,6 @@ fi
 %dir %{_sysconfdir}/security/console.apps
 %dir %{_sysconfdir}/security/console.perms.d
 %dir /var/run/console
-%ghost %verify(not md5 size mtime) /var/log/faillog
 %ghost %verify(not md5 size mtime) /var/log/tallylog
 %{_mandir}/man5/*
 %{_mandir}/man8/*
