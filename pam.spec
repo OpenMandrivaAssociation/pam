@@ -9,14 +9,14 @@
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
-Version:	1.1.0
-Release:	%mkrel 6
+Version:	1.1.1
+Release:	%mkrel 1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
 Group:		System/Libraries
-Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2
-Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/pre/library/Linux-PAM-%{version}.tar.bz2.sign
+Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
+Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source3:	pam-0.99.3.0-README.update
 Source4:	pam-0.99.8.1-11mdv2009.0-README.update
@@ -30,7 +30,6 @@ Source10:	config-util.5
 # RedHat patches
 Patch1:  pam-1.0.90-redhat-modules.patch
 Patch2:  pam-1.0.91-std-noclose.patch
-Patch3:  pam-1.1.0-cracklib-authtok.patch
 Patch4:  pam-1.1.0-console-nochmod.patch
 Patch5:  pam-1.1.0-notally.patch
 
@@ -43,7 +42,7 @@ Patch507:	pam-0.74-loop.patch
 Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
 # (fl) pam_xauth: set extra groups because in high security levels
 #      access to /usr/X11R6/bin dir is controlled by a group
-Patch512:	Linux-PAM-1.0.92-xauth-groups.patch
+Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
 # (tv/blino) add defaults for nice/rtprio in /etc/security/limits.conf
 Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
 # (blino) fix parallel build (pam_console)
@@ -134,7 +133,6 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 # (RH)
 %patch1 -p1 -b .redhat-modules
 %patch2 -p1 -b .std-noclose
-%patch3 -p1 -b .authok
 %patch4 -p1 -b .nochmod
 %patch5 -p1 -b .notally
 
@@ -168,7 +166,7 @@ done
 cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
 autoreconf -I m4
-libtoolize
+#libtoolize
 
 %build
 export BROWSER=""
@@ -228,14 +226,6 @@ for module in $RPM_BUILD_ROOT/%{_lib}/security/pam*.so ; do
 	if ! env LD_LIBRARY_PATH=$RPM_BUILD_ROOT/%{_lib} \
 		 %{SOURCE8} -ldl -lpam -L$RPM_BUILD_ROOT/%{_lib} ${module} ; then
 		echo ERROR module: ${module} cannot be loaded.
-		exit 1
-	fi
-# And for good measure, make sure that none of the modules pull in threading
-# libraries, which if loaded in a non-threaded application, can cause Very
-# Bad Things to happen.
-	if env LD_LIBRARY_PATH=$RPM_BUILD_ROOT/%{_lib} \
-	       LD_PRELOAD=$RPM_BUILD_ROOT/%{_lib}/libpam.so ldd -r ${module} | fgrep -q libpthread ; then
-		echo ERROR module: ${module} pulls threading libraries.
 		exit 1
 	fi
 done
