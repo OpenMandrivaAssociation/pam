@@ -9,8 +9,8 @@
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
-Version:	1.1.1
-Release:	%mkrel 2
+Version:	1.1.3
+Release:	%mkrel 1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -32,10 +32,12 @@ Patch1:  pam-1.0.90-redhat-modules.patch
 Patch2:  pam-1.0.91-std-noclose.patch
 Patch4:  pam-1.1.0-console-nochmod.patch
 Patch5:  pam-1.1.0-notally.patch
+Patch7:  pam-1.1.0-console-fixes.patch
+Patch9:  pam-1.1.2-noflex.patch
+Patch10: pam-1.1.3-nouserenv.patch
+Patch11: pam-1.1.3-console-abstract.patch
 
 # Mandriva specific sources/patches
-
-
 # (fl) fix infinite loop
 Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
@@ -69,7 +71,7 @@ BuildRequires:	openssl-devel
 BuildRequires:	libaudit-devel
 BuildRequires:	glibc-crypt_blowfish-devel
 %if %with_prelude
-BuildRequires:	prelude-devel
+BuildRequires:	prelude-devel >= 0.9.0
 %else
 BuildConflicts:	prelude-devel
 %endif
@@ -135,12 +137,15 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 %patch2 -p1 -b .std-noclose
 %patch4 -p1 -b .nochmod
 %patch5 -p1 -b .notally
+%patch7 -p1 -b .console-fixes
+%patch9 -p1 -b .noflex
+%patch10 -p1 -b .nouserenv
+%patch11 -p1 -b .abstract
 
 # (Mandriva)
-
 %patch507 -p1 -b .loop
 %patch508 -p1 -b .pamtimestampadm
-%patch512 -p1 -b .xauth-groups
+%patch512 -p0 -b .xauth-groups
 %patch517 -p1 -b .enable_rt
 %patch521 -p1 -b .pbuild-rh
 %patch700 -p1 -b .static
@@ -165,8 +170,8 @@ done
 
 cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
+#libtoolize -cf
 autoreconf -I m4
-#libtoolize
 
 %build
 export BROWSER=""
