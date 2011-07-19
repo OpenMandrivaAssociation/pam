@@ -78,7 +78,6 @@ BuildConflicts:	prelude-devel
 Obsoletes:	pamconfig
 Provides:	pamconfig
 Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
-Buildroot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 PAM (Pluggable Authentication Modules) is a system security tool that
@@ -186,7 +185,6 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db_nss -D_GNU_SOURCE" \
 %make
 
 %install
-rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{_includedir}/security
 mkdir -p $RPM_BUILD_ROOT/%{_lib}/security
 make install DESTDIR=$RPM_BUILD_ROOT LDCONFIG=:
@@ -235,16 +233,6 @@ for module in $RPM_BUILD_ROOT/%{_lib}/security/pam*.so ; do
 	fi
 done
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-%if %mdkversion < 200900
-%post -n %libname -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %libname -p /sbin/ldconfig
-%endif
-
 %posttrans
 if [ ! -a /var/log/tallylog ] ; then
        install -m 600 /dev/null /var/log/tallylog
@@ -255,7 +243,6 @@ fi
 
 
 %files -f Linux-PAM.lang
-%defattr(-,root,root)
 %doc NEWS README.0.99.8.1.update.urpmi
 %docdir %{_docdir}/%{name}
 %dir /etc/pam.d
@@ -288,7 +275,6 @@ fi
 %{_mandir}/man8/*
 
 %files -n %{libname}
-%defattr(-,root,root)
 /%{_lib}/libpam.so.*
 /%{_lib}/libpamc.so.*
 /%{_lib}/libpam_misc.so.*
@@ -297,7 +283,6 @@ fi
 %dir /%{_lib}/security
 
 %files -n %{develname}
-%defattr(-,root,root)
 %doc Copyright
 /%{_lib}/libpam.so
 /%{_lib}/libpam_misc.so
@@ -306,7 +291,6 @@ fi
 %{_mandir}/man3/*
 
 %files doc
-%defattr(-,root,root)
 %doc doc/txts doc/specs/rfc86.0.txt Copyright
 
 
