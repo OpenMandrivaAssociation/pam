@@ -9,8 +9,8 @@
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
-Version:	1.1.3
-Release:	4
+Version:	1.1.4
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -53,6 +53,8 @@ Patch521:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 Patch700:	pam_fix_static_pam_console.patch
 # (fc) do not output error when no file is in /etc/security/console.perms.d/
 Patch701:	pam-1.1.0-console-nopermsd.patch
+# (proyvind): add missing constant that went with rpc removal from glibc 2.14
+Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 
 #add missing documentation
 Source501: 	pam_tty_audit.8
@@ -149,6 +151,7 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 %patch521 -p1 -b .pbuild-rh
 %patch700 -p1 -b .static
 %patch701 -p1 -b .nopermsd
+%patch702 -p1 -b .nis_const~
 
 # 08/08/2008 - vdanen - make pam provide pam_unix until we can work out all the issues in pam_tcb; this
 # just makes things easier but is not meant to be a permanent solution
