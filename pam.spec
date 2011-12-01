@@ -188,26 +188,26 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db_nss -D_GNU_SOURCE" \
 %make
 
 %install
-mkdir -p $RPM_BUILD_ROOT%{_includedir}/security
-mkdir -p $RPM_BUILD_ROOT/%{_lib}/security
-make install DESTDIR=$RPM_BUILD_ROOT LDCONFIG=:
-install -d -m 755 $RPM_BUILD_ROOT/etc/pam.d
-install -m 644 %{SOURCE5} $RPM_BUILD_ROOT/etc/pam.d/other
-install -m 644 %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/system-auth
-install -m 644 %{SOURCE7} $RPM_BUILD_ROOT/etc/pam.d/config-util
-install -m 600 /dev/null $RPM_BUILD_ROOT%{_sysconfdir}/security/opasswd
-install -d -m 755 $RPM_BUILD_ROOT/var/log
-install -m 600 /dev/null $RPM_BUILD_ROOT/var/log/tallylog
+mkdir -p %{buildroot}%{_includedir}/security
+mkdir -p %{buildroot}/%{_lib}/security
+make install DESTDIR=%{buildroot} LDCONFIG=:
+install -d -m 755 %{buildroot}/etc/pam.d
+install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
+install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
+install -m 644 %{SOURCE7} %{buildroot}/etc/pam.d/config-util
+install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
+install -d -m 755 %{buildroot}/var/log
+install -m 600 /dev/null %{buildroot}/var/log/tallylog
 
 # Install man pages.
-install -m 644 %{SOURCE9} %{SOURCE10} $RPM_BUILD_ROOT%{_mandir}/man5/
+install -m 644 %{SOURCE9} %{SOURCE10} %{buildroot}%{_mandir}/man5/
 
 # remove unpackaged .la files
-rm -rf $RPM_BUILD_ROOT/%{_lib}/*.la $RPM_BUILD_ROOT/%{_lib}/security/*.la
+rm -rf %{buildroot}/%{_lib}/*.la %{buildroot}/%{_lib}/security/*.la
 
 # no longer needed, handled by ACL in udev
 for phase in auth acct passwd session ; do	 
-	ln -sf pam_unix.so $RPM_BUILD_ROOT/%{_lib}/security/pam_unix_${phase}.so	 
+	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so	 
 done
 
 %find_lang Linux-PAM
@@ -218,7 +218,7 @@ done
 for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [ ${dir} != "modules/pam_selinux" && [ ${dir} != "modules/pam_sepermit"  ]; then
          [ ${dir} = "modules/pam_tally" ] && continue
-	if ! ls -1 $RPM_BUILD_ROOT/%{_lib}/security/`basename ${dir}`*.so ; then
+	if ! ls -1 %{buildroot}/%{_lib}/security/`basename ${dir}`*.so ; then
 		echo ERROR `basename ${dir}` did not build a module.
 		exit 1
 	fi
@@ -227,10 +227,10 @@ done
 
 # Check for module problems.  Specifically, check that every module we just
 # installed can actually be loaded by a minimal PAM-aware application.
-/sbin/ldconfig -n $RPM_BUILD_ROOT/%{_lib}
-for module in $RPM_BUILD_ROOT/%{_lib}/security/pam*.so ; do
-	if ! env LD_LIBRARY_PATH=$RPM_BUILD_ROOT/%{_lib} \
-		 %{SOURCE8} -ldl -lpam -L$RPM_BUILD_ROOT/%{_lib} ${module} ; then
+/sbin/ldconfig -n %{buildroot}/%{_lib}
+for module in %{buildroot}/%{_lib}/security/pam*.so ; do
+	if ! env LD_LIBRARY_PATH=%{buildroot}/%{_lib} \
+		 %{SOURCE8} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
 		echo ERROR module: ${module} cannot be loaded.
 		exit 1
 	fi
