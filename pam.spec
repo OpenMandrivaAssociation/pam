@@ -1,5 +1,5 @@
-%define libname %mklibname %name 0
-%define develname %mklibname %name -d
+%define libname %mklibname %{name} 0
+%define develname %mklibname %{name} -d
 
 %define with_prelude 0
 %{?_without_prelude: %{expand: %%global with_prelude 0}}
@@ -96,7 +96,7 @@ PAM (Pluggable Authentication Modules) is a system security tool that
 allows system administrators to set authentication policy without
 having to recompile programs that handle authentication.
 
-This is the documentation package of %{name}
+This is the documentation package of %{name}.
 
 %package -n	%{libname}
 Summary:	Libraries for %{name}
@@ -109,21 +109,21 @@ PAM (Pluggable Authentication Modules) is a system security tool that
 allows system administrators to set authentication policy without
 having to recompile programs that handle authentication.
 
-This package contains the librairies for %{name}
+This package contains the libraries for %{name}.
 
 %package -n	%{develname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
-Obsoletes:	%{mklibname %name 0 -d} <= 0.99.8.1
+Obsoletes:	%{mklibname %{name} 0 -d} <= 0.99.8.1
 
 %description -n	%{develname}
 PAM (Pluggable Authentication Modules) is a system security tool that
 allows system administrators to set authentication policy without
 having to recompile programs that handle authentication.
 
-This package contains the development librairies for %{name}
+This package contains the development libraries for %{name}.
 
 %prep
 %setup -q -n Linux-PAM-%{version} -a 2
@@ -188,7 +188,7 @@ CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db_nss -D_GNU_SOURCE" \
 %install
 mkdir -p %{buildroot}%{_includedir}/security
 mkdir -p %{buildroot}/%{_lib}/security
-make install DESTDIR=%{buildroot} LDCONFIG=:
+%makeinstall_std LDCONFIG=:
 install -d -m 755 %{buildroot}/etc/pam.d
 install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
 install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
