@@ -290,6 +290,3 @@ fi
 
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright
-
-
-
