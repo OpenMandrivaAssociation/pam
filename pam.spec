@@ -28,14 +28,14 @@ Source9:	system-auth.5
 Source10:	config-util.5
 
 # RedHat patches
-Patch1:  pam-1.0.90-redhat-modules.patch
-Patch2:  pam-1.0.91-std-noclose.patch
-Patch4:  pam-1.1.0-console-nochmod.patch
-Patch5:  pam-1.1.0-notally.patch
-Patch7:  pam-1.1.0-console-fixes.patch
-Patch9:  pam-1.1.2-noflex.patch
-Patch10: pam-1.1.3-nouserenv.patch
-Patch11: pam-1.1.3-console-abstract.patch
+Patch1:		pam-1.0.90-redhat-modules.patch
+Patch2:		pam-1.0.91-std-noclose.patch
+Patch4:		pam-1.1.0-console-nochmod.patch
+Patch5:		pam-1.1.0-notally.patch
+Patch7:		pam-1.1.0-console-fixes.patch
+Patch9:		pam-1.1.2-noflex.patch
+Patch10:	pam-1.1.3-nouserenv.patch
+Patch11:	pam-1.1.3-console-abstract.patch
 
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
