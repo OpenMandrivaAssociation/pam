@@ -200,9 +200,6 @@ install -m 600 /dev/null %{buildroot}/var/log/tallylog
 # Install man pages.
 install -m 644 %{SOURCE9} %{SOURCE10} %{buildroot}%{_mandir}/man5/
 
-# remove unpackaged .la files
-rm -rf %{buildroot}/%{_lib}/*.la %{buildroot}/%{_lib}/security/*.la
-
 # no longer needed, handled by ACL in udev
 for phase in auth acct passwd session ; do	 
 	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so	 
