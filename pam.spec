@@ -89,7 +89,7 @@ having to recompile programs that handle authentication.
 %package	doc
 Summary:	Additional documentation for %{name}
 Group:		System/Libraries
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{EVRD}
 
 %description	doc
 PAM (Pluggable Authentication Modules) is a system security tool that
@@ -114,8 +114,8 @@ This package contains the librairies for %{name}
 %package -n	%{develname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
-Requires:	%{libname} = %{version}
-Provides:	%{name}-devel = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Provides:	%{name}-devel = %{EVRD}
 Obsoletes:	%{mklibname %name 0 -d} <= 0.99.8.1
 
 %description -n	%{develname}
