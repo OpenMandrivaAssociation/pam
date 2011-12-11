@@ -116,7 +116,6 @@ Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{version}
 Provides:	%{name}-devel = %{version}-%{release}
-Obsoletes:	%{name}-devel <= 0.77-9mdk
 Obsoletes:	%{mklibname %name 0 -d} <= 0.99.8.1
 
 %description -n	%{develname}
