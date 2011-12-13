@@ -201,9 +201,13 @@ install -m 600 /dev/null %{buildroot}/var/log/tallylog
 install -m 644 %{SOURCE9} %{SOURCE10} %{buildroot}%{_mandir}/man5/
 
 # no longer needed, handled by ACL in udev
-for phase in auth acct passwd session ; do	 
-	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so	 
+for phase in auth acct passwd session ; do
+	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
+
+# cleanup
+rm -f %{buildroot}/%{_lib}/security/*.la
+rm -f %{buildroot}/%{_lib}/*.la
 
 %find_lang Linux-PAM
 
