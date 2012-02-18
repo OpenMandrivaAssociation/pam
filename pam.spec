@@ -8,6 +8,10 @@
 %{?_without_prelude: %{expand: %%global with_prelude 0}}
 %{?_with_prelude: %{expand: %%global with_prelude 1}}
 
+%define bootstrap 0
+%{?_without_bootstrap: %global bootstrap 0}
+%{?_with_bootstrap: %global bootstrap 1}
+
 %define pam_redhat_version 0.99.10-1
 
 Summary:	A security tool which provides authentication for applications
@@ -66,7 +70,10 @@ Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 BuildRequires:	bison
 BuildRequires:	cracklib-devel
 BuildRequires:	flex
+%if !%{bootstrap}
+# this pulls in the mega texlive load
 BuildRequires:	linuxdoc-tools
+%endif
 BuildRequires:	db_nss-devel
 BuildRequires:	openssl-devel
 BuildRequires:	libaudit-devel
