@@ -1,4 +1,7 @@
-%define libname %mklibname %{name} 0
+%define major	0
+%define libname %mklibname %{name} %{major}
+%define libnamec %mklibname %{name}c %{major}
+%define libname_misc %mklibname %{name}_misc %{major}
 %define develname %mklibname %{name} -d
 
 %define with_prelude 0
@@ -10,11 +13,12 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.4
-Release:	4
+Release:	5
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
 Group:		System/Libraries
+Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
 Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
 Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
@@ -26,6 +30,9 @@ Source7:	config-util.pamd
 Source8:	dlopen.sh
 Source9:	system-auth.5
 Source10:	config-util.5
+#add missing documentation
+Source501: 	pam_tty_audit.8
+Source502:	README
 
 # RedHat patches
 Patch1:		pam-1.0.90-redhat-modules.patch
@@ -56,19 +63,11 @@ Patch701:	pam-1.1.0-console-nopermsd.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 
-#add missing documentation
-Source501: 	pam_tty_audit.8
-Source502:	README
-Requires:	cracklib-dicts
-Requires:	setup >= 2.7.12-2
-Requires:	pam_tcb >= 1.0.2-16
-Conflicts:	initscripts < 3.94
-Requires(pre):	rpm-helper
-Requires(post):	coreutils
-Requires(post):	tcb >= 1.0.2-16
-BuildRequires:	bison cracklib-devel flex
+BuildRequires:	bison
+BuildRequires:	cracklib-devel
+BuildRequires:	flex
 BuildRequires:	linuxdoc-tools
-BuildRequires:	db_nss-devel >= 4.6
+BuildRequires:	db_nss-devel
 BuildRequires:	openssl-devel
 BuildRequires:	libaudit-devel
 BuildRequires:	glibc-crypt_blowfish-devel
@@ -77,9 +76,13 @@ BuildRequires:	prelude-devel >= 0.9.0
 %else
 BuildConflicts:	prelude-devel
 %endif
-Obsoletes:	pamconfig
-Provides:	pamconfig
-Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
+Requires:	cracklib-dicts
+Requires:	setup >= 2.7.12-2
+Requires:	pam_tcb >= 1.0.2-16
+Requires(pre):	rpm-helper
+Requires(post):	coreutils
+Requires(post):	tcb >= 1.0.2-16
+Conflicts:	%{_lib}pam0 < 1.1.4-5
 
 %description
 PAM (Pluggable Authentication Modules) is a system security tool that
@@ -92,31 +95,38 @@ Group:		System/Libraries
 Requires:	%{name} = %{EVRD}
 
 %description	doc
-PAM (Pluggable Authentication Modules) is a system security tool that
-allows system administrators to set authentication policy without
-having to recompile programs that handle authentication.
-
 This is the documentation package of %{name}.
 
 %package -n	%{libname}
-Summary:	Libraries for %{name}
+Summary:	Library for %{name}
 Group:		System/Libraries
-Conflicts:	%{name} < 0.99.8.1-10mdv
-Conflicts:	pam_tcb < 1.0.2-16
 
 %description -n	%{libname}
-PAM (Pluggable Authentication Modules) is a system security tool that
-allows system administrators to set authentication policy without
-having to recompile programs that handle authentication.
+This package contains the library libpam for %{name}.
 
-This package contains the libraries for %{name}.
+%package -n	%{libnamec}
+Summary:	Library for %{name}
+Group:		System/Libraries
+Conflicts:	%{_lib}pam0 < 1.1.4-5
+
+%description -n	%{libnamec}
+This package contains the library libpamc for %{name}.
+
+%package -n	%{libname_misc}
+Summary:	Library for %{name}
+Group:		System/Libraries
+Conflicts:	%{_lib}pam0 < 1.1.4-5
+
+%description -n	%{libname_misc}
+This package contains the library libpam_misc for %{name}.
 
 %package -n	%{develname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
+Requires:	%{libnamec} = %{EVRD}
+Requires:	%{libname_misc} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
-Obsoletes:	%{mklibname %{name} 0 -d} <= 0.99.8.1
 
 %description -n	%{develname}
 PAM (Pluggable Authentication Modules) is a system security tool that
@@ -159,7 +169,6 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 #    sed -i "s,modules/$d/Makefile,," configure.in
 #    sed -i "s/ $d / /" modules/Makefile.am
 #done
-
 
 install -m644 %{SOURCE501} %{SOURCE502} modules/pam_tty_audit/
 
@@ -243,7 +252,6 @@ if [ -f /etc/login.defs ] && ! grep -q USE_TCB /etc/login.defs; then
        /usr/sbin/set_tcb --auto --migrate
 fi
 
-
 %files -f Linux-PAM.lang
 %doc NEWS README.0.99.8.1.update.urpmi
 %docdir %{_docdir}/%{name}
@@ -271,18 +279,22 @@ fi
 %config(noreplace) %{_sysconfdir}/security/opasswd
 %dir %{_sysconfdir}/security/console.apps
 %dir %{_sysconfdir}/security/console.perms.d
+%dir /%{_lib}/security
+/%{_lib}/security/*.so
+/%{_lib}/security/pam_filter
 %dir /var/run/console
 %ghost %verify(not md5 size mtime) /var/log/tallylog
 %{_mandir}/man5/*
 %{_mandir}/man8/*
 
 %files -n %{libname}
-/%{_lib}/libpam.so.*
-/%{_lib}/libpamc.so.*
-/%{_lib}/libpam_misc.so.*
-/%{_lib}/security/*.so
-/%{_lib}/security/pam_filter
-%dir /%{_lib}/security
+/%{_lib}/libpam.so.%{major}*
+
+%files -n %{libnamec}
+/%{_lib}/libpamc.so.%{major}*
+
+%files -n %{libname_misc}
+/%{_lib}/libpam_misc.so.%{major}*
 
 %files -n %{develname}
 %doc Copyright
