@@ -231,8 +231,8 @@ rm -f %{buildroot}/%{_lib}/*.la
 # (blino) we don't want to test if SE Linux is built, it's disabled
 # Make sure every module subdirectory gave us a module.  Yes, this is hackish.
 for dir in modules/pam_* ; do
-if [ -d ${dir} ] && [ ${dir} != "modules/pam_selinux" && [ ${dir} != "modules/pam_sepermit"  ]; then
-         [ ${dir} = "modules/pam_tally" ] && continue
+if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
+         [[ "${dir}" = "modules/pam_tally" ]] && continue
 	if ! ls -1 %{buildroot}/%{_lib}/security/`basename ${dir}`*.so ; then
 		echo ERROR `basename ${dir}` did not build a module.
 		exit 1
