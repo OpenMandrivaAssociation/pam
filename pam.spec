@@ -245,7 +245,7 @@ done
 /sbin/ldconfig -n %{buildroot}/%{_lib}
 for module in %{buildroot}/%{_lib}/security/pam*.so ; do
 	if ! env LD_LIBRARY_PATH=%{buildroot}/%{_lib} \
-		 %{SOURCE8} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
+		sh %{SOURCE8} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
 		echo ERROR module: ${module} cannot be loaded.
 		exit 1
 	fi
