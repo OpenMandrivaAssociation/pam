@@ -17,7 +17,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.4
-Release:	8
+Release:	9
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -107,6 +107,7 @@ This is the documentation package of %{name}.
 %package -n	%{libname}
 Summary:	Library for %{name}
 Group:		System/Libraries
+Conflicts:	pam < 1.1.4-5
 
 %description -n	%{libname}
 This package contains the library libpam for %{name}.
