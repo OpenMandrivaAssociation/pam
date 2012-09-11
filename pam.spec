@@ -17,7 +17,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.4
-Release:	9
+Release:	10
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -35,7 +35,7 @@ Source8:	dlopen.sh
 Source9:	system-auth.5
 Source10:	config-util.5
 #add missing documentation
-Source501: 	pam_tty_audit.8
+Source501:	pam_tty_audit.8
 Source502:	README
 
 # RedHat patches
@@ -309,6 +309,7 @@ fi
 /%{_lib}/libpam.so
 /%{_lib}/libpam_misc.so
 /%{_lib}/libpamc.so
+%dir %{_includedir}/security
 %{_includedir}/security/*.h
 %{_mandir}/man3/*
 
