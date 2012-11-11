@@ -1,0 +1,14 @@
+--- Linux-PAM-0.99.3.0/modules/pam_timestamp/pam_timestamp.c.pamtimestampadm	2006-01-03 16:35:07.000000000 +0100
++++ Linux-PAM-0.99.3.0/modules/pam_timestamp/pam_timestamp.c	2006-01-27 22:31:39.000000000 +0100
+@@ -121,9 +121,9 @@
+ 				       scratch);
+ 				return PAM_AUTH_ERR;
+ 			}
+-			if (st.st_gid != 0) {
++			if ((st.st_gid != 0) && (st.st_gid != 4)) {
+ 				pam_syslog(pamh, LOG_ERR,
+-				       "`%s' owner GID != 0",
++				       "`%s' owner GID != 0 and != 4",
+ 				       scratch);
+ 				return PAM_AUTH_ERR;
+ 			}

@@ -1,0 +1,11 @@
+--- Linux-PAM-1.1.4/modules/pam_unix/support.c.yp_const~	2011-07-19 14:31:36.081046306 +0200
++++ Linux-PAM-1.1.4/modules/pam_unix/support.c	2011-07-19 14:31:38.058067705 +0200
+@@ -21,6 +21,8 @@
+ #include <sys/resource.h>
+ #ifdef HAVE_RPCSVC_YPCLNT_H
+ #include <rpcsvc/ypclnt.h>
++#else
++#define YPERR_SUCCESS 0
+ #endif
+ 
+ #include <security/_pam_macros.h>

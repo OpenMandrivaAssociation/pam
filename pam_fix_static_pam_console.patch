@@ -1,0 +1,26 @@
+Index: Linux-PAM-0.99.7.1/modules/pam_console/configfile.h
+===================================================================
+--- Linux-PAM-0.99.7.1.orig/modules/pam_console/configfile.h
++++ Linux-PAM-0.99.7.1/modules/pam_console/configfile.h
+@@ -4,7 +4,7 @@
+  */
+ #ifndef _CONFIGFILE_H
+ #define _CONFIGFILE_H
+-#define STATIC static
++#define STATIC
+ 
+ #ifndef FALSE
+ #define FALSE 0
+Index: Linux-PAM-0.99.7.1/modules/pam_console/pam_console_apply.c
+===================================================================
+--- Linux-PAM-0.99.7.1.orig/modules/pam_console/pam_console_apply.c
++++ Linux-PAM-0.99.7.1/modules/pam_console/pam_console_apply.c
+@@ -17,7 +17,7 @@
+ #include <stdarg.h>
+ #include <glob.h>
+ #include <locale.h>
+-#define STATIC static
++#define STATIC
+ #include "configfile.h"
+ #include "chmod.h"
+ #include "pam_console.h"

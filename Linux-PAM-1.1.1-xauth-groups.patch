@@ -1,0 +1,67 @@
+--- modules/pam_xauth/pam_xauth.c	2010-10-08 13:56:11.000000000 +0200
++++ modules/pam_xauth/pam_xauth.c.oden	2010-11-03 11:23:06.714312576 +0100
+@@ -90,7 +90,7 @@ static const char * const xauthpaths[] =
+  * given input on stdin, and storing any output it generates. */
+ static int
+ run_coprocess(pam_handle_t *pamh, const char *input, char **output,
+-	      uid_t uid, gid_t gid, const char *command, ...)
++	      uid_t uid, gid_t gid, const char *name, const char *command, ...)
+ {
+ 	int ipipe[2], opipe[2], i;
+ 	char buf[LINE_MAX];
+@@ -141,6 +141,12 @@ run_coprocess(pam_handle_t *pamh, const
+ 		    pam_syslog (pamh, LOG_ERR, "setgroups() failed: %m");
+ 		    _exit (err);
+ 		  }
++
++               /* Mandriva Linux specific:
++                * we need to set the extra groups because in high security levels
++                * access to /usr/X11R6/bin dir is controlled by a group */
++                initgroups(name, gid);
++
+ 		if (setuid(uid) == -1)
+ 		  {
+ 		    int err = errno;
+@@ -148,6 +154,7 @@ run_coprocess(pam_handle_t *pamh, const
+ 				(unsigned long) geteuid ());
+ 		    _exit (err);
+ 		  }
++
+ 		/* Initialize the argument list. */
+ 		memset(args, 0, sizeof(args));
+ 		/* Set the pipe descriptors up as stdin and stdout, and close
+@@ -173,6 +180,7 @@ run_coprocess(pam_handle_t *pamh, const
+ 		}
+ 		/* Run the command. */
+ 		execv(command, args);
++		syslog(LOG_ERR, "pam_xauth: execvp of %s failed: %m", command);
+ 		/* Never reached. */
+ 		_exit(1);
+ 	}
+@@ -508,7 +516,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+ 			   (unsigned long) getuid(), (unsigned long) getgid());
+ 	}
+ 	if (run_coprocess(pamh, NULL, &cookie,
+-			  getuid(), getgid(),
++			  getuid(), getgid(), rpwd->pw_name,
+ 			  xauth, "-f", cookiefile, "nlist", display,
+ 			  NULL) == 0) {
+ #ifdef WITH_SELINUX
+@@ -567,7 +575,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+ 						       (unsigned long) getgid());
+ 					}
+ 					run_coprocess(pamh, NULL, &cookie,
+-						      getuid(), getgid(),
++						      getuid(), getgid(), rpwd->pw_name,
+ 						      xauth, "-f", cookiefile,
+ 						      "nlist", t, NULL);
+ 				}
+@@ -709,7 +717,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+ 				  (unsigned long) tpwd->pw_gid);
+ 		}
+ 		run_coprocess(pamh, cookie, &tmp,
+-			      tpwd->pw_uid, tpwd->pw_gid,
++			      tpwd->pw_uid, tpwd->pw_gid, tpwd->pw_name,
+ 			      xauth, "-f", cookiefile, "nmerge", "-", NULL);
+ 
+ 		/* We don't need to keep a copy of these around any more. */
