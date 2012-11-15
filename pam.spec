@@ -187,8 +187,8 @@ done
 
 cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
-#libtoolize -cf
-autoreconf -I m4
+libtoolize -cf
+autoreconf -fi -I m4
 
 %build
 export BROWSER=""
