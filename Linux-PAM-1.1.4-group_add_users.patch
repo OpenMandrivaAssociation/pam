@@ -1,0 +1,11 @@
+--- Linux-PAM-1.1.4.orig/modules/pam_group/group.conf	2011-06-21 13:04:56.000000000 +0400
++++ Linux-PAM-1.1.4/modules/pam_group/group.conf	2012-04-20 15:45:10.000000000 +0400
+@@ -101,6 +101,8 @@
+ 
+ #xsh; tty* ;%admin;Al0000-2400;plugdev
+ 
++*;*;*;Al0000-2400;users
++
+ #
+ # End of group.conf file
+ #

@@ -1,14 +1,3 @@
 sources:
-  "config-util.5:"	41600ee0c95398dff3ff2380fa308d74f9b600d1
-  "config-util.pamd:"	3b6d7f0993e886aa70019c9966ac1b7be50a7218
-  "dlopen.sh:"	92e07c691784e40f6ff2cf72c24e0e6de7e75595
-  "Linux-PAM-1.1.4.tar.bz2:"	4634b09f9e059f384ce69dbaa4a67f88bef5cf7b
-  "Linux-PAM-1.1.4.tar.bz2.sign:"	f8d2e1b7d8d15ed3bca5fe0f7b5171e4f1105f29
-  "other.pamd:"	0105569be974f158b40109314ddefa6f5a7b6620
-  "pam-0.99.3.0-README.update:"	f77b2f6682cad67251b8fdee947995235c5ecff6
-  "pam-0.99.8.1-11mdv2009.0-README.update:"	336c3b058114b4a1fb2467ff8e4e99e97d2cbcea
-  "pam-redhat-0.99.10-1.tar.bz2:"	09e618edc5dcda9a6eb435a31db742afca673ae1
-  "pam_tty_audit.8:"	bb7271344a330e594c443950313bfb7aaa871881
-  "README:"	2dd1ac56939ea39af521968024ceffb051d5cb5d
-  "system-auth.5:"	e13af7c146086bd1de2bca57c805d784a5bbd442
-  "system-auth.pamd:"	b342ec7d4d9a3692ba5ea630744d3a3f147a8296
+  "Linux-PAM-1.1.4.tar.bz2": 4634b09f9e059f384ce69dbaa4a67f88bef5cf7b
+  "pam-redhat-0.99.10-1.tar.bz2": 09e618edc5dcda9a6eb435a31db742afca673ae1
