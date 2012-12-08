@@ -1,0 +1,8 @@
+PAM 0.99.8.1 update notes
+
+- pam_unix dropped
+
+The pam_unix module has been dropped in favour of the pam_tcb module and is
+no longer available in the pam package from Mandriva.  The pam_tcb module will
+work with the TCB shadowing scheme or regular shadow passwords.  It also provides
+the ability to use blowfish passwords, rather than just md5 passwords.
