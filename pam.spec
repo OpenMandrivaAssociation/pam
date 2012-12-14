@@ -25,8 +25,10 @@ Release:	1
 License:	BSD and GPLv2+
 Group:		System/Libraries
 Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
-Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
-Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
+#Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
+#Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
+# (tpg) new url
+Source0:	https://fedorahosted.org/releases/l/i/linux-pam/Linux-PAM-%{version}.tar.bz2
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source3:	pam-0.99.3.0-README.update
 Source4:	pam-0.99.8.1-11mdv2009.0-README.update
