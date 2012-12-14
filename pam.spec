@@ -18,8 +18,8 @@ Epoch:	1
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
-Version:	1.1.4
-Release:	9
+Version:	1.1.6
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -329,25 +329,25 @@ fi
 
 
 %changelog
-* Wed May 23 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.1.4-9
+* Wed May 23 2012 Per Ãyvind Karlsen <peroyvind@mandriva.org> 1.1.4-9
 + Revision: 800224
 - add a versioned conflicts to deal with pam modules having been moved out of
   library package, ensuring that the library package doesn't get upgraded
   independent of the pam package which now ships the modules which would lead
   to modules possibly missing and anything using pam left broken
 
-* Sun Apr 29 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.1.4-8
+* Sun Apr 29 2012 Per Ãyvind Karlsen <peroyvind@mandriva.org> 1.1.4-8
 + Revision: 794382
 - pam files *really* shouldn't be config(noreplace) but rather %%config, otherwise
   upgrades where these files has changed between releases will very easily turn
   fugly (TODO: post RFC about this as a policy and implement rpmlint check to
   enforce it)
 
-* Fri Mar 09 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.1.4-7
+* Fri Mar 09 2012 Per Ãyvind Karlsen <peroyvind@mandriva.org> 1.1.4-7
 + Revision: 783687
 - rebuild to get rid of false devel() dependency in main package
 
-* Wed Mar 07 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.1.4-6
+* Wed Mar 07 2012 Per Ãyvind Karlsen <peroyvind@mandriva.org> 1.1.4-6
 + Revision: 782601
 - fix module subdirectory test
 - fix assumption of dlopen.sh being executable (which will no longer be true as
@@ -365,7 +365,7 @@ fi
 - delete the libtool *.la files
 - attempt to relink against db_nss-devel 5.2.x
 
-  + Per Øyvind Karlsen <peroyvind@mandriva.org>
+  + Per Ãyvind Karlsen <peroyvind@mandriva.org>
     - no need for removing .la files, it's done automatically by spec-helper now
     - apply some cosmetics
     - use %%{EVRD} macro
@@ -377,11 +377,11 @@ fi
 + Revision: 698188
 - enable systemd pam suport (since udev-173 ther is no more udev_acl, and systemd takes over ACL)
 
-* Tue Jul 19 2011 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.1.4-1
+* Tue Jul 19 2011 Per Ãyvind Karlsen <peroyvind@mandriva.org> 1.1.4-1
 + Revision: 690602
 - new release
 
-* Tue Jul 19 2011 Per Øyvind Karlsen <peroyvind@mandriva.org> 1.1.3-4
+* Tue Jul 19 2011 Per Ãyvind Karlsen <peroyvind@mandriva.org> 1.1.3-4
 + Revision: 690600
 - remove obsolete/deprecated rpm stuff
 - check if /etc/login.defs exists before trying to open it in scriptlet
@@ -390,7 +390,7 @@ fi
 + Revision: 666974
 - mass rebuild
 
-  + Per Øyvind Karlsen <peroyvind@mandriva.org>
+  + Per Ãyvind Karlsen <peroyvind@mandriva.org>
     - work around ordering issue by moving %%post script to %%posttrans
 
 * Wed Nov 03 2010 Oden Eriksson <oeriksson@mandriva.com> 1.1.3-1mdv2011.0
@@ -866,7 +866,7 @@ fi
 * Sat Jul 03 2004 Stew Benedict <sbenedict@mandrakesoft.com> 0.77-14mdk
 - patch for lsb2 lsb-test-pam compliance (patch513)
 
-* Mon Jun 14 2004 Per �yvind Karlsen <peroyvind@linux-mandrake.com> 0.77-13mdk
+* Mon Jun 14 2004 Per Øyvind Karlsen <peroyvind@linux-mandrake.com> 0.77-13mdk
 - fix buildrequires
 - fix provides
 - cosmetics
