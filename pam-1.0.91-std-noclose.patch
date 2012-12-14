@@ -1,7 +1,7 @@
-diff -up Linux-PAM-1.0.91/modules/pam_mkhomedir/pam_mkhomedir.c.std-noclose Linux-PAM-1.0.91/modules/pam_mkhomedir/pam_mkhomedir.c
---- Linux-PAM-1.0.91/modules/pam_mkhomedir/pam_mkhomedir.c.std-noclose	2009-03-03 14:56:01.000000000 +0100
-+++ Linux-PAM-1.0.91/modules/pam_mkhomedir/pam_mkhomedir.c	2009-03-26 10:02:15.000000000 +0100
-@@ -131,13 +131,21 @@ create_homedir (pam_handle_t *pamh, int 
+diff -up Linux-PAM-1.1.6/modules/pam_mkhomedir/pam_mkhomedir.c.std-noclose Linux-PAM-1.1.6/modules/pam_mkhomedir/pam_mkhomedir.c
+--- Linux-PAM-1.1.6/modules/pam_mkhomedir/pam_mkhomedir.c.std-noclose	2012-08-15 13:08:43.000000000 +0200
++++ Linux-PAM-1.1.6/modules/pam_mkhomedir/pam_mkhomedir.c	2012-08-17 13:25:20.684075361 +0200
+@@ -133,13 +133,21 @@ create_homedir (pam_handle_t *pamh, opti
     if (child == 0) {
          int i;
          struct rlimit rlim;
@@ -21,59 +21,13 @@ diff -up Linux-PAM-1.0.91/modules/pam_mkhomedir/pam_mkhomedir.c.std-noclose Linu
                  rlim.rlim_max = MAX_FD_NO;
 -	  for (i=0; i < (int)rlim.rlim_max; i++) {
 +	  for (i = STDERR_FILENO + 1; i < (int)rlim.rlim_max; i++) {
- 	  	close(i);
+ 		close(i);
  	  }
  	}
-diff -up Linux-PAM-1.0.91/modules/pam_unix/support.c.std-noclose Linux-PAM-1.0.91/modules/pam_unix/support.c
---- Linux-PAM-1.0.91/modules/pam_unix/support.c.std-noclose	2009-03-03 14:56:01.000000000 +0100
-+++ Linux-PAM-1.0.91/modules/pam_unix/support.c	2009-03-26 10:08:59.000000000 +0100
-@@ -443,13 +443,16 @@ static int _unix_run_helper_binary(pam_h
- 
- 	/* reopen stdin as pipe */
- 	dup2(fds[0], STDIN_FILENO);
-+	/* and replace also the stdout/err as the helper will
-+           not write anything there */
-+	dup2(fds[1], STDOUT_FILENO);
-+	dup2(fds[1], STDERR_FILENO);
- 
- 	if (getrlimit(RLIMIT_NOFILE,&rlim)==0) {
-           if (rlim.rlim_max >= MAX_FD_NO)
-                 rlim.rlim_max = MAX_FD_NO;
--	  for (i=0; i < (int)rlim.rlim_max; i++) {
--		if (i != STDIN_FILENO)
--	  	   close(i);
-+	  for (i = STDERR_FILENO + 1; i < (int)rlim.rlim_max; i++) {
-+	  	close(i);
- 	  }
- 	}
- 
-diff -up Linux-PAM-1.0.91/modules/pam_unix/pam_unix_passwd.c.std-noclose Linux-PAM-1.0.91/modules/pam_unix/pam_unix_passwd.c
---- Linux-PAM-1.0.91/modules/pam_unix/pam_unix_passwd.c.std-noclose	2009-03-03 14:56:01.000000000 +0100
-+++ Linux-PAM-1.0.91/modules/pam_unix/pam_unix_passwd.c	2009-03-26 10:07:06.000000000 +0100
-@@ -175,13 +175,16 @@ static int _unix_run_update_binary(pam_h
- 
- 	/* reopen stdin as pipe */
- 	dup2(fds[0], STDIN_FILENO);
-+	/* and replace also the stdout/err as the helper will
-+           not write anything there */
-+	dup2(fds[1], STDOUT_FILENO);
-+	dup2(fds[1], STDERR_FILENO);
- 
- 	if (getrlimit(RLIMIT_NOFILE,&rlim)==0) {
- 	  if (rlim.rlim_max >= MAX_FD_NO)
- 	    rlim.rlim_max = MAX_FD_NO;
--	  for (i=0; i < (int)rlim.rlim_max; i++) {
--	    if (i != STDIN_FILENO)
--	  	   close(i);
-+	  for (i = STDERR_FILENO + 1; i < (int)rlim.rlim_max; i++) {
-+	    close(i);
- 	  }
- 	}
- 
-diff -up Linux-PAM-1.0.91/modules/pam_unix/pam_unix_acct.c.std-noclose Linux-PAM-1.0.91/modules/pam_unix/pam_unix_acct.c
---- Linux-PAM-1.0.91/modules/pam_unix/pam_unix_acct.c.std-noclose	2009-03-03 14:56:01.000000000 +0100
-+++ Linux-PAM-1.0.91/modules/pam_unix/pam_unix_acct.c	2009-03-26 10:05:41.000000000 +0100
-@@ -100,16 +100,18 @@ int _unix_run_verify_binary(pam_handle_t
+diff -up Linux-PAM-1.1.6/modules/pam_unix/pam_unix_acct.c.std-noclose Linux-PAM-1.1.6/modules/pam_unix/pam_unix_acct.c
+--- Linux-PAM-1.1.6/modules/pam_unix/pam_unix_acct.c.std-noclose	2012-08-15 13:08:43.000000000 +0200
++++ Linux-PAM-1.1.6/modules/pam_unix/pam_unix_acct.c	2012-08-17 13:22:51.664560481 +0200
+@@ -105,16 +105,18 @@ int _unix_run_verify_binary(pam_handle_t
  
      /* reopen stdout as pipe */
      dup2(fds[1], STDOUT_FILENO);
@@ -95,4 +49,50 @@ diff -up Linux-PAM-1.0.91/modules/pam_unix/pam_unix_acct.c.std-noclose Linux-PAM
 +	close(i);
        }
      }
+ 
+diff -up Linux-PAM-1.1.6/modules/pam_unix/pam_unix_passwd.c.std-noclose Linux-PAM-1.1.6/modules/pam_unix/pam_unix_passwd.c
+--- Linux-PAM-1.1.6/modules/pam_unix/pam_unix_passwd.c.std-noclose	2012-08-15 13:08:43.000000000 +0200
++++ Linux-PAM-1.1.6/modules/pam_unix/pam_unix_passwd.c	2012-08-17 14:10:38.917346789 +0200
+@@ -210,13 +210,16 @@ static int _unix_run_update_binary(pam_h
+ 
+ 	/* reopen stdin as pipe */
+ 	dup2(fds[0], STDIN_FILENO);
++	/* and replace also the stdout/err as the helper will
++           not write anything there */
++	dup2(fds[1], STDOUT_FILENO);
++	dup2(fds[1], STDERR_FILENO);
+ 
+ 	if (getrlimit(RLIMIT_NOFILE,&rlim)==0) {
+ 	  if (rlim.rlim_max >= MAX_FD_NO)
+ 	    rlim.rlim_max = MAX_FD_NO;
+-	  for (i=0; i < (int)rlim.rlim_max; i++) {
+-	    if (i != STDIN_FILENO)
+-		close(i);
++	  for (i = STDERR_FILENO + 1; i < (int)rlim.rlim_max; i++) {
++	    close(i);
+ 	  }
+ 	}
+ 
+diff -up Linux-PAM-1.1.6/modules/pam_unix/support.c.std-noclose Linux-PAM-1.1.6/modules/pam_unix/support.c
+--- Linux-PAM-1.1.6/modules/pam_unix/support.c.std-noclose	2012-08-15 13:08:43.000000000 +0200
++++ Linux-PAM-1.1.6/modules/pam_unix/support.c	2012-08-17 14:12:10.833511475 +0200
+@@ -469,13 +469,16 @@ static int _unix_run_helper_binary(pam_h
+ 
+ 	/* reopen stdin as pipe */
+ 	dup2(fds[0], STDIN_FILENO);
++	/* and replace also the stdout/err as the helper will
++           not write anything there */
++	dup2(fds[1], STDOUT_FILENO);
++	dup2(fds[1], STDERR_FILENO);
+ 
+ 	if (getrlimit(RLIMIT_NOFILE,&rlim)==0) {
+           if (rlim.rlim_max >= MAX_FD_NO)
+                 rlim.rlim_max = MAX_FD_NO;
+-	  for (i=0; i < (int)rlim.rlim_max; i++) {
+-		if (i != STDIN_FILENO)
+-		  close(i);
++	  for (i = STDERR_FILENO + 1; i < (int)rlim.rlim_max; i++) {
++		close(i);
+ 	  }
+ 	}
  
