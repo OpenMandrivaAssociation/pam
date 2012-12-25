@@ -83,11 +83,11 @@ BuildRequires:	flex
 BuildRequires:	linuxdoc-tools
 %endif
 BuildRequires:	db_nss-devel
-BuildRequires:	openssl-devel
-BuildRequires:	libaudit-devel
+BuildRequires:	pkgconfig(openssl)
+BuildRequires:	audit-devel >= 2.2.2
 BuildRequires:	glibc-crypt_blowfish-devel
 %if %with_prelude
-BuildRequires:	prelude-devel >= 0.9.0
+BuildRequires:	libprelude-devel >= 0.9.0
 %else
 BuildConflicts:	prelude-devel
 %endif
