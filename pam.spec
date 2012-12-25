@@ -83,6 +83,7 @@ BuildRequires:	flex
 BuildRequires:	linuxdoc-tools
 %endif
 BuildRequires:	db_nss-devel
+BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	audit-devel >= 2.2.2
 BuildRequires:	glibc-crypt_blowfish-devel
