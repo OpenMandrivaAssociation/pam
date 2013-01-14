@@ -232,10 +232,6 @@ for phase in auth acct passwd session ; do
 	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
 
-# cleanup
-rm -f %{buildroot}/%{_lib}/security/*.la
-rm -f %{buildroot}/%{_lib}/*.la
-
 %find_lang Linux-PAM
 
 %check
