@@ -14,12 +14,12 @@
 
 %define pam_redhat_version 0.99.10-1
 
-Epoch:	1
+Epoch:		1
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.6
-Release:	1
+Release:	2
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -83,7 +83,7 @@ BuildRequires:	flex
 # this pulls in the mega texlive load
 BuildRequires:	linuxdoc-tools
 %endif
-BuildRequires:	db_nss-devel
+BuildRequires:	db-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	audit-devel >= 2.2.2
@@ -204,12 +204,10 @@ autoreconf -I m4
 
 %build
 export BROWSER=""
-CFLAGS="$RPM_OPT_FLAGS -fPIC -I%{_includedir}/db_nss -D_GNU_SOURCE" \
 %configure2_5x \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
-	--with-db-uniquename=_nss \
 	--docdir=%{_docdir}/%{name} \
 	--disable-selinux
 %make
