@@ -160,27 +160,7 @@ This package contains the development libraries for %{name}.
 # Add custom modules.
 mv pam-redhat-%{pam_redhat_version}/* modules
 
-# (RH)
-%patch1 -p1 -b .redhat-modules
-%patch2 -p1 -b .std-noclose
-%patch4 -p1 -b .nochmod
-%patch5 -p1 -b .notally
-%patch7 -p1 -b .console-fixes
-%patch9 -p1 -b .noflex
-%patch10 -p1 -b .nouserenv
-%patch11 -p1 -b .abstract
-%patch12 -p1 -b .dest
-
-# (Mandriva)
-%patch507 -p1 -b .loop
-%patch508 -p1 -b .pamtimestampadm
-%patch512 -p0 -b .xauth-groups
-%patch517 -p1 -b .enable_rt
-%patch521 -p1 -b .pbuild-rh
-%patch700 -p1 -b .static
-%patch701 -p1 -b .nopermsd
-%patch702 -p1 -b .nis_const~
-%patch801 -p1 -b .group_users
+%apply_patches
 
 # 08/08/2008 - vdanen - make pam provide pam_unix until we can work out all the issues in pam_tcb; this
 # just makes things easier but is not meant to be a permanent solution
