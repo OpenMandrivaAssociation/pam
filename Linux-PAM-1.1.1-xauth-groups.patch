@@ -1,5 +1,5 @@
---- modules/pam_xauth/pam_xauth.c	2010-10-08 13:56:11.000000000 +0200
-+++ modules/pam_xauth/pam_xauth.c.oden	2010-11-03 11:23:06.714312576 +0100
+--- pam/modules/pam_xauth/pam_xauth.c	2010-10-08 13:56:11.000000000 +0200
++++ pam/modules/pam_xauth/pam_xauth.c.oden	2010-11-03 11:23:06.714312576 +0100
 @@ -90,7 +90,7 @@ static const char * const xauthpaths[] =
   * given input on stdin, and storing any output it generates. */
  static int
