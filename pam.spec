@@ -52,6 +52,7 @@ Patch9:		pam-1.1.2-noflex.patch
 Patch10:	pam-1.1.3-nouserenv.patch
 Patch11:	pam-1.1.3-console-abstract.patch
 Patch12:	make_dest_dir_install.patch
+Patch13:	pam-aarch64.patch
 
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
