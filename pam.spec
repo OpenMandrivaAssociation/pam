@@ -4,13 +4,9 @@
 %define libname_misc %mklibname %{name}_misc %{major}
 %define develname %mklibname %{name} -d
 
-%define with_prelude 0
-%{?_without_prelude: %{expand: %%global with_prelude 0}}
-%{?_with_prelude: %{expand: %%global with_prelude 1}}
-
-%define bootstrap 0
-%{?_without_bootstrap: %global bootstrap 0}
-%{?_with_bootstrap: %global bootstrap 1}
+%bcond_with	prelude
+%bcond_with	bootstrap
+%bcond_without	uclibc
 
 %define pam_redhat_version 0.99.10-1
 
@@ -19,7 +15,7 @@ Epoch:		1
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.6
-Release:	3
+Release:	4
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -81,7 +77,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	bison
 BuildRequires:	cracklib-devel
 BuildRequires:	flex
-%if !%{bootstrap}
+%if !%{with bootstrap}
 # this pulls in the mega texlive load
 BuildRequires:	linuxdoc-tools
 %endif
@@ -90,10 +86,13 @@ BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	audit-devel >= 2.2.2
 BuildRequires:	glibc-crypt_blowfish-devel
-%if %with_prelude
+%if %{with prelude}
 BuildRequires:	libprelude-devel >= 0.9.0
 %else
 BuildConflicts:	prelude-devel
+%endif
+%if %{with uclibc}
+BuildRequires:	uClibc-devel
 %endif
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
@@ -140,12 +139,43 @@ Conflicts:	%{_lib}pam0 < 1.1.4-5
 %description -n	%{libname_misc}
 This package contains the library libpam_misc for %{name}.
 
+
+%package -n	uclibc-%{libname}
+Summary:	Library for %{name} (uClibc build)
+Group:		System/Libraries
+Conflicts:	pam < 1.1.4-5
+
+%description -n	uclibc-%{libname}
+This package contains the library libpam for %{name}.
+
+%package -n	uclibc-%{libnamec}
+Summary:	Library for %{name}
+Group:		System/Libraries
+Conflicts:	%{_lib}pam0 < 1.1.4-5
+
+%description -n	uclibc-%{libnamec}
+This package contains the library libpamc for %{name} (uClibc build).
+
+%package -n	uclibc-%{libname_misc}
+Summary:	Library for %{name}
+Group:		System/Libraries
+Conflicts:	%{_lib}pam0 < 1.1.4-5
+
+%description -n	uclibc-%{libname_misc}
+This package contains the library libpam_misc for %{name} (uClibc build).
+
+
 %package -n	%{develname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
 Requires:	%{libnamec} = %{EVRD}
 Requires:	%{libname_misc} = %{EVRD}
+%if %{with uclibc}
+Requires:	uclibc-%{libname} = %{EVRD}
+Requires:	uclibc-%{libnamec} = %{EVRD}
+Requires:	uclibc-%{libname_misc} = %{EVRD}
+%endif
 Provides:	%{name}-devel = %{EVRD}
 
 %description -n	%{develname}
@@ -186,18 +216,44 @@ autoreconf -i
 
 %build
 export BROWSER=""
+export CONFIGURE_TOP="$PWD"
+
+%if %{with uclibc}
+mkdir -p uclibc
+pushd uclibc
+%uclibc_configure \
+                --bindir=%{uclibc_root}/bin \
+                --sbindir=%{uclibc_root}/sbin \
+                --prefix=%{uclibc_root} \
+		--includedir=%{_includedir}/security \
+                --exec-prefix=%{uclibc_root} \
+                --libdir=%{uclibc_root}/%{_lib} \
+                --host=%{_host} \
+		--disable-selinux \
+		--docdir=%{_docdir}/%{name}
+%make
+popd
+
+%endif
+
+mkdir -p system
+pushd  system
 %configure2_5x \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
 	--docdir=%{_docdir}/%{name} \
 	--disable-selinux
+
+# build util-linux
 %make
+popd
+
 
 %install
 mkdir -p %{buildroot}%{_includedir}/security
 mkdir -p %{buildroot}/%{_lib}/security
-%makeinstall_std LDCONFIG=:
+%makeinstall_std -C system install DESTDIR=%{buildroot} LDCONFIG=:
 install -d -m 755 %{buildroot}/etc/pam.d
 install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
 install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
@@ -208,11 +264,19 @@ install -m 600 /dev/null %{buildroot}/var/log/tallylog
 
 # Install man pages.
 install -m 644 %{SOURCE9} %{SOURCE10} %{buildroot}%{_mandir}/man5/
-
-# no longer needed, handled by ACL in udev
 for phase in auth acct passwd session ; do
 	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
+
+%if %{with uclibc}
+mkdir -p %{buildroot}/%{uclibc_root}%{_lib}/security
+mkdir -p %{buildroot}/%{uclibc_root}%{_includedir}/security
+%makeinstall_std -C uclibc DESTDIR="%{buildroot}"
+for phase in auth acct passwd session ; do
+	ln -sf pam_unix.so %{buildroot}/%{uclibc_root}/%{_lib}/security/pam_unix_${phase}.so
+done
+%endif
+# no longer needed, handled by ACL in udev
 
 %find_lang Linux-PAM
 
@@ -239,6 +303,29 @@ for module in %{buildroot}/%{_lib}/security/pam*.so ; do
 		exit 1
 	fi
 done
+
+%if %{with uclibc}
+for dir in modules/pam_* ; do
+if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
+         [[ "${dir}" = "modules/pam_tally" ]] && continue
+        if ! ls -1 %{buildroot}/%{uclibc_root}/%{_lib}/security/`basename ${dir}`*.so ; then
+                echo ERROR `basename ${dir}` did not build a module.
+                exit 1
+        fi
+fi
+done
+
+# Check for module problems.  Specifically, check that every module we just
+# installed can actually be loaded by a minimal PAM-aware application.
+/sbin/ldconfig -n %{buildroot}/%{uclibc_root}/%{_lib}
+for module in %{buildroot}/%{uclibc_root}/%{_lib}/security/pam*.so ; do
+        if ! env LD_LIBRARY_PATH=%{buildroot}/%{uclibc_root}/%{_lib}:%{uclibc_root}/%{_lib} \
+                sh %{SOURCE8} -ldl -lpam -L%{buildroot}/%{uclibc_root}/%{_lib} ${module} ; then
+                echo ERROR module: ${module} cannot be loaded.
+                exit 1
+        fi
+done
+%endif
 
 %posttrans
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
@@ -267,6 +354,17 @@ fi
 /sbin/pam_tally2
 /sbin/unix_chkpwd
 /sbin/unix_update
+%if %{with uclibc}
+%{uclibc_root}/sbin/mkhomedir_helper
+%{uclibc_root}/sbin/pam_console_apply
+%{uclibc_root}/sbin/pam_tally2
+%{uclibc_root}/sbin/unix_chkpwd
+%{uclibc_root}/sbin/unix_update
+%attr(4755,root,root) %{uclibc_root}/sbin/pam_timestamp_check
+%{uclibc_root}/%{_lib}/security/*.so
+%{uclibc_root}/%{_lib}/security/pam_filter
+%endif
+
 %attr(4755,root,root) /sbin/pam_timestamp_check
 %config(noreplace) %{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
@@ -303,8 +401,24 @@ fi
 /%{_lib}/libpam.so
 /%{_lib}/libpam_misc.so
 /%{_lib}/libpamc.so
+%if %{with uclibc}
+%{uclibc_root}/%{_lib}/libpam.so
+%{uclibc_root}/%{_lib}/libpam_misc.so
+%{uclibc_root}/%{_lib}/libpamc.so
+%endif
 %{_includedir}/security/*.h
 %{_mandir}/man3/*
+
+%if %{with uclibc}
+%files -n uclibc-%{libname}
+%{uclibc_root}/%{_lib}/libpam.so.%{major}*
+
+%files -n uclibc-%{libnamec}
+%{uclibc_root}/%{_lib}/libpamc.so.%{major}*
+
+%files -n uclibc-%{libname_misc}
+%{uclibc_root}/%{_lib}/libpam_misc.so.%{major}*
+%endif
 
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright
