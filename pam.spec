@@ -6,7 +6,7 @@
 
 %bcond_with	prelude
 %bcond_with	bootstrap
-%bcond_with	uclibc
+%bcond_without	uclibc
 
 %define pam_redhat_version 0.99.10-1
 
