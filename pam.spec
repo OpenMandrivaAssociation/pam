@@ -140,6 +140,14 @@ Conflicts:	%{_lib}pam0 < 1.1.4-5
 This package contains the library libpam_misc for %{name}.
 
 
+%package -n	uclibc-pam
+Summary:	PAM modules etc. for uClibc PAM
+Group:		System/Libraries
+Conflicts:	pam < 1.1.4-5
+
+%description -n uclibc-pam
+PAM modules etc. for uClibc PAM
+
 %package -n	uclibc-%{libname}
 Summary:	Library for %{name} (uClibc build)
 Group:		System/Libraries
@@ -221,7 +229,10 @@ export CONFIGURE_TOP="$PWD"
 %if %{with uclibc}
 mkdir -p uclibc
 pushd uclibc
-%uclibc_configure \
+# Modules like audit and cracklib are disabled because
+# we currently don't build the libraries they depend on
+# for uClibc.
+libtirpc_LIBS="-lc" %uclibc_configure \
                 --bindir=%{uclibc_root}/bin \
                 --sbindir=%{uclibc_root}/sbin \
                 --prefix=%{uclibc_root} \
@@ -230,6 +241,8 @@ pushd uclibc
                 --libdir=%{uclibc_root}/%{_lib} \
                 --host=%{_host} \
 		--disable-selinux \
+		--disable-audit \
+		--disable-cracklib \
 		--docdir=%{_docdir}/%{name}
 %make
 popd
@@ -276,9 +289,13 @@ for phase in auth acct passwd session ; do
 	ln -sf pam_unix.so %{buildroot}/%{uclibc_root}/%{_lib}/security/pam_unix_${phase}.so
 done
 %endif
-# no longer needed, handled by ACL in udev
 
 %find_lang Linux-PAM
+%if %{with uclibc}
+grep -i uclibc Linux-PAM.lang >Linux-PAM-uClibc.lang
+cat Linux-PAM.lang Linux-PAM-uClibc.lang |sort |uniq -u >Linux-PAM-no-uClibc.lang
+mv -f Linux-PAM-no-uClibc.lang Linux-PAM.lang
+%endif
 
 %check
 # (blino) we don't want to test if SE Linux is built, it's disabled
@@ -309,6 +326,7 @@ for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
 	# We currently don't build cracklib for uClibc
          [[ "${dir}" = "modules/pam_cracklib" ]] && continue
+         [[ "${dir}" = "modules/pam_tty_audit" ]] && continue
          [[ "${dir}" = "modules/pam_tally" ]] && continue
         if ! ls -1 %{buildroot}/%{uclibc_root}/%{_lib}/security/`basename ${dir}`*.so ; then
                 echo ERROR `basename ${dir}` did not build a module.
@@ -359,16 +377,6 @@ fi
 /sbin/pam_tally2
 /sbin/unix_chkpwd
 /sbin/unix_update
-%if %{with uclibc}
-%{uclibc_root}/sbin/mkhomedir_helper
-%{uclibc_root}/sbin/pam_console_apply
-%{uclibc_root}/sbin/pam_tally2
-%{uclibc_root}/sbin/unix_chkpwd
-%{uclibc_root}/sbin/unix_update
-%attr(4755,root,root) %{uclibc_root}/sbin/pam_timestamp_check
-%{uclibc_root}/%{_lib}/security/*.so
-%{uclibc_root}/%{_lib}/security/pam_filter
-%endif
 
 %attr(4755,root,root) /sbin/pam_timestamp_check
 %config(noreplace) %{_sysconfdir}/security/access.conf
@@ -415,6 +423,16 @@ fi
 %{_mandir}/man3/*
 
 %if %{with uclibc}
+%files -n uclibc-pam -f Linux-PAM-uClibc.lang
+%{uclibc_root}/sbin/mkhomedir_helper
+%{uclibc_root}/sbin/pam_console_apply
+%{uclibc_root}/sbin/pam_tally2
+%{uclibc_root}/sbin/unix_chkpwd
+%{uclibc_root}/sbin/unix_update
+%attr(4755,root,root) %{uclibc_root}/sbin/pam_timestamp_check
+%{uclibc_root}/%{_lib}/security/*.so
+%{uclibc_root}/%{_lib}/security/pam_filter
+
 %files -n uclibc-%{libname}
 %{uclibc_root}/%{_lib}/libpam.so.%{major}*
 
