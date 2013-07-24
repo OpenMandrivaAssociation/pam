@@ -6,7 +6,7 @@
 
 %bcond_with	prelude
 %bcond_with	bootstrap
-%bcond_without	uclibc
+%bcond_with	uclibc
 
 %define pam_redhat_version 0.99.10-1
 
@@ -15,7 +15,7 @@ Epoch:		1
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Version:	1.1.6
-Release:	4
+Release:	5
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
