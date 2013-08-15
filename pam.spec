@@ -2,7 +2,7 @@
 %define libname %mklibname %{name} %{major}
 %define libnamec %mklibname %{name}c %{major}
 %define libname_misc %mklibname %{name}_misc %{major}
-%define develname %mklibname %{name} -d
+%define devname %mklibname %{name} -d
 
 %bcond_with	prelude
 %bcond_with	bootstrap
@@ -10,10 +10,9 @@
 
 %define pam_redhat_version 0.99.10-1
 
-Epoch:		1
-
 Summary:	A security tool which provides authentication for applications
 Name:		pam
+Epoch:		1
 Version:	1.1.6
 Release:	7
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
@@ -37,7 +36,6 @@ Source10:	config-util.5
 #add missing documentation
 Source501:	pam_tty_audit.8
 Source502:	README
-
 # RedHat patches
 Patch1:		pam-1.0.90-redhat-modules.patch
 Patch2:		pam-1.0.91-std-noclose.patch
@@ -49,7 +47,6 @@ Patch10:	pam-1.1.3-nouserenv.patch
 Patch11:	pam-1.1.3-console-abstract.patch
 Patch12:	make_dest_dir_install.patch
 Patch13:	pam-aarch64.patch
-
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
 Patch507:	pam-0.74-loop.patch
@@ -68,28 +65,27 @@ Patch700:	pam_fix_static_pam_console.patch
 Patch701:	pam-1.1.0-console-nopermsd.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
-
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
 
-BuildRequires:	glibc-devel
-BuildRequires:	gettext-devel
 BuildRequires:	bison
-BuildRequires:	cracklib-devel
 BuildRequires:	flex
 %if !%{with bootstrap}
 # this pulls in the mega texlive load
 BuildRequires:	linuxdoc-tools
 %endif
+BuildRequires:	audit-devel >= 2.2.2
+BuildRequires:	cracklib-devel
 BuildRequires:	db-devel
+BuildRequires:	gettext-devel
+BuildRequires:	glibc-crypt_blowfish-devel
+BuildRequires:	glibc-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(openssl)
-BuildRequires:	audit-devel >= 2.2.2
-BuildRequires:	glibc-crypt_blowfish-devel
 %if %{with prelude}
-BuildRequires:	libprelude-devel >= 0.9.0
+BuildRequires:	pkgconfig(libprelude)
 %else
-BuildConflicts:	prelude-devel
+BuildConflicts:	pkgconfig(libprelude)
 %endif
 %if %{with uclibc}
 BuildRequires:	uClibc-devel
@@ -139,7 +135,6 @@ Conflicts:	%{_lib}pam0 < 1.1.4-5
 %description -n	%{libname_misc}
 This package contains the library libpam_misc for %{name}.
 
-
 %package -n	uclibc-pam
 Summary:	PAM modules etc. for uClibc PAM
 Group:		System/Libraries
@@ -172,8 +167,7 @@ Conflicts:	%{_lib}pam0 < 1.1.4-5
 %description -n	uclibc-%{libname_misc}
 This package contains the library libpam_misc for %{name} (uClibc build).
 
-
-%package -n	%{develname}
+%package -n	%{devname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
@@ -186,7 +180,7 @@ Requires:	uclibc-%{libname_misc} = %{EVRD}
 %endif
 Provides:	%{name}-devel = %{EVRD}
 
-%description -n	%{develname}
+%description -n	%{devname}
 PAM (Pluggable Authentication Modules) is a system security tool that
 allows system administrators to set authentication policy without
 having to recompile programs that handle authentication.
@@ -233,17 +227,17 @@ pushd uclibc
 # we currently don't build the libraries they depend on
 # for uClibc.
 libtirpc_LIBS="-lc" %uclibc_configure \
-                --bindir=%{uclibc_root}/bin \
-                --sbindir=%{uclibc_root}/sbin \
-                --prefix=%{uclibc_root} \
-		--includedir=%{_includedir}/security \
-                --exec-prefix=%{uclibc_root} \
-                --libdir=%{uclibc_root}/%{_lib} \
-                --host=%{_host} \
-		--disable-selinux \
-		--disable-audit \
-		--disable-cracklib \
-		--docdir=%{_docdir}/%{name}
+	--bindir=%{uclibc_root}/bin \
+       	--sbindir=%{uclibc_root}/sbin \
+       	--prefix=%{uclibc_root} \
+	--includedir=%{_includedir}/security \
+       	--exec-prefix=%{uclibc_root} \
+       	--libdir=%{uclibc_root}/%{_lib} \
+       	--host=%{_host} \
+	--disable-selinux \
+	--disable-audit \
+	--disable-cracklib \
+	--docdir=%{_docdir}/%{name}
 %make
 popd
 
@@ -261,7 +255,6 @@ pushd  system
 # build util-linux
 %make
 popd
-
 
 %install
 mkdir -p %{buildroot}%{_includedir}/security
@@ -409,7 +402,7 @@ fi
 %files -n %{libname_misc}
 /%{_lib}/libpam_misc.so.%{major}*
 
-%files -n %{develname}
+%files -n %{devname}
 %doc Copyright
 /%{_lib}/libpam.so
 /%{_lib}/libpam_misc.so
@@ -445,3 +438,4 @@ fi
 
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright
+
