@@ -14,7 +14,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.1.6
-Release:	7
+Release:	8
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -237,6 +237,7 @@ libtirpc_LIBS="-lc" %uclibc_configure \
 	--disable-selinux \
 	--disable-audit \
 	--disable-cracklib \
+	--disable-db \
 	--docdir=%{_docdir}/%{name}
 %make
 popd
@@ -317,8 +318,9 @@ done
 %if %{with uclibc}
 for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
-	# We currently don't build cracklib for uClibc
+	# We currently don't build cracklib or db for uClibc
          [[ "${dir}" = "modules/pam_cracklib" ]] && continue
+         [[ "${dir}" = "modules/pam_userdb" ]] && continue
          [[ "${dir}" = "modules/pam_tty_audit" ]] && continue
          [[ "${dir}" = "modules/pam_tally" ]] && continue
         if ! ls -1 %{buildroot}/%{uclibc_root}/%{_lib}/security/`basename ${dir}`*.so ; then
