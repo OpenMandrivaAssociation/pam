@@ -35,6 +35,8 @@ Source8:	dlopen.sh
 Source9:	system-auth.5
 Source10:	config-util.5
 Source11:	pam-tmpfiles.conf
+Source12:	postlogin.pamd
+Source13:	postlogin.5
 #add missing documentation
 Source501:	pam_tty_audit.8
 Source502:	README
@@ -266,13 +268,14 @@ install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
 install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
 install -m 644 %{SOURCE7} %{buildroot}/etc/pam.d/config-util
 install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/90-nproc.conf
+install -m 644 %{SOURCE12} %{buildroot}/etc/pam.d/postlogin
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
 install -m 600 /dev/null %{buildroot}/var/log/tallylog
 install -D -p -m 644 %{SOURCE11} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
 # Install man pages.
-install -m 644 %{SOURCE9} %{SOURCE10} %{buildroot}%{_mandir}/man5/
+install -m 644 %{SOURCE9} %{SOURCE10} %{SOURCE13} %{buildroot}%{_mandir}/man5/
 for phase in auth acct passwd session ; do
 	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
@@ -372,6 +375,7 @@ fi
 %config /etc/pam.d/other
 %attr(0644,root,shadow) %config /etc/pam.d/system-auth
 %config /etc/pam.d/config-util
+%config(noreplace) /etc/pam.d/postlogin
 %{_tmpfilesdir}/%{name}.conf
 /sbin/mkhomedir_helper
 /sbin/pam_console_apply
