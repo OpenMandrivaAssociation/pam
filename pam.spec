@@ -67,27 +67,27 @@ Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
 
-#BuildRequires:	bison
-#BuildRequires:	flex
+BuildRequires:	bison
+BuildRequires:	flex
 %if !%{with bootstrap}
 # this pulls in the mega texlive load
-#BuildRequires:	linuxdoc-tools
+BuildRequires:	linuxdoc-tools
 %endif
-#BuildRequires:	audit-devel >= 2.2.2
-#BuildRequires:	cracklib-devel
-#BuildRequires:	db-devel
-#BuildRequires:	gettext-devel
-#BuildRequires:	glibc-crypt_blowfish-devel
-#BuildRequires:	glibc-devel
-#BuildRequires:	pkgconfig(libtirpc)
-#BuildRequires:	pkgconfig(openssl)
+BuildRequires:	audit-devel >= 2.2.2
+BuildRequires:	cracklib-devel
+BuildRequires:	db-devel
+BuildRequires:	gettext-devel
+BuildRequires:	glibc-crypt_blowfish-devel
+BuildRequires:	glibc-devel
+BuildRequires:	pkgconfig(libtirpc)
+BuildRequires:	pkgconfig(openssl)
 %if %{with prelude}
-#BuildRequires:	pkgconfig(libprelude)
+BuildRequires:	pkgconfig(libprelude)
 %else
 BuildConflicts:	pkgconfig(libprelude)
 %endif
 %if %{with uclibc}
-#BuildRequires:	uClibc-devel
+BuildRequires:	uClibc-devel
 %endif
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
@@ -213,7 +213,7 @@ done
 cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
 libtoolize -cf
-autoreconf -i
+autoreconf -fi -I m4
 
 %build
 export BROWSER=""
