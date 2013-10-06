@@ -24,6 +24,7 @@ Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
 #Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 # (tpg) new url
 Source0:	https://fedorahosted.org/releases/l/i/linux-pam/Linux-PAM-%{version}.tar.bz2
+Source1:	90-nproc.conf
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source3:	pam-0.99.3.0-README.update
 Source4:	pam-0.99.8.1-11mdv2009.0-README.update
@@ -212,7 +213,6 @@ done
 
 cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
-libtoolize -cf
 autoreconf -fi -I m4
 
 %build
@@ -264,6 +264,7 @@ install -d -m 755 %{buildroot}/etc/pam.d
 install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
 install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
 install -m 644 %{SOURCE7} %{buildroot}/etc/pam.d/config-util
+install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/90-nproc.conf
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
 install -m 600 /dev/null %{buildroot}/var/log/tallylog
@@ -379,6 +380,8 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.handlers
 %config(noreplace) %{_sysconfdir}/security/group.conf
 %config(noreplace) %{_sysconfdir}/security/limits.conf
+%dir %{_sysconfdir}/security/limits.d
+%config(noreplace) %{_sysconfdir}/security/limits.d/90-nproc.conf
 %config(noreplace) %{_sysconfdir}/security/namespace.conf
 %attr(755,root,root) %config(noreplace) %{_sysconfdir}/security/namespace.init
 %config(noreplace) %{_sysconfdir}/security/pam_env.conf
