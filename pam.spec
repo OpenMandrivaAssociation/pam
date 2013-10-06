@@ -34,6 +34,7 @@ Source7:	config-util.pamd
 Source8:	dlopen.sh
 Source9:	system-auth.5
 Source10:	config-util.5
+Source11:	pam-tmpfiles.conf
 #add missing documentation
 Source501:	pam_tty_audit.8
 Source502:	README
@@ -268,6 +269,7 @@ install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/90-nproc.
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
 install -m 600 /dev/null %{buildroot}/var/log/tallylog
+install -D -p -m 644 %{SOURCE11} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
 # Install man pages.
 install -m 644 %{SOURCE9} %{SOURCE10} %{buildroot}%{_mandir}/man5/
@@ -344,6 +346,9 @@ for module in %{buildroot}/%{uclibc_root}/%{_lib}/security/pam*.so ; do
 done
 %endif
 %endif
+
+%post
+%tmpfiles_create %{name}.conf
 
 %posttrans
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
