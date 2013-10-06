@@ -372,6 +372,7 @@ fi
 %config /etc/pam.d/other
 %attr(0644,root,shadow) %config /etc/pam.d/system-auth
 %config /etc/pam.d/config-util
+%{_tmpfilesdir}/%{name}.conf
 /sbin/mkhomedir_helper
 /sbin/pam_console_apply
 /sbin/pam_tally2
