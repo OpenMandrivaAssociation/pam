@@ -13,8 +13,8 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.1.6
-Release:	8
+Version:	1.1.8
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -45,7 +45,6 @@ Patch7:		pam-1.1.0-console-fixes.patch
 Patch9:		pam-1.1.2-noflex.patch
 Patch10:	pam-1.1.3-nouserenv.patch
 Patch11:	pam-1.1.3-console-abstract.patch
-Patch12:	make_dest_dir_install.patch
 Patch13:	pam-aarch64.patch
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
@@ -68,27 +67,27 @@ Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
 
-BuildRequires:	bison
-BuildRequires:	flex
+#BuildRequires:	bison
+#BuildRequires:	flex
 %if !%{with bootstrap}
 # this pulls in the mega texlive load
-BuildRequires:	linuxdoc-tools
+#BuildRequires:	linuxdoc-tools
 %endif
-BuildRequires:	audit-devel >= 2.2.2
-BuildRequires:	cracklib-devel
-BuildRequires:	db-devel
-BuildRequires:	gettext-devel
-BuildRequires:	glibc-crypt_blowfish-devel
-BuildRequires:	glibc-devel
-BuildRequires:	pkgconfig(libtirpc)
-BuildRequires:	pkgconfig(openssl)
+#BuildRequires:	audit-devel >= 2.2.2
+#BuildRequires:	cracklib-devel
+#BuildRequires:	db-devel
+#BuildRequires:	gettext-devel
+#BuildRequires:	glibc-crypt_blowfish-devel
+#BuildRequires:	glibc-devel
+#BuildRequires:	pkgconfig(libtirpc)
+#BuildRequires:	pkgconfig(openssl)
 %if %{with prelude}
-BuildRequires:	pkgconfig(libprelude)
+#BuildRequires:	pkgconfig(libprelude)
 %else
 BuildConflicts:	pkgconfig(libprelude)
 %endif
 %if %{with uclibc}
-BuildRequires:	uClibc-devel
+#BuildRequires:	uClibc-devel
 %endif
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
