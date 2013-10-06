@@ -70,6 +70,7 @@ Patch701:	pam-1.1.0-console-nopermsd.patch
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
+Patch802:	pam-1.1.7-tty-audit-init.patch
 
 BuildRequires:	bison
 BuildRequires:	flex
@@ -290,6 +291,7 @@ done
 %endif
 
 %find_lang Linux-PAM
+
 %if %{with uclibc}
 grep -i uclibc Linux-PAM.lang >Linux-PAM-uClibc.lang
 cat Linux-PAM.lang Linux-PAM-uClibc.lang |sort |uniq -u >Linux-PAM-no-uClibc.lang
