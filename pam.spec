@@ -293,7 +293,7 @@ done
 %find_lang Linux-PAM
 
 %if %{with uclibc}
-grep -i uclibc Linux-PAM.lang >Linux-PAM-uClibc.lang
+cat  Linux-PAM.lang | grep -i uclibc >Linux-PAM-uClibc.lang
 cat Linux-PAM.lang Linux-PAM-uClibc.lang |sort |uniq -u >Linux-PAM-no-uClibc.lang
 mv -f Linux-PAM-no-uClibc.lang Linux-PAM.lang
 %endif
