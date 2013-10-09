@@ -5,7 +5,7 @@
 %define devname %mklibname %{name} -d
 
 %bcond_with	prelude
-%bcond_with	bootstrap
+%bcond_without	bootstrap
 %bcond_without	uclibc
 
 %define pam_redhat_version 0.99.10-1
