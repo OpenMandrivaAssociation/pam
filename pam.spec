@@ -5,7 +5,7 @@
 %define devname %mklibname %{name} -d
 
 %bcond_with	prelude
-%bcond_with	bootstrap
+%bcond_without	bootstrap
 %bcond_without	uclibc
 
 %define pam_redhat_version 0.99.10-1
@@ -13,8 +13,8 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.1.6
-Release:	8
+Version:	1.1.8
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -24,6 +24,7 @@ Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
 #Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 # (tpg) new url
 Source0:	https://fedorahosted.org/releases/l/i/linux-pam/Linux-PAM-%{version}.tar.bz2
+Source1:	90-nproc.conf
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source3:	pam-0.99.3.0-README.update
 Source4:	pam-0.99.8.1-11mdv2009.0-README.update
@@ -33,6 +34,9 @@ Source7:	config-util.pamd
 Source8:	dlopen.sh
 Source9:	system-auth.5
 Source10:	config-util.5
+Source11:	pam-tmpfiles.conf
+Source12:	postlogin.pamd
+Source13:	postlogin.5
 #add missing documentation
 Source501:	pam_tty_audit.8
 Source502:	README
@@ -45,7 +49,6 @@ Patch7:		pam-1.1.0-console-fixes.patch
 Patch9:		pam-1.1.2-noflex.patch
 Patch10:	pam-1.1.3-nouserenv.patch
 Patch11:	pam-1.1.3-console-abstract.patch
-Patch12:	make_dest_dir_install.patch
 Patch13:	pam-aarch64.patch
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
@@ -67,6 +70,7 @@ Patch701:	pam-1.1.0-console-nopermsd.patch
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
+Patch802:	pam-1.1.7-tty-audit-init.patch
 
 BuildRequires:	bison
 BuildRequires:	flex
@@ -213,8 +217,7 @@ done
 
 cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
-libtoolize -cf
-autoreconf -i
+autoreconf -fi -I m4
 
 %build
 export BROWSER=""
@@ -265,12 +268,15 @@ install -d -m 755 %{buildroot}/etc/pam.d
 install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
 install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
 install -m 644 %{SOURCE7} %{buildroot}/etc/pam.d/config-util
+install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/90-nproc.conf
+install -m 644 %{SOURCE12} %{buildroot}/etc/pam.d/postlogin
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
 install -m 600 /dev/null %{buildroot}/var/log/tallylog
+install -D -p -m 644 %{SOURCE11} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
 # Install man pages.
-install -m 644 %{SOURCE9} %{SOURCE10} %{buildroot}%{_mandir}/man5/
+install -m 644 %{SOURCE9} %{SOURCE10} %{SOURCE13} %{buildroot}%{_mandir}/man5/
 for phase in auth acct passwd session ; do
 	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
@@ -285,8 +291,9 @@ done
 %endif
 
 %find_lang Linux-PAM
+
 %if %{with uclibc}
-grep -i uclibc Linux-PAM.lang >Linux-PAM-uClibc.lang
+cat  Linux-PAM.lang | grep -i uclibc >Linux-PAM-uClibc.lang ||:
 cat Linux-PAM.lang Linux-PAM-uClibc.lang |sort |uniq -u >Linux-PAM-no-uClibc.lang
 mv -f Linux-PAM-no-uClibc.lang Linux-PAM.lang
 %endif
@@ -345,6 +352,9 @@ done
 %endif
 %endif
 
+%post
+%tmpfiles_create %{name}.conf
+
 %posttrans
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
 # Note: Only affects upgrades, but does no harm so always update if needed.
@@ -367,6 +377,8 @@ fi
 %config /etc/pam.d/other
 %attr(0644,root,shadow) %config /etc/pam.d/system-auth
 %config /etc/pam.d/config-util
+%config(noreplace) /etc/pam.d/postlogin
+%{_tmpfilesdir}/%{name}.conf
 /sbin/mkhomedir_helper
 /sbin/pam_console_apply
 /sbin/pam_tally2
@@ -380,6 +392,8 @@ fi
 %config(noreplace) %{_sysconfdir}/security/console.handlers
 %config(noreplace) %{_sysconfdir}/security/group.conf
 %config(noreplace) %{_sysconfdir}/security/limits.conf
+%dir %{_sysconfdir}/security/limits.d
+%config(noreplace) %{_sysconfdir}/security/limits.d/90-nproc.conf
 %config(noreplace) %{_sysconfdir}/security/namespace.conf
 %attr(755,root,root) %config(noreplace) %{_sysconfdir}/security/namespace.init
 %config(noreplace) %{_sysconfdir}/security/pam_env.conf
