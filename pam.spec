@@ -14,7 +14,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.1.8
-Release:	5
+Release:	6
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -364,9 +364,6 @@ fi
 
 if [ ! -a /var/log/tallylog ] ; then
        install -m 600 /dev/null /var/log/tallylog
-fi
-if [ -f /etc/login.defs ] && ! grep -q USE_TCB /etc/login.defs; then
-       /usr/sbin/set_tcb --auto --migrate
 fi
 
 %files -f Linux-PAM.lang
