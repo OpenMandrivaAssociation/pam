@@ -279,9 +279,6 @@ if [ -d %{_varrun}/console ]; then
    fi
 fi
 
-%post
-%tmpfiles_create %{name}.conf
-
 %posttrans
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
 # Note: Only affects upgrades, but does no harm so always update if needed.
