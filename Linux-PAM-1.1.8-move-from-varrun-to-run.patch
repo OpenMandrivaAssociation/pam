@@ -1,0 +1,185 @@
+--- Linux-PAM-1.1.8/modules/pam_console/Makefile.am.0703~	2014-05-24 03:15:06.615344752 +0200
++++ Linux-PAM-1.1.8/modules/pam_console/Makefile.am	2014-05-24 03:15:06.635345710 +0200
+@@ -13,7 +13,7 @@ man_MANS = $(MAN5) $(MAN8)
+ 
+ EXTRA_DIST = README $(man_MANS) $(CONFFILES) sed-static configfile.y configfile.l
+ 
+-LOCKDIR = /var/run/console
++LOCKDIR = /run/console
+ LOCKMODE = 755
+ 
+ securelibdir = $(SECUREDIR)
+--- Linux-PAM-1.1.8/modules/pam_console/console.handlers.0703~	2014-05-24 03:15:06.485338522 +0200
++++ Linux-PAM-1.1.8/modules/pam_console/console.handlers	2014-05-24 03:15:06.635345710 +0200
+@@ -12,6 +12,6 @@
+ # Example:
+ # console consoledevs tty[0-9][0-9]* vc/[0-9][0-9]* :[0-9]\.[0-9] :[0-9]
+ # echo lock wait Locking console for user on tty
+-# touch unlock wait /var/run/console-unlocked
++# touch unlock wait /run/console-unlocked
+ 
+ console consoledevs tty[0-9][0-9]* vc/[0-9][0-9]* :[0-9]+\.[0-9]+ :[0-9]+
+--- Linux-PAM-1.1.8/modules/pam_console/pam_console.8.0703~	2008-12-16 13:37:52.000000000 +0100
++++ Linux-PAM-1.1.8/modules/pam_console/pam_console.8	2014-05-24 03:15:06.635345710 +0200
+@@ -73,9 +73,9 @@ session required pam_unix.so
+ session optional pam_console.so
+ .br
+ .SH FILES
+-\fI/var/run/console/\fP
++\fI/run/console/\fP
+ .br
+-\fI/var/run/console/console.lock\fP
++\fI/run/console/console.lock\fP
+ .br
+ \fI/etc/security/console.apps\fP
+ .br
+--- Linux-PAM-1.1.8/modules/pam_console/pam_console.c.0703~	2014-05-24 03:15:06.585343314 +0200
++++ Linux-PAM-1.1.8/modules/pam_console/pam_console.c	2014-05-24 03:15:06.635345710 +0200
+@@ -2,7 +2,7 @@
+  * This software may be used under the terms of the GNU General Public
+  * License, available in the file COPYING accompanying this file.
+  *
+- * /var/run/console/console.lock is the file used to control access to
++ * /run/console/console.lock is the file used to control access to
+  * devices.  It is created when the first console user logs in,
+  * and that user has the control of the console until they have
+  * logged out of all concurrent login sessions.  That is,
+@@ -17,12 +17,12 @@
+  * console access to files/devices is not available to any one of
+  * the users (B in this case).
+  *
+- * /var/run/console/<username> is used for reference counting
++ * /run/console/<username> is used for reference counting
+  * and to make console authentication easy -- if it exists, then
+  * <username> is logged on console.
+  *
+- * A system startup script should remove /var/run/console/console.lock
+- * and everything in /var/run/console/
++ * A system startup script should remove /run/console/console.lock
++ * and everything in /run/console/
+  */
+ 
+ #include "config.h"
+@@ -417,7 +417,7 @@ pam_sm_authenticate(pam_handle_t *pamh,
+ 		    int argc, const char **argv)
+ {
+   /* getuid() must return an id that maps to a username as a filename in
+-   * /var/run/console/
++   * /run/console/
+    * and the service name must be listed in
+    * /etc/security/console-apps
+    */
+@@ -517,12 +517,12 @@ PAM_EXTERN int
+ pam_sm_open_session(pam_handle_t *pamh, int flags UNUSED,
+ 		    int argc, const char **argv)
+ {
+-  /* Create /var/run/console/console.lock if it does not exist
+-   * Create /var/run/console/<username> if it does not exist
++  /* Create /run/console/console.lock if it does not exist
++   * Create /run/console/<username> if it does not exist
+    * Increment its use count
+    * Change file ownerships and permissions as given in
+    * /etc/security/console.perms IFF returned use count was 0
+-   * and we created /var/run/console/console.lock
++   * and we created /run/console/console.lock
+    */
+     int got_console = 0;
+     int count = 0;
+@@ -588,13 +588,13 @@ PAM_EXTERN int
+ pam_sm_close_session(pam_handle_t *pamh, int flags UNUSED,
+ 		     int argc, const char **argv)
+ {
+-  /* Get /var/run/console/<username> use count, leave it locked
++  /* Get /run/console/<username> use count, leave it locked
+    * If use count is now 1:
+-   *   If /var/run/console/console.lock contains <username>"
++   *   If /run/console/console.lock contains <username>"
+    *     Revert file ownerships and permissions as given in
+    *     /etc/security/console.perms
+-   * Decrement /var/run/console/<username>, removing both it and
+-   *   /var/run/console/console.lock if 0, unlocking /var/run/console/<username>
++   * Decrement /run/console/<username>, removing both it and
++   *   /run/console/console.lock if 0, unlocking /run/console/<username>
+    *   in any case.
+    */
+     int fd;
+--- Linux-PAM-1.1.8/modules/pam_console/pam_console_apply.8.0703~	2008-12-16 13:37:52.000000000 +0100
++++ Linux-PAM-1.1.8/modules/pam_console/pam_console_apply.8	2014-05-24 03:15:26.059609809 +0200
+@@ -9,7 +9,7 @@ pam_console_apply \- set or revoke permi
+ \fBpam_console_apply\fP is a helper executable which sets or resets permissions
+ on device nodes.
+ .br
+-If \fI/var/run/console.lock\fP exists, \fBpam_console_apply\fP will grant
++If \fI/run/console/console.lock\fP exists, \fBpam_console_apply\fP will grant
+ permissions to the user listed therein.  If the lock file does not exist,
+ permissions are reset according to defaults set in \fIconsole.perms\fP files,
+ normally configured to set permissions on devices so that \fBroot\fP
+@@ -28,7 +28,7 @@ Load other console.perms file than the d
+ Load other fstab file than the default one (\fI/etc/fstab\fP).
+ .IP -r
+ Signals \fBpam_console_apply\fP to reset permissions.  The default is to set
+-permissions so that the user listed in \fI/var/run/console.lock\fP has access
++permissions so that the user listed in \fI/run/console/console.lock\fP has access
+ to the devices, and to reset permissions if no such file exists.
+ .IP -t
+ Use <tty> to match console class in console.perms file. The default is tty0.
+@@ -41,7 +41,7 @@ The optional <device file> arguments con
+ by \fBpam_console_apply\fP. If they aren't specified permissions are
+ changed on all files specified in the \fIconsole.perms\fP file.
+ .SH FILES
+-\fI/var/run/console.lock\fP
++\fI/run/console/console.lock\fP
+ .br
+ \fI/etc/security/console.perms\fP
+ .br
+--- Linux-PAM-1.1.8/modules/pam_faillock/faillock.8.xml.0703~	2014-05-24 03:15:06.495339001 +0200
++++ Linux-PAM-1.1.8/modules/pam_faillock/faillock.8.xml	2014-05-24 03:15:06.635345710 +0200
+@@ -62,7 +62,7 @@
+               <listitem>
+                 <para>
+                   The directory where the user files with the failure records are kept. The
+-                  default is <filename>/var/run/faillock</filename>.
++                  default is <filename>/run/faillock</filename>.
+                 </para>
+               </listitem>
+             </varlistentry>
+@@ -93,7 +93,7 @@
+     <title>FILES</title>
+     <variablelist>
+       <varlistentry>
+-        <term><filename>/var/run/faillock/*</filename></term>
++        <term><filename>/run/faillock/*</filename></term>
+         <listitem>
+           <para>the files logging the authentication failures for users</para>
+         </listitem>
+--- Linux-PAM-1.1.8/modules/pam_faillock/faillock.h.0703~	2014-05-24 03:15:06.512006466 +0200
++++ Linux-PAM-1.1.8/modules/pam_faillock/faillock.h	2014-05-24 03:15:06.635345710 +0200
+@@ -64,7 +64,7 @@ struct tally_data {
+ 	unsigned int count;		/* number of records */
+ };
+ 
+-#define FAILLOCK_DEFAULT_TALLYDIR "/var/run/faillock"
++#define FAILLOCK_DEFAULT_TALLYDIR "/run/faillock"
+ 
+ int open_tally(const char *dir, const char *user, uid_t uid, int create);
+ int read_tally(int fd, struct tally_data *tallies);
+--- Linux-PAM-1.1.8/modules/pam_faillock/pam_faillock.8.xml.0703~	2014-05-24 03:15:06.512006466 +0200
++++ Linux-PAM-1.1.8/modules/pam_faillock/pam_faillock.8.xml	2014-05-24 03:15:06.638679204 +0200
+@@ -130,7 +130,7 @@
+               <listitem>
+                 <para>
+                   The directory where the user files with the failure records are kept. The
+-                  default is <filename>/var/run/faillock</filename>.
++                  default is <filename>/run/faillock</filename>.
+                 </para>
+               </listitem>
+             </varlistentry>
+@@ -356,7 +356,7 @@ session  required       pam_selinux.so o
+     <title>FILES</title>
+     <variablelist>
+       <varlistentry>
+-        <term><filename>/var/run/faillock/*</filename></term>
++        <term><filename>/run/faillock/*</filename></term>
+         <listitem>
+           <para>the files logging the authentication failures for users</para>
+         </listitem>

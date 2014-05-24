@@ -88,6 +88,8 @@ Patch700:	pam_fix_static_pam_console.patch
 Patch701:	pam-1.1.0-console-nopermsd.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
+# (proyvind): move from /var/run/console to /run/console
+Patch703:	Linux-PAM-1.1.8-move-from-varrun-to-run.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
 
@@ -229,6 +231,7 @@ install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
 install -m 600 /dev/null %{buildroot}/var/log/tallylog
 install -D -p -m 644 %{SOURCE15} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -d %{buildroot}/run/faillock
 
 # Install man pages.
 install -m 644 %{SOURCE12} %{SOURCE13} %{SOURCE17} %{buildroot}%{_mandir}/man5/
@@ -261,6 +264,20 @@ for module in %{buildroot}/%{_lib}/security/pam*.so ; do
 		exit 1
 	fi
 done
+
+%triggerprein -- dbus < 1:1.1.8-7
+if [ -d %{_varrun}/console ]; then
+   if [ -d /run/console ]; then
+      if [ -e /run/console/console.lock ]; then 
+          rm -rf %{_varrun}/console
+      else
+          rm -rf /run/console
+          mv %{_varrun}/console /run/
+      fi
+   else
+      mv %{_varrun}/console /run/
+   fi
+fi
 
 %post
 %tmpfiles_create %{name}.conf
@@ -316,7 +333,8 @@ fi
 %dir /%{_lib}/security
 /%{_lib}/security/*.so
 /%{_lib}/security/pam_filter
-%dir /var/run/console
+%ghost %dir /run/console
+%ghost %dir /run/faillock
 %ghost %verify(not md5 size mtime) /var/log/tallylog
 %{_mandir}/man5/*
 %{_mandir}/man8/*
