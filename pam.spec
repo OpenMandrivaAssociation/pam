@@ -6,7 +6,6 @@
 
 %bcond_with	prelude
 %bcond_without	bootstrap
-%bcond_without	uclibc
 
 %define pam_redhat_version 0.99.10-1
 
@@ -91,9 +90,6 @@ BuildRequires:	pkgconfig(libprelude)
 %else
 BuildConflicts:	pkgconfig(libprelude)
 %endif
-%if %{with uclibc}
-BuildRequires:	uClibc-devel
-%endif
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
 Requires:	pam_tcb >= 1.0.2-16
@@ -139,49 +135,12 @@ Conflicts:	%{_lib}pam0 < 1.1.4-5
 %description -n	%{libname_misc}
 This package contains the library libpam_misc for %{name}.
 
-%package -n	uclibc-pam
-Summary:	PAM modules etc. for uClibc PAM
-Group:		System/Libraries
-Conflicts:	pam < 1.1.4-5
-
-%description -n uclibc-pam
-PAM modules etc. for uClibc PAM
-
-%package -n	uclibc-%{libname}
-Summary:	Library for %{name} (uClibc build)
-Group:		System/Libraries
-Conflicts:	pam < 1.1.4-5
-
-%description -n	uclibc-%{libname}
-This package contains the library libpam for %{name}.
-
-%package -n	uclibc-%{libnamec}
-Summary:	Library for %{name}
-Group:		System/Libraries
-Conflicts:	%{_lib}pam0 < 1.1.4-5
-
-%description -n	uclibc-%{libnamec}
-This package contains the library libpamc for %{name} (uClibc build).
-
-%package -n	uclibc-%{libname_misc}
-Summary:	Library for %{name}
-Group:		System/Libraries
-Conflicts:	%{_lib}pam0 < 1.1.4-5
-
-%description -n	uclibc-%{libname_misc}
-This package contains the library libpam_misc for %{name} (uClibc build).
-
 %package -n	%{devname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
 Requires:	%{libnamec} = %{EVRD}
 Requires:	%{libname_misc} = %{EVRD}
-%if %{with uclibc}
-Requires:	uclibc-%{libname} = %{EVRD}
-Requires:	uclibc-%{libnamec} = %{EVRD}
-Requires:	uclibc-%{libname_misc} = %{EVRD}
-%endif
 Provides:	%{name}-devel = %{EVRD}
 
 %description -n	%{devname}
@@ -221,34 +180,7 @@ autoreconf -fi -I m4
 
 %build
 export BROWSER=""
-export CONFIGURE_TOP="$PWD"
 
-%if %{with uclibc}
-mkdir -p uclibc
-pushd uclibc
-# Modules like audit and cracklib are disabled because
-# we currently don't build the libraries they depend on
-# for uClibc.
-libtirpc_LIBS="-lc" %uclibc_configure \
-	--bindir=%{uclibc_root}/bin \
-       	--sbindir=%{uclibc_root}/sbin \
-       	--prefix=%{uclibc_root} \
-	--includedir=%{_includedir}/security \
-       	--exec-prefix=%{uclibc_root} \
-       	--libdir=%{uclibc_root}/%{_lib} \
-       	--host=%{_host} \
-	--disable-selinux \
-	--disable-audit \
-	--disable-cracklib \
-	--disable-db \
-	--docdir=%{_docdir}/%{name}
-%make
-popd
-
-%endif
-
-mkdir -p system
-pushd  system
 %configure2_5x \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
@@ -256,14 +188,13 @@ pushd  system
 	--docdir=%{_docdir}/%{name} \
 	--disable-selinux
 
-# build util-linux
 %make
 popd
 
 %install
 mkdir -p %{buildroot}%{_includedir}/security
 mkdir -p %{buildroot}/%{_lib}/security
-%makeinstall_std -C system install DESTDIR=%{buildroot} LDCONFIG=:
+%makeinstall_std LDCONFIG=:
 install -d -m 755 %{buildroot}/etc/pam.d
 install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
 install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
@@ -281,22 +212,7 @@ for phase in auth acct passwd session ; do
 	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
 
-%if %{with uclibc}
-mkdir -p %{buildroot}/%{uclibc_root}%{_lib}/security
-mkdir -p %{buildroot}/%{uclibc_root}%{_includedir}/security
-%makeinstall_std -C uclibc DESTDIR="%{buildroot}"
-for phase in auth acct passwd session ; do
-	ln -sf pam_unix.so %{buildroot}/%{uclibc_root}/%{_lib}/security/pam_unix_${phase}.so
-done
-%endif
-
 %find_lang Linux-PAM
-
-%if %{with uclibc}
-cat  Linux-PAM.lang | grep -i uclibc >Linux-PAM-uClibc.lang ||:
-cat Linux-PAM.lang Linux-PAM-uClibc.lang |sort |uniq -u >Linux-PAM-no-uClibc.lang
-mv -f Linux-PAM-no-uClibc.lang Linux-PAM.lang
-%endif
 
 %check
 # (blino) we don't want to test if SE Linux is built, it's disabled
@@ -321,36 +237,6 @@ for module in %{buildroot}/%{_lib}/security/pam*.so ; do
 		exit 1
 	fi
 done
-
-%if %{with uclibc}
-for dir in modules/pam_* ; do
-if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
-	# We currently don't build cracklib or db for uClibc
-         [[ "${dir}" = "modules/pam_cracklib" ]] && continue
-         [[ "${dir}" = "modules/pam_userdb" ]] && continue
-         [[ "${dir}" = "modules/pam_tty_audit" ]] && continue
-         [[ "${dir}" = "modules/pam_tally" ]] && continue
-        if ! ls -1 %{buildroot}/%{uclibc_root}/%{_lib}/security/`basename ${dir}`*.so ; then
-                echo ERROR `basename ${dir}` did not build a module.
-                exit 1
-        fi
-fi
-done
-
-# FIXME This check is currently broken for uclibc. Needs to be debugged.
-%if 0
-# Check for module problems.  Specifically, check that every module we just
-# installed can actually be loaded by a minimal PAM-aware application.
-/usr/uclibc/sbin/ldconfig -n %{buildroot}/%{uclibc_root}/%{_lib}
-for module in %{buildroot}/%{uclibc_root}/%{_lib}/security/pam*.so ; do
-        if ! env LD_LIBRARY_PATH=%{buildroot}/%{uclibc_root}/%{_lib}:%{uclibc_root}/%{_lib} \
-                CC=uclibc-gcc %{SOURCE8} -ldl -lpam -L%{buildroot}/%{uclibc_root}/%{_lib} ${module}; then
-                echo ERROR module: ${module} cannot be loaded.
-                exit 1
-        fi
-done
-%endif
-%endif
 
 %post
 %tmpfiles_create %{name}.conf
@@ -420,35 +306,8 @@ fi
 /%{_lib}/libpam.so
 /%{_lib}/libpam_misc.so
 /%{_lib}/libpamc.so
-%if %{with uclibc}
-%{uclibc_root}/%{_lib}/libpam.so
-%{uclibc_root}/%{_lib}/libpam_misc.so
-%{uclibc_root}/%{_lib}/libpamc.so
-%endif
 %{_includedir}/security/*.h
 %{_mandir}/man3/*
 
-%if %{with uclibc}
-%files -n uclibc-pam -f Linux-PAM-uClibc.lang
-%{uclibc_root}/sbin/mkhomedir_helper
-%{uclibc_root}/sbin/pam_console_apply
-%{uclibc_root}/sbin/pam_tally2
-%{uclibc_root}/sbin/unix_chkpwd
-%{uclibc_root}/sbin/unix_update
-%attr(4755,root,root) %{uclibc_root}/sbin/pam_timestamp_check
-%{uclibc_root}/%{_lib}/security/*.so
-%{uclibc_root}/%{_lib}/security/pam_filter
-
-%files -n uclibc-%{libname}
-%{uclibc_root}/%{_lib}/libpam.so.%{major}*
-
-%files -n uclibc-%{libnamec}
-%{uclibc_root}/%{_lib}/libpamc.so.%{major}*
-
-%files -n uclibc-%{libname_misc}
-%{uclibc_root}/%{_lib}/libpam_misc.so.%{major}*
-%endif
-
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright
-
