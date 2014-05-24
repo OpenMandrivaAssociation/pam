@@ -78,13 +78,13 @@ Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
 # (fl) pam_xauth: set extra groups because in high security levels
 #      access to /usr/X11R6/bin dir is controlled by a group
 Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
-# (tv/blino) add defaults for nice/rtprio in /etc/security/limits.conf
+# (tv/blino) add defaults for nice/rtprio in %{_sysconfdir}/security/limits.conf
 Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
 # (blino) fix parallel build (pam_console)
 Patch521:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 
 Patch700:	pam_fix_static_pam_console.patch
-# (fc) do not output error when no file is in /etc/security/console.perms.d/
+# (fc) do not output error when no file is in %{_sysconfdir}/security/console.perms.d/
 Patch701:	pam-1.1.0-console-nopermsd.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
@@ -218,15 +218,15 @@ export BROWSER=""
 mkdir -p %{buildroot}%{_includedir}/security
 mkdir -p %{buildroot}/%{_lib}/security
 %makeinstall_std LDCONFIG=:
-install -d -m 755 %{buildroot}/etc/pam.d
-install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
-install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
-install -m 644 %{SOURCE7} %{buildroot}/etc/pam.d/password-auth
-install -m 644 %{SOURCE8} %{buildroot}/etc/pam.d/fingerprint-auth
-install -m 644 %{SOURCE9} %{buildroot}/etc/pam.d/smartcard-auth
-install -m 644 %{SOURCE10} %{buildroot}/etc/pam.d/config-util
+install -d -m 755 %{buildroot}%{_sysconfdir}/pam.d
+install -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/pam.d/other
+install -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/pam.d/system-auth
+install -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/pam.d/password-auth
+install -m 644 %{SOURCE8} %{buildroot}%{_sysconfdir}/pam.d/fingerprint-auth
+install -m 644 %{SOURCE9} %{buildroot}%{_sysconfdir}/pam.d/smartcard-auth
+install -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/pam.d/config-util
 install -m 644 %{SOURCE14} %{buildroot}%{_sysconfdir}/security/limits.d/90-nproc.conf
-install -m 644 %{SOURCE16} %{buildroot}/etc/pam.d/postlogin
+install -m 644 %{SOURCE16} %{buildroot}%{_sysconfdir}/pam.d/postlogin
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
 install -m 600 /dev/null %{buildroot}/var/log/tallylog
@@ -282,8 +282,8 @@ fi
 %posttrans
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
 # Note: Only affects upgrades, but does no harm so always update if needed.
-if ! grep -q "pam_systemd\.so" /etc/pam.d/system-auth; then
-	echo "-session    optional      pam_systemd.so" >>/etc/pam.d/system-auth
+if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
+	echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
 fi
 
 if [ ! -a /var/log/tallylog ] ; then
@@ -293,15 +293,15 @@ fi
 %files -f Linux-PAM.lang
 %doc NEWS README.0.99.8.1.update.urpmi
 %docdir %{_docdir}/%{name}
-%dir /etc/pam.d
-%config(noreplace) /etc/environment
-%config /etc/pam.d/other
-%attr(0644,root,shadow) %config /etc/pam.d/system-auth
-%config(noreplace) /etc/pam.d/password-auth
-%config(noreplace) /etc/pam.d/fingerprint-auth
-%config(noreplace) /etc/pam.d/smartcard-auth
-%config /etc/pam.d/config-util
-%config(noreplace) /etc/pam.d/postlogin
+%dir %{_sysconfdir}/pam.d
+%config(noreplace) %{_sysconfdir}/environment
+%config %{_sysconfdir}/pam.d/other
+%attr(0644,root,shadow) %config %{_sysconfdir}/pam.d/system-auth
+%config(noreplace) %{_sysconfdir}/pam.d/password-auth
+%config(noreplace) %{_sysconfdir}/pam.d/fingerprint-auth
+%config(noreplace) %{_sysconfdir}/pam.d/smartcard-auth
+%config %{_sysconfdir}/pam.d/config-util
+%config(noreplace) %{_sysconfdir}/pam.d/postlogin
 %{_tmpfilesdir}/%{name}.conf
 /sbin/faillock
 /sbin/mkhomedir_helper
