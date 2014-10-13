@@ -14,7 +14,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.1.8
-Release:	9
+Release:	10
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -229,7 +229,7 @@ pushd uclibc
 # Modules like audit and cracklib are disabled because
 # we currently don't build the libraries they depend on
 # for uClibc.
-libtirpc_LIBS="-lc" %uclibc_configure \
+%uclibc_configure \
 	--bindir=%{uclibc_root}/bin \
        	--sbindir=%{uclibc_root}/sbin \
        	--prefix=%{uclibc_root} \
@@ -241,6 +241,7 @@ libtirpc_LIBS="-lc" %uclibc_configure \
 	--disable-audit \
 	--disable-cracklib \
 	--disable-db \
+	--disable-nis \
 	--docdir=%{_docdir}/%{name}
 %make
 popd
