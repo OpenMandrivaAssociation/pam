@@ -14,7 +14,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.1.8
-Release:	10
+Release:	11
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -98,6 +98,7 @@ Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
 Requires:	pam_tcb >= 1.0.2-16
 Requires(pre):	rpm-helper
+Requires(post):	bash
 Requires(post):	coreutils
 Requires(post):	tcb >= 1.0.2-16
 Conflicts:	%{_lib}pam0 < 1.1.4-5
