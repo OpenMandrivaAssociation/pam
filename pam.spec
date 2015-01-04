@@ -71,10 +71,6 @@ Patch41:	pam-1.1.8-limits-check-process.patch
 Patch42:	pam-1.1.8-limits-docfix.patch
 Patch43:	pam-1.1.8-audit-user-mgmt.patch
 
-# ???
-Patch107:	pam-1.1.0-console-fixes.patch
-
-Patch111:	pam-1.1.3-console-abstract.patch
 Patch113:	pam-aarch64.patch
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
