@@ -7,7 +7,7 @@
 %bcond_with	prelude
 %bcond_without	bootstrap
 
-%define pam_redhat_version 0.99.10-1
+%define pam_redhat_version 0.99.11
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
