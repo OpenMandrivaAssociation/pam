@@ -6,7 +6,6 @@
 
 %bcond_with	prelude
 %bcond_without	bootstrap
-%bcond_without	uclibc
 
 %define pam_redhat_version 0.99.10-1
 
@@ -24,32 +23,53 @@ Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
 #Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 # (tpg) new url
 Source0:	https://fedorahosted.org/releases/l/i/linux-pam/Linux-PAM-%{version}.tar.bz2
-Source1:	90-nproc.conf
+
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source3:	pam-0.99.3.0-README.update
 Source4:	pam-0.99.8.1-11mdv2009.0-README.update
+
 Source5:	other.pamd
 Source6:	system-auth.pamd
-Source7:	config-util.pamd
-Source8:	dlopen.sh
-Source9:	system-auth.5
-Source10:	config-util.5
-Source11:	pam-tmpfiles.conf
-Source12:	postlogin.pamd
-Source13:	postlogin.5
-#add missing documentation
-Source501:	pam_tty_audit.8
-Source502:	README
+Source7:	password-auth.pamd
+Source8:	fingerprint-auth.pamd
+Source9:	smartcard-auth.pamd
+Source10:	config-util.pamd
+Source11:	dlopen.sh
+Source12:	system-auth.5
+Source13:	config-util.5
+Source14:	20-nproc.conf
+Source15:	pam-tmpfiles.conf
+Source16:	postlogin.pamd
+Source17:	postlogin.5
+
 # RedHat patches
 Patch1:		pam-1.0.90-redhat-modules.patch
 Patch2:		pam-1.0.91-std-noclose.patch
 Patch4:		pam-1.1.0-console-nochmod.patch
 Patch5:		pam-1.1.0-notally.patch
-Patch7:		pam-1.1.0-console-fixes.patch
+Patch8:		pam-1.1.1-faillock.patch
 Patch9:		pam-1.1.2-noflex.patch
 Patch10:	pam-1.1.3-nouserenv.patch
-Patch11:	pam-1.1.3-console-abstract.patch
-Patch13:	pam-aarch64.patch
+Patch12:	pam-1.1.3-faillock-screensaver.patch
+Patch13:	pam-1.1.6-limits-user.patch
+Patch15:	pam-1.1.6-full-relro.patch
+# FIPS related - non upstreamable
+Patch20:	pam-1.1.5-unix-no-fallback.patch
+# Upstreamed partially
+Patch29:	pam-1.1.8-pwhistory-helper.patch
+Patch31:	pam-1.1.6-use-links.patch
+Patch32:	pam-1.1.7-tty-audit-init.patch
+Patch33:	pam-1.1.8-translation-updates.patch
+Patch34:	pam-1.1.8-canonicalize-username.patch
+Patch35:	pam-1.1.8-cve-2013-7041.patch
+Patch36:	pam-1.1.8-cve-2014-2583.patch
+Patch37:	pam-1.1.8-loginuid-container.patch
+
+# ???
+Patch107:	pam-1.1.0-console-fixes.patch
+
+Patch111:	pam-1.1.3-console-abstract.patch
+Patch113:	pam-aarch64.patch
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
 Patch507:	pam-0.74-loop.patch
@@ -58,19 +78,20 @@ Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
 # (fl) pam_xauth: set extra groups because in high security levels
 #      access to /usr/X11R6/bin dir is controlled by a group
 Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
-# (tv/blino) add defaults for nice/rtprio in /etc/security/limits.conf
+# (tv/blino) add defaults for nice/rtprio in %{_sysconfdir}/security/limits.conf
 Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
 # (blino) fix parallel build (pam_console)
 Patch521:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 
 Patch700:	pam_fix_static_pam_console.patch
-# (fc) do not output error when no file is in /etc/security/console.perms.d/
+# (fc) do not output error when no file is in %{_sysconfdir}/security/console.perms.d/
 Patch701:	pam-1.1.0-console-nopermsd.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
+# (proyvind): move from /var/run/console to /run/console
+Patch703:	Linux-PAM-1.1.8-move-from-varrun-to-run.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
-Patch802:	pam-1.1.7-tty-audit-init.patch
 
 BuildRequires:	bison
 BuildRequires:	flex
@@ -91,16 +112,16 @@ BuildRequires:	pkgconfig(libprelude)
 %else
 BuildConflicts:	pkgconfig(libprelude)
 %endif
-%if %{with uclibc}
-BuildRequires:	uClibc-devel
-%endif
+# Following deps are necessary only to build the pam library documentation.
+BuildRequires:	linuxdoc-tools elinks xsltproc
+BuildRequires:	docbook-style-xsl docbook-dtds
+
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
-Requires:	pam_tcb >= 1.0.2-16
+Requires:	pam_pwquality
 Requires(pre):	rpm-helper
 Requires(post):	bash
 Requires(post):	coreutils
-Requires(post):	tcb >= 1.0.2-16
 Conflicts:	%{_lib}pam0 < 1.1.4-5
 
 %description
@@ -140,49 +161,12 @@ Conflicts:	%{_lib}pam0 < 1.1.4-5
 %description -n	%{libname_misc}
 This package contains the library libpam_misc for %{name}.
 
-%package -n	uclibc-pam
-Summary:	PAM modules etc. for uClibc PAM
-Group:		System/Libraries
-Conflicts:	pam < 1.1.4-5
-
-%description -n uclibc-pam
-PAM modules etc. for uClibc PAM
-
-%package -n	uclibc-%{libname}
-Summary:	Library for %{name} (uClibc build)
-Group:		System/Libraries
-Conflicts:	pam < 1.1.4-5
-
-%description -n	uclibc-%{libname}
-This package contains the library libpam for %{name}.
-
-%package -n	uclibc-%{libnamec}
-Summary:	Library for %{name}
-Group:		System/Libraries
-Conflicts:	%{_lib}pam0 < 1.1.4-5
-
-%description -n	uclibc-%{libnamec}
-This package contains the library libpamc for %{name} (uClibc build).
-
-%package -n	uclibc-%{libname_misc}
-Summary:	Library for %{name}
-Group:		System/Libraries
-Conflicts:	%{_lib}pam0 < 1.1.4-5
-
-%description -n	uclibc-%{libname_misc}
-This package contains the library libpam_misc for %{name} (uClibc build).
-
 %package -n	%{devname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
 Requires:	%{libnamec} = %{EVRD}
 Requires:	%{libname_misc} = %{EVRD}
-%if %{with uclibc}
-Requires:	uclibc-%{libname} = %{EVRD}
-Requires:	uclibc-%{libnamec} = %{EVRD}
-Requires:	uclibc-%{libname_misc} = %{EVRD}
-%endif
 Provides:	%{name}-devel = %{EVRD}
 
 %description -n	%{devname}
@@ -209,8 +193,6 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 #    sed -i "s/ $d / /" modules/Makefile.am
 #done
 
-install -m644 %{SOURCE501} %{SOURCE502} modules/pam_tty_audit/
-
 mkdir -p doc/txts
 for readme in modules/pam_*/README ; do
 	cp -f ${readme} doc/txts/README.`dirname ${readme} | sed -e 's|^modules/||'`
@@ -222,83 +204,42 @@ autoreconf -fi -I m4
 
 %build
 export BROWSER=""
-export CONFIGURE_TOP="$PWD"
-
-%if %{with uclibc}
-mkdir -p uclibc
-pushd uclibc
-# Modules like audit and cracklib are disabled because
-# we currently don't build the libraries they depend on
-# for uClibc.
-%uclibc_configure \
-	--bindir=%{uclibc_root}/bin \
-       	--sbindir=%{uclibc_root}/sbin \
-       	--prefix=%{uclibc_root} \
-	--includedir=%{_includedir}/security \
-       	--exec-prefix=%{uclibc_root} \
-       	--libdir=%{uclibc_root}/%{_lib} \
-       	--host=%{_host} \
-	--disable-selinux \
-	--disable-audit \
-	--disable-cracklib \
-	--disable-db \
-	--disable-nis \
-	--docdir=%{_docdir}/%{name}
-%make
-popd
-
-%endif
-
-mkdir -p system
-pushd  system
 %configure \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
 	--docdir=%{_docdir}/%{name} \
+	--enable-regenerate-docu \
 	--disable-selinux
 
-# build util-linux
 %make
-popd
 
 %install
 mkdir -p %{buildroot}%{_includedir}/security
 mkdir -p %{buildroot}/%{_lib}/security
-%makeinstall_std -C system install DESTDIR=%{buildroot} LDCONFIG=:
-install -d -m 755 %{buildroot}/etc/pam.d
-install -m 644 %{SOURCE5} %{buildroot}/etc/pam.d/other
-install -m 644 %{SOURCE6} %{buildroot}/etc/pam.d/system-auth
-install -m 644 %{SOURCE7} %{buildroot}/etc/pam.d/config-util
-install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/security/limits.d/90-nproc.conf
-install -m 644 %{SOURCE12} %{buildroot}/etc/pam.d/postlogin
+%makeinstall_std LDCONFIG=:
+install -d -m 755 %{buildroot}%{_sysconfdir}/pam.d
+install -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/pam.d/other
+install -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/pam.d/system-auth
+install -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/pam.d/password-auth
+install -m 644 %{SOURCE8} %{buildroot}%{_sysconfdir}/pam.d/fingerprint-auth
+install -m 644 %{SOURCE9} %{buildroot}%{_sysconfdir}/pam.d/smartcard-auth
+install -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/pam.d/config-util
+install -m 644 %{SOURCE14} %{buildroot}%{_sysconfdir}/security/limits.d/90-nproc.conf
+install -m 644 %{SOURCE16} %{buildroot}%{_sysconfdir}/pam.d/postlogin
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
 install -m 600 /dev/null %{buildroot}/var/log/tallylog
-install -D -p -m 644 %{SOURCE11} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -D -p -m 644 %{SOURCE15} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+install -d %{buildroot}/run/faillock
 
 # Install man pages.
-install -m 644 %{SOURCE9} %{SOURCE10} %{SOURCE13} %{buildroot}%{_mandir}/man5/
+install -m 644 %{SOURCE12} %{SOURCE13} %{SOURCE17} %{buildroot}%{_mandir}/man5/
 for phase in auth acct passwd session ; do
 	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
 
-%if %{with uclibc}
-mkdir -p %{buildroot}/%{uclibc_root}%{_lib}/security
-mkdir -p %{buildroot}/%{uclibc_root}%{_includedir}/security
-%makeinstall_std -C uclibc DESTDIR="%{buildroot}"
-for phase in auth acct passwd session ; do
-	ln -sf pam_unix.so %{buildroot}/%{uclibc_root}/%{_lib}/security/pam_unix_${phase}.so
-done
-%endif
-
 %find_lang Linux-PAM
-
-%if %{with uclibc}
-cat  Linux-PAM.lang | grep -i uclibc >Linux-PAM-uClibc.lang ||:
-cat Linux-PAM.lang Linux-PAM-uClibc.lang |sort |uniq -u >Linux-PAM-no-uClibc.lang
-mv -f Linux-PAM-no-uClibc.lang Linux-PAM.lang
-%endif
 
 %check
 # (blino) we don't want to test if SE Linux is built, it's disabled
@@ -318,50 +259,31 @@ done
 /sbin/ldconfig -n %{buildroot}/%{_lib}
 for module in %{buildroot}/%{_lib}/security/pam*.so ; do
 	if ! env LD_LIBRARY_PATH=%{buildroot}/%{_lib} \
-		sh %{SOURCE8} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
+		sh %{SOURCE11} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
 		echo ERROR module: ${module} cannot be loaded.
 		exit 1
 	fi
 done
 
-%if %{with uclibc}
-for dir in modules/pam_* ; do
-if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
-	# We currently don't build cracklib or db for uClibc
-         [[ "${dir}" = "modules/pam_cracklib" ]] && continue
-         [[ "${dir}" = "modules/pam_userdb" ]] && continue
-         [[ "${dir}" = "modules/pam_tty_audit" ]] && continue
-         [[ "${dir}" = "modules/pam_tally" ]] && continue
-        if ! ls -1 %{buildroot}/%{uclibc_root}/%{_lib}/security/`basename ${dir}`*.so ; then
-                echo ERROR `basename ${dir}` did not build a module.
-                exit 1
-        fi
+%triggerprein -- dbus < 1:1.1.8-7
+if [ -d %{_varrun}/console ]; then
+   if [ -d /run/console ]; then
+      if [ -e /run/console/console.lock ]; then 
+          rm -rf %{_varrun}/console
+      else
+          rm -rf /run/console
+          mv %{_varrun}/console /run/
+      fi
+   else
+      mv %{_varrun}/console /run/
+   fi
 fi
-done
-
-# FIXME This check is currently broken for uclibc. Needs to be debugged.
-%if 0
-# Check for module problems.  Specifically, check that every module we just
-# installed can actually be loaded by a minimal PAM-aware application.
-/usr/uclibc/sbin/ldconfig -n %{buildroot}/%{uclibc_root}/%{_lib}
-for module in %{buildroot}/%{uclibc_root}/%{_lib}/security/pam*.so ; do
-        if ! env LD_LIBRARY_PATH=%{buildroot}/%{uclibc_root}/%{_lib}:%{uclibc_root}/%{_lib} \
-                CC=uclibc-gcc %{SOURCE8} -ldl -lpam -L%{buildroot}/%{uclibc_root}/%{_lib} ${module}; then
-                echo ERROR module: ${module} cannot be loaded.
-                exit 1
-        fi
-done
-%endif
-%endif
-
-%post
-%tmpfiles_create %{name}.conf
 
 %posttrans
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
 # Note: Only affects upgrades, but does no harm so always update if needed.
-if ! grep -q "pam_systemd\.so" /etc/pam.d/system-auth; then
-	echo "-session    optional      pam_systemd.so" >>/etc/pam.d/system-auth
+if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
+	echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
 fi
 
 if [ ! -a /var/log/tallylog ] ; then
@@ -371,16 +293,21 @@ fi
 %files -f Linux-PAM.lang
 %doc NEWS README.0.99.8.1.update.urpmi
 %docdir %{_docdir}/%{name}
-%dir /etc/pam.d
-%config(noreplace) /etc/environment
-%config /etc/pam.d/other
-%attr(0644,root,shadow) %config /etc/pam.d/system-auth
-%config /etc/pam.d/config-util
-%config(noreplace) /etc/pam.d/postlogin
+%dir %{_sysconfdir}/pam.d
+%config(noreplace) %{_sysconfdir}/environment
+%config %{_sysconfdir}/pam.d/other
+%attr(0644,root,shadow) %config %{_sysconfdir}/pam.d/system-auth
+%config(noreplace) %{_sysconfdir}/pam.d/password-auth
+%config(noreplace) %{_sysconfdir}/pam.d/fingerprint-auth
+%config(noreplace) %{_sysconfdir}/pam.d/smartcard-auth
+%config %{_sysconfdir}/pam.d/config-util
+%config(noreplace) %{_sysconfdir}/pam.d/postlogin
 %{_tmpfilesdir}/%{name}.conf
+/sbin/faillock
 /sbin/mkhomedir_helper
 /sbin/pam_console_apply
 /sbin/pam_tally2
+/sbin/pwhistory_helper
 /sbin/unix_chkpwd
 /sbin/unix_update
 
@@ -403,7 +330,8 @@ fi
 %dir /%{_lib}/security
 /%{_lib}/security/*.so
 /%{_lib}/security/pam_filter
-%dir /var/run/console
+%ghost %dir /run/console
+%ghost %dir /run/faillock
 %ghost %verify(not md5 size mtime) /var/log/tallylog
 %{_mandir}/man5/*
 %{_mandir}/man8/*
@@ -422,35 +350,8 @@ fi
 /%{_lib}/libpam.so
 /%{_lib}/libpam_misc.so
 /%{_lib}/libpamc.so
-%if %{with uclibc}
-%{uclibc_root}/%{_lib}/libpam.so
-%{uclibc_root}/%{_lib}/libpam_misc.so
-%{uclibc_root}/%{_lib}/libpamc.so
-%endif
 %{_includedir}/security/*.h
 %{_mandir}/man3/*
 
-%if %{with uclibc}
-%files -n uclibc-pam -f Linux-PAM-uClibc.lang
-%{uclibc_root}/sbin/mkhomedir_helper
-%{uclibc_root}/sbin/pam_console_apply
-%{uclibc_root}/sbin/pam_tally2
-%{uclibc_root}/sbin/unix_chkpwd
-%{uclibc_root}/sbin/unix_update
-%attr(4755,root,root) %{uclibc_root}/sbin/pam_timestamp_check
-%{uclibc_root}/%{_lib}/security/*.so
-%{uclibc_root}/%{_lib}/security/pam_filter
-
-%files -n uclibc-%{libname}
-%{uclibc_root}/%{_lib}/libpam.so.%{major}*
-
-%files -n uclibc-%{libnamec}
-%{uclibc_root}/%{_lib}/libpamc.so.%{major}*
-
-%files -n uclibc-%{libname_misc}
-%{uclibc_root}/%{_lib}/libpam_misc.so.%{major}*
-%endif
-
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright
-
