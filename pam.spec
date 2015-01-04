@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.1.8
-Release:	13
+Release:	14
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -64,6 +64,12 @@ Patch34:	pam-1.1.8-canonicalize-username.patch
 Patch35:	pam-1.1.8-cve-2013-7041.patch
 Patch36:	pam-1.1.8-cve-2014-2583.patch
 Patch37:	pam-1.1.8-loginuid-container.patch
+Patch38:	pam-1.1.8-opasswd-tolerant.patch
+Patch39:	pam-1.1.8-audit-grantor.patch
+Patch40:	pam-1.1.8-man-dbsuffix.patch
+Patch41:	pam-1.1.8-limits-check-process.patch
+Patch42:	pam-1.1.8-limits-docfix.patch
+Patch43:	pam-1.1.8-audit-user-mgmt.patch
 
 # ???
 Patch107:	pam-1.1.0-console-fixes.patch
