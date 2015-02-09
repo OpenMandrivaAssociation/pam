@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.1.8
-Release:	14
+Release:	15
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -267,7 +267,7 @@ for module in %{buildroot}/%{_lib}/security/pam*.so ; do
 	fi
 done
 
-%triggerprein -- dbus < 1:1.1.8-7
+%triggerprein -- dbus < 1.1.8-7
 if [ -d %{_varrun}/console ]; then
    if [ -d /run/console ]; then
       if [ -e /run/console/console.lock ]; then 
