@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.1.8
-Release:	17
+Release:	18
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -309,9 +309,9 @@ fi
 /sbin/mkhomedir_helper
 /sbin/pam_console_apply
 /sbin/pam_tally2
-/sbin/pwhistory_helper
-/sbin/unix_chkpwd
-/sbin/unix_update
+%attr(0755,root,root) /sbin/pwhistory_helper
+%attr(4755,root,root) /sbin/unix_chkpwd
+%attr(0700,root,root) /sbin/unix_update
 
 %attr(4755,root,root) /sbin/pam_timestamp_check
 %config(noreplace) %{_sysconfdir}/security/access.conf
