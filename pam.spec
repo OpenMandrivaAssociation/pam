@@ -12,8 +12,8 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.1.8
-Release:	19
+Version:	1.2.0
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -22,7 +22,7 @@ Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
 #Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
 #Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 # (tpg) new url
-Source0:	https://fedorahosted.org/releases/l/i/linux-pam/Linux-PAM-%{version}.tar.bz2
+Source0:	https://fedorahosted.org/releases/l/i/linux-pam/Linux-PAM-%(echo %{version} | tr . _).tar.bz2
 
 Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
 Source3:	pam-0.99.3.0-README.update
@@ -179,7 +179,7 @@ having to recompile programs that handle authentication.
 This package contains the development libraries for %{name}.
 
 %prep
-%setup -q -n Linux-PAM-%{version} -a 2
+%setup -q -n Linux-PAM-%(echo %{version} | tr . _) -a 2
 
 # Add custom modules.
 mv pam-redhat-%{pam_redhat_version}/* modules
