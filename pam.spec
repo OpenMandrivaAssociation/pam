@@ -53,6 +53,7 @@ Patch10:	pam-1.1.3-nouserenv.patch
 Patch12:	pam-1.1.3-faillock-screensaver.patch
 Patch13:	pam-1.1.6-limits-user.patch
 Patch15:	pam-1.1.6-full-relro.patch
+Patch16:	pam-1.2.0-fix-running-in-containers.patch
 # FIPS related - non upstreamable
 Patch20:	pam-1.1.5-unix-no-fallback.patch
 # Upstreamed partially
