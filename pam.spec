@@ -18,13 +18,13 @@ Release:	1
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
 Group:		System/Libraries
-Url:		http://www.kernel.org/pub/linux/libs/pam/index.html
+Url:		http://linux-pam.org/
 #Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
 #Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 # (tpg) new url
-Source0:	https://fedorahosted.org/releases/l/i/linux-pam/Linux-PAM-%(echo %{version} | tr . _).tar.xz
+Source0:	https://linux-pam.org/library/Linux-PAM-%(echo %{version} | tr . _).tar.xz
 
-Source2:	pam-redhat-%{pam_redhat_version}.tar.bz2
+Source2:	https://fedorahosted.org/releases/p/a/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
 Source3:	pam-0.99.3.0-README.update
 Source4:	pam-0.99.8.1-11mdv2009.0-README.update
 
