@@ -190,6 +190,7 @@ done
 
 cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
+touch ChangeLog # to make autoreconf happy
 autoreconf -fi -I m4
 
 %build

@@ -53,7 +53,7 @@
  		pam_syslog(pamh, LOG_ERR,
 -			   "Algo %s not supported by the crypto backend, "
 -			   "falling back to MD5\n",
-+			   "Algo %s not supported by the crypto backend.\n"
++			   "Algo %s not supported by the crypto backend.\n",
  			   on(UNIX_BLOWFISH_PASS, ctrl) ? "blowfish" :
  			   on(UNIX_SHA256_PASS, ctrl) ? "sha256" :
  			   on(UNIX_SHA512_PASS, ctrl) ? "sha512" : algoid);
