@@ -1,5 +1,5 @@
---- pam/modules/pam_xauth/pam_xauth.c	2010-10-08 13:56:11.000000000 +0200
-+++ pam/modules/pam_xauth/pam_xauth.c.oden	2010-11-03 11:23:06.714312576 +0100
+--- Linux-PAM-1_2_0/modules/pam_xauth/pam_xauth.c.0512~	2015-04-27 16:57:39.000000000 +0200
++++ Linux-PAM-1_2_0/modules/pam_xauth/pam_xauth.c	2015-06-11 17:30:15.830251670 +0200
 @@ -90,7 +90,7 @@ static const char * const xauthpaths[] =
   * given input on stdin, and storing any output it generates. */
  static int
@@ -9,7 +9,7 @@
  {
  	int ipipe[2], opipe[2], i;
  	char buf[LINE_MAX];
-@@ -141,6 +141,12 @@ run_coprocess(pam_handle_t *pamh, const
+@@ -142,6 +142,12 @@ run_coprocess(pam_handle_t *pamh, const
  		    pam_syslog (pamh, LOG_ERR, "setgroups() failed: %m");
  		    _exit (err);
  		  }
@@ -22,23 +22,15 @@
  		if (setuid(uid) == -1)
  		  {
  		    int err = errno;
-@@ -148,6 +154,7 @@ run_coprocess(pam_handle_t *pamh, const
- 				(unsigned long) geteuid ());
- 		    _exit (err);
- 		  }
-+
- 		/* Initialize the argument list. */
- 		memset(args, 0, sizeof(args));
- 		/* Set the pipe descriptors up as stdin and stdout, and close
-@@ -173,6 +180,7 @@ run_coprocess(pam_handle_t *pamh, const
+@@ -180,6 +186,7 @@ run_coprocess(pam_handle_t *pamh, const
  		}
  		/* Run the command. */
- 		execv(command, args);
+ 		execv(command, (char *const *) args);
 +		syslog(LOG_ERR, "pam_xauth: execvp of %s failed: %m", command);
  		/* Never reached. */
  		_exit(1);
  	}
-@@ -508,7 +516,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+@@ -524,7 +531,7 @@ pam_sm_open_session (pam_handle_t *pamh,
  			   (unsigned long) getuid(), (unsigned long) getgid());
  	}
  	if (run_coprocess(pamh, NULL, &cookie,
@@ -47,7 +39,7 @@
  			  xauth, "-f", cookiefile, "nlist", display,
  			  NULL) == 0) {
  #ifdef WITH_SELINUX
-@@ -567,7 +575,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+@@ -583,7 +590,7 @@ pam_sm_open_session (pam_handle_t *pamh,
  						       (unsigned long) getgid());
  					}
  					run_coprocess(pamh, NULL, &cookie,
@@ -56,7 +48,7 @@
  						      xauth, "-f", cookiefile,
  						      "nlist", t, NULL);
  				}
-@@ -709,7 +717,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+@@ -725,7 +732,7 @@ pam_sm_open_session (pam_handle_t *pamh,
  				  (unsigned long) tpwd->pw_gid);
  		}
  		run_coprocess(pamh, cookie, &tmp,

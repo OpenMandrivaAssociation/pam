@@ -9,9 +9,9 @@ diff -up Linux-PAM-1.0.90/modules/Makefile.am.redhat-modules Linux-PAM-1.0.90/mo
  	pam_env pam_exec pam_faildelay pam_filter pam_ftp \
  	pam_group pam_issue pam_keyinit pam_lastlog pam_limits \
  	pam_listfile pam_localuser pam_loginuid pam_mail \
-diff -up Linux-PAM-1.0.90/configure.in.redhat-modules Linux-PAM-1.0.90/configure.in
---- Linux-PAM-1.0.90/configure.in.redhat-modules	2008-12-02 16:25:01.000000000 +0100
-+++ Linux-PAM-1.0.90/configure.in	2008-12-16 13:39:11.000000000 +0100
+diff -up Linux-PAM-1.0.90/configure.ac.redhat-modules Linux-PAM-1.0.90/configure.ac
+--- Linux-PAM-1.0.90/configure.ac.redhat-modules	2008-12-02 16:25:01.000000000 +0100
++++ Linux-PAM-1.0.90/configure.ac	2008-12-16 13:39:11.000000000 +0100
 @@ -531,6 +531,8 @@ AC_CONFIG_FILES([Makefile libpam/Makefil
  	libpam_misc/Makefile conf/Makefile conf/pam_conv1/Makefile \
  	po/Makefile.in \

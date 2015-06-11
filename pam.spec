@@ -44,7 +44,6 @@ Source17:	postlogin.5
 
 # RedHat patches
 Patch1:		pam-1.0.90-redhat-modules.patch
-Patch2:		pam-1.0.91-std-noclose.patch
 Patch4:		pam-1.1.0-console-nochmod.patch
 Patch5:		pam-1.1.0-notally.patch
 Patch8:		pam-1.1.1-faillock.patch
@@ -59,20 +58,8 @@ Patch20:	pam-1.1.5-unix-no-fallback.patch
 # Upstreamed partially
 Patch29:	pam-1.1.8-pwhistory-helper.patch
 Patch31:	pam-1.1.6-use-links.patch
-Patch32:	pam-1.1.7-tty-audit-init.patch
-Patch33:	pam-1.1.8-translation-updates.patch
-Patch34:	pam-1.1.8-canonicalize-username.patch
-Patch35:	pam-1.1.8-cve-2013-7041.patch
-Patch36:	pam-1.1.8-cve-2014-2583.patch
-Patch37:	pam-1.1.8-loginuid-container.patch
-Patch38:	pam-1.1.8-opasswd-tolerant.patch
-Patch39:	pam-1.1.8-audit-grantor.patch
-Patch40:	pam-1.1.8-man-dbsuffix.patch
-Patch41:	pam-1.1.8-limits-check-process.patch
-Patch42:	pam-1.1.8-limits-docfix.patch
 Patch43:	pam-1.1.8-audit-user-mgmt.patch
 
-Patch113:	pam-aarch64.patch
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
 Patch507:	pam-0.74-loop.patch

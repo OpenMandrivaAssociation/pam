@@ -1,6 +1,6 @@
-diff -up Linux-PAM-1.1.1/configure.in.faillock Linux-PAM-1.1.1/configure.in
---- Linux-PAM-1.1.1/configure.in.faillock	2010-09-17 15:58:41.000000000 +0200
-+++ Linux-PAM-1.1.1/configure.in	2010-09-17 15:58:41.000000000 +0200
+diff -up Linux-PAM-1.1.1/configure.ac.faillock Linux-PAM-1.1.1/configure.ac
+--- Linux-PAM-1.1.1/configure.ac.faillock	2010-09-17 15:58:41.000000000 +0200
++++ Linux-PAM-1.1.1/configure.ac	2010-09-17 15:58:41.000000000 +0200
 @@ -539,7 +539,7 @@ AC_CONFIG_FILES([Makefile libpam/Makefil
  	modules/pam_access/Makefile modules/pam_cracklib/Makefile \
          modules/pam_debug/Makefile modules/pam_deny/Makefile \
