@@ -166,7 +166,7 @@ having to recompile programs that handle authentication.
 This package contains the development libraries for %{name}.
 
 %prep
-%setup -q -n Linux-PAM-%(echo %{version} | tr . _) -a 2
+%setup -q -n Linux-PAM-%{version} -a 2
 
 # Add custom modules.
 mv pam-redhat-%{pam_redhat_version}/* modules
