@@ -12,7 +12,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.2.0
+Version:	1.2.1
 Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
@@ -22,7 +22,7 @@ Url:		http://linux-pam.org/
 #Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
 #Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 # (tpg) new url
-Source0:	https://linux-pam.org/library/Linux-PAM-%(echo %{version} | tr . _).tar.xz
+Source0:	http://www.linux-pam.org/library/Linux-PAM-%{version}.tar.bz2
 
 Source2:	https://fedorahosted.org/releases/p/a/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
 Source3:	pam-0.99.3.0-README.update
@@ -109,9 +109,8 @@ BuildRequires:	docbook-style-xsl docbook-dtds
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
 Requires:	pam_pwquality
-Requires(pre):	rpm-helper
-Requires(post):	bash
-Requires(post):	coreutils
+Requires(posttrans):	grep
+Requires(posttrans):	coreutils
 Conflicts:	%{_lib}pam0 < 1.1.4-5
 
 %description
