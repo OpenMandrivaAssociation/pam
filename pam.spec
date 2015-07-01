@@ -4,6 +4,10 @@
 %define libname_misc %mklibname %{name}_misc %{major}
 %define devname %mklibname %{name} -d
 
+%ifarch %{i586}
+%define _disable_ld_no_undefined 1
+%endif
+
 %bcond_with	prelude
 %bcond_without	bootstrap
 
