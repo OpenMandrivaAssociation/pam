@@ -103,7 +103,7 @@ BuildRequires:	pkgconfig(libprelude)
 BuildConflicts:	pkgconfig(libprelude)
 %endif
 # Following deps are necessary only to build the pam library documentation.
-BuildRequires:	linuxdoc-tools xsltproc
+BuildRequires:	linuxdoc-tools xsltproc elinks
 BuildRequires:	docbook-style-xsl docbook-dtds
 
 Requires:	cracklib-dicts
