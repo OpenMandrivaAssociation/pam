@@ -76,28 +76,28 @@ Patch703:	Linux-PAM-1.1.8-move-from-varrun-to-run.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
 
-BuildRequires:	bison
-BuildRequires:	flex
+#BuildRequires:	bison
+#BuildRequires:	flex
 %if !%{with bootstrap}
 # this pulls in the mega texlive load
-BuildRequires:	linuxdoc-tools
+#BuildRequires:	linuxdoc-tools
 %endif
-BuildRequires:	audit-devel >= 2.2.2
-BuildRequires:	cracklib-devel
-BuildRequires:	db-devel
-BuildRequires:	gettext-devel
-BuildRequires:	glibc-crypt_blowfish-devel
-BuildRequires:	glibc-devel
-BuildRequires:	pkgconfig(libtirpc)
-BuildRequires:	pkgconfig(openssl)
+#BuildRequires:	audit-devel >= 2.2.2
+#BuildRequires:	cracklib-devel
+#BuildRequires:	db-devel
+#BuildRequires:	gettext-devel
+#BuildRequires:	glibc-crypt_blowfish-devel
+#BuildRequires:	glibc-devel
+#BuildRequires:	pkgconfig(libtirpc)
+#BuildRequires:	pkgconfig(openssl)
 %if %{with prelude}
-BuildRequires:	pkgconfig(libprelude)
+#BuildRequires:	pkgconfig(libprelude)
 %else
-BuildConflicts:	pkgconfig(libprelude)
+#BuildConflicts:	pkgconfig(libprelude)
 %endif
 # Following deps are necessary only to build the pam library documentation.
-BuildRequires:	linuxdoc-tools xsltproc elinks
-BuildRequires:	docbook-style-xsl docbook-dtds
+#BuildRequires:	linuxdoc-tools xsltproc elinks
+#BuildRequires:	docbook-style-xsl docbook-dtds
 
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
@@ -160,8 +160,6 @@ This package contains the development libraries for %{name}.
 
 %prep
 %setup -q -n Linux-PAM-%{version} -a 2
-
-perl -pi -e "s/\/lib \/usr\/lib/\/lib \/usr\/lib \/lib64 \/usr\/lib64/" m4/libtool.m4
 
 # Add custom modules.
 mv pam-redhat-%{pam_redhat_version}/* modules
@@ -250,7 +248,7 @@ done
 %triggerprein -- dbus < 1.1.8-7
 if [ -d %{_varrun}/console ]; then
    if [ -d /run/console ]; then
-      if [ -e /run/console/console.lock ]; then 
+      if [ -e /run/console/console.lock ]; then
           rm -rf %{_varrun}/console
       else
           rm -rf /run/console

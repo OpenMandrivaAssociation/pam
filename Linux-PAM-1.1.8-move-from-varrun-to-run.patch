@@ -1,6 +1,7 @@
---- Linux-PAM-1.1.8/modules/pam_console/Makefile.am.0703~	2014-05-24 03:15:06.615344752 +0200
-+++ Linux-PAM-1.1.8/modules/pam_console/Makefile.am	2014-05-24 03:15:06.635345710 +0200
-@@ -13,7 +13,7 @@ man_MANS = $(MAN5) $(MAN8)
+diff -Naur Linux-PAM-1.3.0/modules/pam_console/Makefile.am Linux-PAM-1.3.0.tpg/modules/pam_console/Makefile.am
+--- Linux-PAM-1.3.0/modules/pam_console/Makefile.am	2016-05-08 18:02:04.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_console/Makefile.am	2016-05-08 18:14:26.980236496 +0000
+@@ -13,7 +13,7 @@
  
  EXTRA_DIST = README $(man_MANS) $(CONFFILES) sed-static configfile.y configfile.l
  
@@ -9,8 +10,9 @@
  LOCKMODE = 755
  
  securelibdir = $(SECUREDIR)
---- Linux-PAM-1.1.8/modules/pam_console/console.handlers.0703~	2014-05-24 03:15:06.485338522 +0200
-+++ Linux-PAM-1.1.8/modules/pam_console/console.handlers	2014-05-24 03:15:06.635345710 +0200
+diff -Naur Linux-PAM-1.3.0/modules/pam_console/console.handlers Linux-PAM-1.3.0.tpg/modules/pam_console/console.handlers
+--- Linux-PAM-1.3.0/modules/pam_console/console.handlers	2016-05-08 18:02:04.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_console/console.handlers	2016-05-08 18:14:53.505952906 +0000
 @@ -12,6 +12,6 @@
  # Example:
  # console consoledevs tty[0-9][0-9]* vc/[0-9][0-9]* :[0-9]\.[0-9] :[0-9]
@@ -18,10 +20,11 @@
 -# touch unlock wait /var/run/console-unlocked
 +# touch unlock wait /run/console-unlocked
  
- console consoledevs tty[0-9][0-9]* vc/[0-9][0-9]* :[0-9]+\.[0-9]+ :[0-9]+
---- Linux-PAM-1.1.8/modules/pam_console/pam_console.8.0703~	2008-12-16 13:37:52.000000000 +0100
-+++ Linux-PAM-1.1.8/modules/pam_console/pam_console.8	2014-05-24 03:15:06.635345710 +0200
-@@ -73,9 +73,9 @@ session required pam_unix.so
+ console consoledevs /dev/tty[0-9][0-9]* tty[0-9][0-9]* vc/[0-9][0-9]* :[0-9]+\.[0-9]+ :[0-9]+
+diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console.8 Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console.8
+--- Linux-PAM-1.3.0/modules/pam_console/pam_console.8	2014-01-31 13:17:53.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console.8	2016-05-08 18:15:22.955748383 +0000
+@@ -73,9 +73,9 @@
  session optional pam_console.so
  .br
  .SH FILES
@@ -33,8 +36,9 @@
  .br
  \fI/etc/security/console.apps\fP
  .br
---- Linux-PAM-1.1.8/modules/pam_console/pam_console.c.0703~	2014-05-24 03:15:06.585343314 +0200
-+++ Linux-PAM-1.1.8/modules/pam_console/pam_console.c	2014-05-24 03:15:06.635345710 +0200
+diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console.c Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console.c
+--- Linux-PAM-1.3.0/modules/pam_console/pam_console.c	2014-01-31 13:17:53.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console.c	2016-05-08 18:17:17.503843360 +0000
 @@ -2,7 +2,7 @@
   * This software may be used under the terms of the GNU General Public
   * License, available in the file COPYING accompanying this file.
@@ -60,7 +64,7 @@
   */
  
  #include "config.h"
-@@ -417,7 +417,7 @@ pam_sm_authenticate(pam_handle_t *pamh,
+@@ -417,7 +417,7 @@
  		    int argc, const char **argv)
  {
    /* getuid() must return an id that maps to a username as a filename in
@@ -69,7 +73,7 @@
     * and the service name must be listed in
     * /etc/security/console-apps
     */
-@@ -517,12 +517,12 @@ PAM_EXTERN int
+@@ -517,12 +517,12 @@
  pam_sm_open_session(pam_handle_t *pamh, int flags UNUSED,
  		    int argc, const char **argv)
  {
@@ -85,7 +89,7 @@
     */
      int got_console = 0;
      int count = 0;
-@@ -588,13 +588,13 @@ PAM_EXTERN int
+@@ -588,13 +588,13 @@
  pam_sm_close_session(pam_handle_t *pamh, int flags UNUSED,
  		     int argc, const char **argv)
  {
@@ -103,37 +107,39 @@
     *   in any case.
     */
      int fd;
---- Linux-PAM-1.1.8/modules/pam_console/pam_console_apply.8.0703~	2008-12-16 13:37:52.000000000 +0100
-+++ Linux-PAM-1.1.8/modules/pam_console/pam_console_apply.8	2014-05-24 03:15:26.059609809 +0200
-@@ -9,7 +9,7 @@ pam_console_apply \- set or revoke permi
+diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console_apply.8 Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console_apply.8
+--- Linux-PAM-1.3.0/modules/pam_console/pam_console_apply.8	2014-01-31 13:17:53.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console_apply.8	2016-05-08 18:15:40.772229676 +0000
+@@ -9,7 +9,7 @@
  \fBpam_console_apply\fP is a helper executable which sets or resets permissions
  on device nodes.
  .br
 -If \fI/var/run/console.lock\fP exists, \fBpam_console_apply\fP will grant
-+If \fI/run/console/console.lock\fP exists, \fBpam_console_apply\fP will grant
++If \fI/run/console.lock\fP exists, \fBpam_console_apply\fP will grant
  permissions to the user listed therein.  If the lock file does not exist,
  permissions are reset according to defaults set in \fIconsole.perms\fP files,
  normally configured to set permissions on devices so that \fBroot\fP
-@@ -28,7 +28,7 @@ Load other console.perms file than the d
+@@ -28,7 +28,7 @@
  Load other fstab file than the default one (\fI/etc/fstab\fP).
  .IP -r
  Signals \fBpam_console_apply\fP to reset permissions.  The default is to set
 -permissions so that the user listed in \fI/var/run/console.lock\fP has access
-+permissions so that the user listed in \fI/run/console/console.lock\fP has access
++permissions so that the user listed in \fI/run/console.lock\fP has access
  to the devices, and to reset permissions if no such file exists.
  .IP -t
  Use <tty> to match console class in console.perms file. The default is tty0.
-@@ -41,7 +41,7 @@ The optional <device file> arguments con
+@@ -41,7 +41,7 @@
  by \fBpam_console_apply\fP. If they aren't specified permissions are
  changed on all files specified in the \fIconsole.perms\fP file.
  .SH FILES
 -\fI/var/run/console.lock\fP
-+\fI/run/console/console.lock\fP
++\fI/run/console.lock\fP
  .br
  \fI/etc/security/console.perms\fP
  .br
---- Linux-PAM-1.1.8/modules/pam_faillock/faillock.8.xml.0703~	2014-05-24 03:15:06.495339001 +0200
-+++ Linux-PAM-1.1.8/modules/pam_faillock/faillock.8.xml	2014-05-24 03:15:06.635345710 +0200
+diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/faillock.8.xml Linux-PAM-1.3.0.tpg/modules/pam_faillock/faillock.8.xml
+--- Linux-PAM-1.3.0/modules/pam_faillock/faillock.8.xml	2016-05-08 18:02:04.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_faillock/faillock.8.xml	2016-05-08 18:19:11.458923597 +0000
 @@ -62,7 +62,7 @@
                <listitem>
                  <para>
@@ -152,9 +158,10 @@
          <listitem>
            <para>the files logging the authentication failures for users</para>
          </listitem>
---- Linux-PAM-1.1.8/modules/pam_faillock/faillock.h.0703~	2014-05-24 03:15:06.512006466 +0200
-+++ Linux-PAM-1.1.8/modules/pam_faillock/faillock.h	2014-05-24 03:15:06.635345710 +0200
-@@ -64,7 +64,7 @@ struct tally_data {
+diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/faillock.h Linux-PAM-1.3.0.tpg/modules/pam_faillock/faillock.h
+--- Linux-PAM-1.3.0/modules/pam_faillock/faillock.h	2016-05-08 18:02:04.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_faillock/faillock.h	2016-05-08 18:19:30.947450494 +0000
+@@ -64,7 +64,7 @@
  	unsigned int count;		/* number of records */
  };
  
@@ -163,8 +170,9 @@
  
  int open_tally(const char *dir, const char *user, uid_t uid, int create);
  int read_tally(int fd, struct tally_data *tallies);
---- Linux-PAM-1.1.8/modules/pam_faillock/pam_faillock.8.xml.0703~	2014-05-24 03:15:06.512006466 +0200
-+++ Linux-PAM-1.1.8/modules/pam_faillock/pam_faillock.8.xml	2014-05-24 03:15:06.638679204 +0200
+diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/pam_faillock.8.xml Linux-PAM-1.3.0.tpg/modules/pam_faillock/pam_faillock.8.xml
+--- Linux-PAM-1.3.0/modules/pam_faillock/pam_faillock.8.xml	2016-05-08 18:02:04.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_faillock/pam_faillock.8.xml	2016-05-08 18:19:57.394165569 +0000
 @@ -130,7 +130,7 @@
                <listitem>
                  <para>
@@ -174,7 +182,7 @@
                  </para>
                </listitem>
              </varlistentry>
-@@ -356,7 +356,7 @@ session  required       pam_selinux.so o
+@@ -372,7 +372,7 @@
      <title>FILES</title>
      <variablelist>
        <varlistentry>
@@ -182,4 +190,127 @@
 +        <term><filename>/run/faillock/*</filename></term>
          <listitem>
            <para>the files logging the authentication failures for users</para>
+         </listitem>
+diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/README Linux-PAM-1.3.0.tpg/modules/pam_nologin/README
+--- Linux-PAM-1.3.0/modules/pam_nologin/README	2016-04-01 13:23:08.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_nologin/README	2016-05-08 18:20:35.769203271 +0000
+@@ -5,7 +5,7 @@
+ DESCRIPTION
+ 
+ pam_nologin is a PAM module that prevents users from logging into the system
+-when /var/run/nologin or /etc/nologin exists. The contents of the file are
++when /run/nologin or /etc/nologin exists. The contents of the file are
+ displayed to the user. The pam_nologin module has no effect on the root user's
+ ability to log in.
+ 
+@@ -13,7 +13,7 @@
+ 
+ file=/path/nologin
+ 
+-    Use this file instead the default /var/run/nologin or /etc/nologin.
++    Use this file instead the default /run/nologin or /etc/nologin.
+ 
+ successok
+ 
+diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8 Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.8
+--- Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8	2016-04-01 13:23:07.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.8	2016-05-08 18:20:48.193539264 +0000
+@@ -35,7 +35,7 @@
+ .SH "DESCRIPTION"
+ .PP
+ pam_nologin is a PAM module that prevents users from logging into the system when
+-/var/run/nologin
++/run/nologin
+ or
+ /etc/nologin
+ exists\&. The contents of the file are displayed to the user\&. The pam_nologin module has no effect on the root user\*(Aqs ability to log in\&.
+@@ -44,7 +44,7 @@
+ \fBfile=\fR\fB\fI/path/nologin\fR\fR
+ .RS 4
+ Use this file instead the default
+-/var/run/nologin
++/run/nologin
+ or
+ /etc/nologin\&.
+ .RE
+diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8.xml Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.8.xml
+--- Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8.xml	2016-03-24 11:45:42.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.8.xml	2016-05-08 18:21:03.975966087 +0000
+@@ -33,7 +33,7 @@
+ 
+     <para>
+       pam_nologin is a PAM module that prevents users from logging into
+-      the system when <filename>/var/run/nologin</filename> or
++      the system when <filename>/run/nologin</filename> or
+       <filename>/etc/nologin</filename> exists. The contents
+       of the file are displayed to the user. The pam_nologin module
+       has no effect on the root user's ability to log in.
+@@ -51,7 +51,7 @@
+         <listitem>
+           <para>
+             Use this file instead the default
+-            <filename>/var/run/nologin</filename> or
++            <filename>/run/nologin</filename> or
+             <filename>/etc/nologin</filename>.
+           </para>
+         </listitem>
+diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.c Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.c
+--- Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.c	2016-03-24 11:50:21.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.c	2016-05-08 18:21:10.840151729 +0000
+@@ -33,7 +33,7 @@
+ #include <security/pam_modutil.h>
+ #include <security/pam_ext.h>
+ 
+-#define DEFAULT_NOLOGIN_PATH "/var/run/nologin"
++#define DEFAULT_NOLOGIN_PATH "/run/nologin"
+ #define COMPAT_NOLOGIN_PATH "/etc/nologin"
+ 
+ /*
+diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8 Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp.8
+--- Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8	2016-04-01 13:23:24.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp.8	2016-05-08 18:22:00.447493475 +0000
+@@ -115,7 +115,7 @@
+ .\}
+ .SH "FILES"
+ .PP
+-/var/run/pam_timestamp/\&.\&.\&.
++/run/pam_timestamp/\&.\&.\&.
+ .RS 4
+ timestamp files and directories
+ .RE
+diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8.xml Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp.8.xml
+--- Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8.xml	2016-03-24 11:45:42.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp.8.xml	2016-05-08 18:22:17.197946573 +0000
+@@ -167,7 +167,7 @@
+     <title>FILES</title>
+     <variablelist>
+       <varlistentry>
+-        <term><filename>/var/run/pam_timestamp/...</filename></term>
++        <term><filename>/run/pam_timestamp/...</filename></term>
+         <listitem>
+           <para>timestamp files and directories</para>
+         </listitem>
+diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8 Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp_check.8
+--- Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8	2016-04-01 13:23:24.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp_check.8	2016-05-08 18:22:30.182297811 +0000
+@@ -118,7 +118,7 @@
+ .\}
+ .SH "FILES"
+ .PP
+-/var/run/sudo/\&.\&.\&.
++/run/sudo/\&.\&.\&.
+ .RS 4
+ timestamp files and directories
+ .RE
+diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8.xml Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp_check.8.xml
+--- Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8.xml	2016-03-24 11:45:42.000000000 +0000
++++ Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp_check.8.xml	2016-05-08 18:22:45.237705088 +0000
+@@ -171,7 +171,7 @@
+     <title>FILES</title>
+     <variablelist>
+       <varlistentry>
+-        <term><filename>/var/run/sudo/...</filename></term>
++        <term><filename>/run/sudo/...</filename></term>
+         <listitem>
+           <para>timestamp files and directories</para>
          </listitem>
