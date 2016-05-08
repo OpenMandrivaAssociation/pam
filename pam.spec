@@ -67,8 +67,6 @@ Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
 Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
 # (tv/blino) add defaults for nice/rtprio in %{_sysconfdir}/security/limits.conf
 Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
-# (blino) fix parallel build (pam_console)
-Patch521:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 
 Patch700:	pam_fix_static_pam_console.patch
 # (fc) do not output error when no file is in %{_sysconfdir}/security/console.perms.d/
