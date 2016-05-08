@@ -69,8 +69,6 @@ Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
 Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
 
 Patch700:	pam_fix_static_pam_console.patch
-# (fc) do not output error when no file is in %{_sysconfdir}/security/console.perms.d/
-Patch701:	pam-1.1.0-console-nopermsd.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (proyvind): move from /var/run/console to /run/console
