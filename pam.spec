@@ -12,8 +12,8 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.2.1
-Release:	4
+Version:	1.3.0
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -25,8 +25,6 @@ Url:		http://linux-pam.org/
 Source0:	http://www.linux-pam.org/library/Linux-PAM-%{version}.tar.bz2
 
 Source2:	https://fedorahosted.org/releases/p/a/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
-Source3:	pam-0.99.3.0-README.update
-Source4:	pam-0.99.8.1-11mdv2009.0-README.update
 
 Source5:	other.pamd
 Source6:	system-auth.pamd
@@ -37,28 +35,27 @@ Source10:	config-util.pamd
 Source11:	dlopen.sh
 Source12:	system-auth.5
 Source13:	config-util.5
-Source14:	20-nproc.conf
 Source15:	pam-tmpfiles.conf
 Source16:	postlogin.pamd
 Source17:	postlogin.5
 
 # RedHat patches
-Patch1:		pam-1.0.90-redhat-modules.patch
+Patch1:		pam-1.2.0-redhat-modules.patch
 Patch4:		pam-1.1.0-console-nochmod.patch
 Patch5:		pam-1.1.0-notally.patch
-Patch8:		pam-1.1.1-faillock.patch
-Patch9:		pam-1.1.2-noflex.patch
+Patch8:		pam-1.2.1-faillock.patch
+Patch9:		pam-1.1.6-noflex.patch
 Patch10:	pam-1.1.3-nouserenv.patch
-Patch12:	pam-1.1.3-faillock-screensaver.patch
 Patch13:	pam-1.1.6-limits-user.patch
-Patch15:	pam-1.1.6-full-relro.patch
+Patch15:	pam-1.1.8-full-relro.patch
 Patch16:	pam-1.2.0-fix-running-in-containers.patch
 # FIPS related - non upstreamable
-Patch20:	pam-1.1.5-unix-no-fallback.patch
+Patch20:	pam-1.2.0-unix-no-fallback.patch
+Patch21:	pam-1.1.1-console-errmsg.patch
 # Upstreamed partially
-Patch29:	pam-1.1.8-pwhistory-helper.patch
-Patch31:	pam-1.1.6-use-links.patch
-Patch43:	pam-1.1.8-audit-user-mgmt.patch
+Patch29:	pam-1.3.0-pwhistory-helper.patch
+Patch30:	pam-1.1.8-audit-user-mgmt.patch
+Patch31:	pam-1.2.1-console-devname.patch
 
 # Mandriva specific sources/patches
 # (fl) fix infinite loop
@@ -168,6 +165,8 @@ This package contains the development libraries for %{name}.
 %prep
 %setup -q -n Linux-PAM-%{version} -a 2
 
+perl -pi -e "s/\/lib \/usr\/lib/\/lib \/usr\/lib \/lib64 \/usr\/lib64/" m4/libtool.m4
+
 # Add custom modules.
 mv pam-redhat-%{pam_redhat_version}/* modules
 
@@ -186,8 +185,6 @@ mkdir -p doc/txts
 for readme in modules/pam_*/README ; do
 	cp -f ${readme} doc/txts/README.`dirname ${readme} | sed -e 's|^modules/||'`
 done
-
-cp %{SOURCE4} README.0.99.8.1.update.urpmi
 
 touch ChangeLog # to make autoreconf happy
 autoreconf -fi -I m4
@@ -215,7 +212,6 @@ install -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/pam.d/password-auth
 install -m 644 %{SOURCE8} %{buildroot}%{_sysconfdir}/pam.d/fingerprint-auth
 install -m 644 %{SOURCE9} %{buildroot}%{_sysconfdir}/pam.d/smartcard-auth
 install -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/pam.d/config-util
-install -m 644 %{SOURCE14} %{buildroot}%{_sysconfdir}/security/limits.d/90-nproc.conf
 install -m 644 %{SOURCE16} %{buildroot}%{_sysconfdir}/pam.d/postlogin
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
@@ -276,12 +272,12 @@ if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
 	echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
 fi
 
-if [ ! -a /var/log/tallylog ] ; then
-       install -m 600 /dev/null /var/log/tallylog
+if [ ! -a /var/log/tallylog ]; then
+    install -m 600 /dev/null /var/log/tallylog
 fi
 
 %files -f Linux-PAM.lang
-%doc NEWS README.0.99.8.1.update.urpmi
+%doc NEWS
 %docdir %{_docdir}/%{name}
 %dir %{_sysconfdir}/pam.d
 %config(noreplace) %{_sysconfdir}/environment
@@ -309,7 +305,6 @@ fi
 %config(noreplace) %{_sysconfdir}/security/group.conf
 %config(noreplace) %{_sysconfdir}/security/limits.conf
 %dir %{_sysconfdir}/security/limits.d
-%config(noreplace) %{_sysconfdir}/security/limits.d/90-nproc.conf
 %config(noreplace) %{_sysconfdir}/security/namespace.conf
 %attr(755,root,root) %config(noreplace) %{_sysconfdir}/security/namespace.init
 %config(noreplace) %{_sysconfdir}/security/pam_env.conf
