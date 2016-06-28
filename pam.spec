@@ -4,8 +4,8 @@
 %define libname_misc %mklibname %{name}_misc %{major}
 %define devname %mklibname %{name} -d
 
-%bcond_with	prelude
-%bcond_without	bootstrap
+%bcond_with prelude
+%bcond_without bootstrap
 
 %define pam_redhat_version 0.99.11
 
@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.0
-Release:	1
+Release:	2
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
