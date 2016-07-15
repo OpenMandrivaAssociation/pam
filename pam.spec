@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.0
-Release:	2
+Release:	3
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -28,7 +28,6 @@ Source2:	https://fedorahosted.org/releases/p/a/pam-redhat/pam-redhat-%{pam_redha
 
 Source5:	other.pamd
 Source6:	system-auth.pamd
-Source7:	password-auth.pamd
 Source8:	fingerprint-auth.pamd
 Source9:	smartcard-auth.pamd
 Source10:	config-util.pamd
@@ -167,15 +166,6 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 
 %apply_patches
 
-# 08/08/2008 - vdanen - make pam provide pam_unix until we can work out all the issues in pam_tcb; this
-# just makes things easier but is not meant to be a permanent solution
-## Remove unwanted modules; pam_tcb provides pam_unix now
-#for d in pam_unix; do
-#    rm -rf modules/$d
-#    sed -i "s,modules/$d/Makefile,," configure.in
-#    sed -i "s/ $d / /" modules/Makefile.am
-#done
-
 mkdir -p doc/txts
 for readme in modules/pam_*/README ; do
 	cp -f ${readme} doc/txts/README.`dirname ${readme} | sed -e 's|^modules/||'`
@@ -203,7 +193,6 @@ mkdir -p %{buildroot}/%{_lib}/security
 install -d -m 755 %{buildroot}%{_sysconfdir}/pam.d
 install -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/pam.d/other
 install -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/pam.d/system-auth
-install -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/pam.d/password-auth
 install -m 644 %{SOURCE8} %{buildroot}%{_sysconfdir}/pam.d/fingerprint-auth
 install -m 644 %{SOURCE9} %{buildroot}%{_sysconfdir}/pam.d/smartcard-auth
 install -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/pam.d/config-util
@@ -238,6 +227,7 @@ done
 # Check for module problems.  Specifically, check that every module we just
 # installed can actually be loaded by a minimal PAM-aware application.
 /sbin/ldconfig -n %{buildroot}/%{_lib}
+chmod +x %{SOURCE11}
 for module in %{buildroot}/%{_lib}/security/pam*.so ; do
 	if ! env LD_LIBRARY_PATH=%{buildroot}/%{_lib} \
 		sh %{SOURCE11} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
@@ -278,7 +268,6 @@ fi
 %config(noreplace) %{_sysconfdir}/environment
 %config %{_sysconfdir}/pam.d/other
 %attr(0644,root,shadow) %config %{_sysconfdir}/pam.d/system-auth
-%config(noreplace) %{_sysconfdir}/pam.d/password-auth
 %config(noreplace) %{_sysconfdir}/pam.d/fingerprint-auth
 %config(noreplace) %{_sysconfdir}/pam.d/smartcard-auth
 %config %{_sysconfdir}/pam.d/config-util
