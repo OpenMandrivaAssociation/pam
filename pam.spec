@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.0
-Release:	4
+Release:	5
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -104,6 +104,7 @@ Requires:	setup >= 2.7.12-2
 Requires:	pam_pwquality
 Requires(posttrans):	grep
 Requires(posttrans):	coreutils
+Requires(post):	sed
 Conflicts:	%{_lib}pam0 < 1.1.4-5
 
 %description
@@ -254,20 +255,25 @@ fi
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
 # Note: Only affects upgrades, but does no harm so always update if needed.
 if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
-	echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
+    echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
 fi
 
 if [ ! -a /var/log/tallylog ]; then
     install -m 600 /dev/null /var/log/tallylog
 fi
 
+%post
+sed -i -re 's/(^auth[ \t]+sufficient[ \t]+pam_tcb.so.*)/auth        sufficient    pam_unix.so try_first_pass likeauth nullok/' /etc/pam.d/system-auth
+sed -i -re 's/(^account[ \t]+required[ \t]+pam_tcb.so.*)/account     required      pam_unix.so/' /etc/pam.d/system-auth
+sed -i -re 's/(^password[ \t]+sufficient[ \t]+pam_tcb.so.*)/password    sufficient    pam_unix.so try_first_pass use_authtok nullok sha512 shadow/' /etc/pam.d/system-auth
+sed -i -re 's/(^session[ \t]+required[ \t]+pam_tcb.so)/session     required      pam_unix.so/' /etc/pam.d/system-auth
+
 %files -f Linux-PAM.lang
-%doc NEWS
 %docdir %{_docdir}/%{name}
 %dir %{_sysconfdir}/pam.d
 %config(noreplace) %{_sysconfdir}/environment
 %config %{_sysconfdir}/pam.d/other
-%attr(0644,root,shadow) %config %{_sysconfdir}/pam.d/system-auth
+%config %{_sysconfdir}/pam.d/system-auth
 %config(noreplace) %{_sysconfdir}/pam.d/fingerprint-auth
 %config(noreplace) %{_sysconfdir}/pam.d/smartcard-auth
 %config %{_sysconfdir}/pam.d/config-util
@@ -278,8 +284,8 @@ fi
 /sbin/pam_console_apply
 /sbin/pam_tally2
 %attr(0755,root,root) /sbin/pwhistory_helper
-%attr(2755,root,shadow) /sbin/unix_chkpwd
-%attr(0700,root,root) /sbin/unix_update
+%attr(4755,root,root) /sbin/unix_chkpwd
+%attr(4755,root,root) /sbin/unix_update
 
 %attr(4755,root,root) /sbin/pam_timestamp_check
 %config(noreplace) %{_sysconfdir}/security/access.conf
@@ -315,7 +321,6 @@ fi
 /%{_lib}/libpam_misc.so.%{major}*
 
 %files -n %{devname}
-%doc Copyright
 /%{_lib}/libpam.so
 /%{_lib}/libpam_misc.so
 /%{_lib}/libpamc.so
@@ -324,3 +329,4 @@ fi
 
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright
+%doc NEWS
