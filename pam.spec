@@ -286,7 +286,6 @@ sed -i -re 's/(^session[ \t]+required[ \t]+pam_tcb.so)/session     required     
 %attr(0755,root,root) /sbin/pwhistory_helper
 %attr(4755,root,root) /sbin/unix_chkpwd
 %attr(4755,root,root) /sbin/unix_update
-
 %attr(4755,root,root) /sbin/pam_timestamp_check
 %config(noreplace) %{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
@@ -328,5 +327,5 @@ sed -i -re 's/(^session[ \t]+required[ \t]+pam_tcb.so)/session     required     
 %{_mandir}/man3/*
 
 %files doc
-%doc doc/txts doc/specs/rfc86.0.txt Copyright
-%doc NEWS
+%doc doc/txts doc/specs/rfc86.0.txt Copyright NEWS
+%doc %{_docdir}/%{name}/*
