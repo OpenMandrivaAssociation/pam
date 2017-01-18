@@ -1,4 +1,4 @@
-%define major	0
+%define major 0
 %define libname %mklibname %{name} %{major}
 %define libnamec %mklibname %{name}c %{major}
 %define libname_misc %mklibname %{name}_misc %{major}
@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.0
-Release:	5
+Release:	6
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -101,7 +101,6 @@ BuildRequires:	docbook-dtds
 
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
-Requires:	pam_pwquality
 Requires(posttrans):	grep
 Requires(posttrans):	coreutils
 Requires(post):	sed
@@ -207,7 +206,7 @@ install -d %{buildroot}/run/faillock
 # Install man pages.
 install -m 644 %{SOURCE12} %{SOURCE13} %{SOURCE17} %{buildroot}%{_mandir}/man5/
 for phase in auth acct passwd session ; do
-	ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
+    ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
 
 %find_lang Linux-PAM
@@ -217,11 +216,11 @@ done
 # Make sure every module subdirectory gave us a module.  Yes, this is hackish.
 for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
-         [[ "${dir}" = "modules/pam_tally" ]] && continue
-	if ! ls -1 %{buildroot}/%{_lib}/security/`basename ${dir}`*.so ; then
-		echo ERROR `basename ${dir}` did not build a module.
-		exit 1
-	fi
+    [[ "${dir}" = "modules/pam_tally" ]] && continue
+    if ! ls -1 %{buildroot}/%{_lib}/security/`basename ${dir}`*.so ; then
+	echo ERROR `basename ${dir}` did not build a module.
+	exit 1
+    fi
 fi
 done
 
@@ -230,25 +229,25 @@ done
 /sbin/ldconfig -n %{buildroot}/%{_lib}
 chmod +x %{SOURCE11}
 for module in %{buildroot}/%{_lib}/security/pam*.so ; do
-	if ! env LD_LIBRARY_PATH=%{buildroot}/%{_lib} \
-		sh %{SOURCE11} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
-		echo ERROR module: ${module} cannot be loaded.
-		exit 1
-	fi
+    if ! env LD_LIBRARY_PATH=%{buildroot}/%{_lib} \
+	sh %{SOURCE11} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
+	echo ERROR module: ${module} cannot be loaded.
+	exit 1
+    fi
 done
 
 %triggerprein -- dbus < 1.1.8-7
 if [ -d %{_varrun}/console ]; then
-   if [ -d /run/console ]; then
-      if [ -e /run/console/console.lock ]; then
-          rm -rf %{_varrun}/console
-      else
-          rm -rf /run/console
-          mv %{_varrun}/console /run/
-      fi
-   else
-      mv %{_varrun}/console /run/
-   fi
+    if [ -d /run/console ]; then
+	if [ -e /run/console/console.lock ]; then
+	    rm -rf %{_varrun}/console
+	else
+	    rm -rf /run/console
+	    mv %{_varrun}/console /run/
+	fi
+    else
+	mv %{_varrun}/console /run/
+    fi
 fi
 
 %posttrans
