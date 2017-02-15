@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.0
-Release:	4
+Release:	5
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -64,8 +64,6 @@ Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
 # (fl) pam_xauth: set extra groups because in high security levels
 #      access to /usr/X11R6/bin dir is controlled by a group
 Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
-# (tv/blino) add defaults for nice/rtprio in %{_sysconfdir}/security/limits.conf
-Patch517:	Linux-PAM-0.99.3.0-enable_rt.patch
 
 Patch700:	pam_fix_static_pam_console.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
