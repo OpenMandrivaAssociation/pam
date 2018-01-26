@@ -61,6 +61,7 @@ Patch31:	pam-1.2.1-console-devname.patch
 Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
 Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
+Patch509:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 # (fl) pam_xauth: set extra groups because in high security levels
 #      access to /usr/X11R6/bin dir is controlled by a group
 Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
