@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.0
-Release:	8
+Release:	9
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -104,6 +104,7 @@ Requires(post):	/bin/sh
 Requires(post):	grep
 Requires(post):	coreutils
 Requires(post):	sed
+Requires(post):	util-linux
 Conflicts:	%{_lib}pam0 < 1.1.4-5
 
 %description
