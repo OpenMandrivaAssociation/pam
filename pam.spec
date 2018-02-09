@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.0
-Release:	9
+Release:	10
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -100,11 +100,7 @@ BuildRequires:	docbook-dtds
 
 Requires:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
-Requires(post):	/bin/sh
-Requires(post):	grep
-Requires(post):	coreutils
-Requires(post):	sed
-Requires(post):	util-linux
+Requires:	filesystem
 Conflicts:	%{_lib}pam0 < 1.1.4-5
 
 %description
@@ -112,39 +108,39 @@ PAM (Pluggable Authentication Modules) is a system security tool that
 allows system administrators to set authentication policy without
 having to recompile programs that handle authentication.
 
-%package	doc
+%package doc
 Summary:	Additional documentation for %{name}
 Group:		System/Libraries
 Requires:	%{name} = %{EVRD}
 
-%description	doc
+%description doc
 This is the documentation package of %{name}.
 
-%package -n	%{libname}
+%package -n %{libname}
 Summary:	Library for %{name}
 Group:		System/Libraries
 Conflicts:	pam < 1.1.4-5
 
-%description -n	%{libname}
+%description -n %{libname}
 This package contains the library libpam for %{name}.
 
-%package -n	%{libnamec}
+%package -n %{libnamec}
 Summary:	Library for %{name}
 Group:		System/Libraries
 Conflicts:	%{_lib}pam0 < 1.1.4-5
 
-%description -n	%{libnamec}
+%description -n %{libnamec}
 This package contains the library libpamc for %{name}.
 
-%package -n	%{libname_misc}
+%package -n %{libname_misc}
 Summary:	Library for %{name}
 Group:		System/Libraries
 Conflicts:	%{_lib}pam0 < 1.1.4-5
 
-%description -n	%{libname_misc}
+%description -n %{libname_misc}
 This package contains the library libpam_misc for %{name}.
 
-%package -n	%{devname}
+%package -n %{devname}
 Summary:	Development headers and libraries for %{name}
 Group:		Development/Other
 Requires:	%{libname} = %{EVRD}
@@ -152,7 +148,7 @@ Requires:	%{libnamec} = %{EVRD}
 Requires:	%{libname_misc} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
 
-%description -n	%{devname}
+%description -n %{devname}
 PAM (Pluggable Authentication Modules) is a system security tool that
 allows system administrators to set authentication policy without
 having to recompile programs that handle authentication.
@@ -251,22 +247,19 @@ if [ -d %{_varrun}/console ]; then
     fi
 fi
 
-%post
-if [ $1 -ge 2 ]; then
-    sed -i -re 's/(^auth[ \t]+sufficient[ \t]+pam_tcb.so.*)/auth        sufficient    pam_unix.so try_first_pass likeauth nullok/' /etc/pam.d/system-auth
-    sed -i -re 's/(^account[ \t]+required[ \t]+pam_tcb.so.*)/account     required      pam_unix.so/' /etc/pam.d/system-auth
-    sed -i -re 's/(^password[ \t]+sufficient[ \t]+pam_tcb.so.*)/password    sufficient    pam_unix.so try_first_pass use_authtok nullok sha512 shadow/' /etc/pam.d/system-auth
-    sed -i -re 's/(^session[ \t]+required[ \t]+pam_tcb.so)/session     required      pam_unix.so/' /etc/pam.d/system-auth
-
+%triggerin -- %{name} < 1:1.3.0-10
+sed -i -re 's/(^auth[ \t]+sufficient[ \t]+pam_tcb.so.*)/auth        sufficient    pam_unix.so try_first_pass likeauth nullok/' /etc/pam.d/system-auth
+sed -i -re 's/(^account[ \t]+required[ \t]+pam_tcb.so.*)/account     required      pam_unix.so/' /etc/pam.d/system-auth
+sed -i -re 's/(^password[ \t]+sufficient[ \t]+pam_tcb.so.*)/password    sufficient    pam_unix.so try_first_pass use_authtok nullok sha512 shadow/' /etc/pam.d/system-auth
+sed -i -re 's/(^session[ \t]+required[ \t]+pam_tcb.so)/session     required      pam_unix.so/' /etc/pam.d/system-auth
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
 # Note: Only affects upgrades, but does no harm so always update if needed.
-    if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
-	echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
-    fi
+if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
+    echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
+fi
 
-    if [ ! -a /var/log/tallylog ]; then
-	install -m 600 /dev/null /var/log/tallylog
-    fi
+if [ ! -a /var/log/tallylog ]; then
+    install -m 600 /dev/null /var/log/tallylog
 fi
 
 %files -f Linux-PAM.lang
