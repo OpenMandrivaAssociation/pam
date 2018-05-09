@@ -90,6 +90,8 @@ BuildRequires:	glibc-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	xauth
+# For _tmpfilesdir macro
+BuildRequires:	systemd
 %if %{with prelude}
 BuildRequires:	pkgconfig(libprelude)
 %else
