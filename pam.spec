@@ -73,6 +73,7 @@ Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 Patch703:	Linux-PAM-1.1.8-move-from-varrun-to-run.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
+Patch802:	pam-1.3.0-browserdetection.patch
 
 BuildRequires:	bison
 BuildRequires:	flex
@@ -88,6 +89,7 @@ BuildRequires:	glibc-crypt_blowfish-devel
 BuildRequires:	glibc-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(openssl)
+BuildRequires:	xauth
 %if %{with prelude}
 BuildRequires:	pkgconfig(libprelude)
 %else
