@@ -178,7 +178,7 @@ export BROWSER=""
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
 	--docdir=%{_docdir}/%{name} \
-	--enable-regenerate-docu \
+	--enable-docu --enable-regenerate-docu \
 	--disable-selinux
 
 %make
