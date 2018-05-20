@@ -12,8 +12,8 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.3.0
-Release:	12
+Version:	1.3.1
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -22,7 +22,7 @@ Url:		http://linux-pam.org/
 #Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
 #Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
 # (tpg) new url
-Source0:	http://www.linux-pam.org/library/Linux-PAM-%{version}.tar.bz2
+Source0:	http://www.linux-pam.org/library/Linux-PAM-%{version}.tar.xz
 
 Source2:	https://fedorahosted.org/releases/p/a/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
 
@@ -88,6 +88,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	glibc-crypt_blowfish-devel
 BuildRequires:	glibc-devel
 BuildRequires:	pkgconfig(libtirpc)
+BuildRequires:	pkgconfig(libnsl)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	xauth
 # For _tmpfilesdir macro
