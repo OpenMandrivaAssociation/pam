@@ -1,0 +1,15 @@
+diff -urN Linux-PAM-1.3.0/configure.ac Linux-PAM-1.3.0-patched/configure.ac
+--- Linux-PAM-1.3.0/configure.ac	2016-04-28 21:21:59.000000000 +1000
++++ Linux-PAM-1.3.0-patched/configure.ac	2016-09-19 17:20:03.612168890 +1000
+@@ -554,9 +554,9 @@
+ JH_CHECK_XML_CATALOG([http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl],
+                 [DocBook XSL Stylesheets], [], enable_docu=no)
+ 
+-AC_PATH_PROG([BROWSER], [w3m])
++AC_PATH_PROG([BROWSER], [html2text])
+ if test ! -z "$BROWSER"; then
+-     BROWSER="$BROWSER -T text/html -dump"
++     BROWSER="$BROWSER"
+ else
+      AC_PATH_PROG([BROWSER], [links])
+      if test ! -z "$BROWSER"; then
