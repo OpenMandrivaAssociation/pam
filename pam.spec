@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.1
-Release:	1
+Release:	2
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -93,7 +93,7 @@ BuildRequires:	pkgconfig(libnsl)
 BuildRequires:	pkgconfig(openssl)
 BuildRequires:	xauth
 # For _tmpfilesdir macro
-BuildRequires:	systemd
+BuildRequires:	systemd-macros
 %if %{with prelude}
 BuildRequires:	pkgconfig(libprelude)
 %else
@@ -105,10 +105,10 @@ BuildRequires:	html2text
 BuildRequires:	docbook-style-xsl
 BuildRequires:	docbook-dtds
 
-Recommends:	cracklib-dicts
 Requires:	setup >= 2.7.12-2
 Requires:	filesystem
 Conflicts:	%{_lib}pam0 < 1.1.4-5
+Suggests:	%{name}-cracklib >= %{EVRD}
 
 %description
 PAM (Pluggable Authentication Modules) is a system security tool that
@@ -161,6 +161,15 @@ allows system administrators to set authentication policy without
 having to recompile programs that handle authentication.
 
 This package contains the development libraries for %{name}.
+
+%package cracklib
+Summary:	PAM module to enable cracklib support
+Group:		System/Libraries
+Requires:	%{name}
+Requires:	cracklib-dicts
+
+%description cracklib
+PAM module to enable cracklib support.
 
 %prep
 %setup -q -n Linux-PAM-%{version} -a 2
@@ -262,11 +271,11 @@ sed -i -re 's/(^session[ \t]+required[ \t]+pam_tcb.so)/session     required     
 # (cg) Ensure that the pam_systemd.so is included for user ACLs under systemd
 # Note: Only affects upgrades, but does no harm so always update if needed.
 if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
-    echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
+	echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
 fi
 
 if [ ! -a /var/log/tallylog ]; then
-    install -m 600 /dev/null /var/log/tallylog
+	install -m 600 /dev/null /var/log/tallylog
 fi
 
 %files -f Linux-PAM.lang
@@ -310,6 +319,8 @@ fi
 %ghost %verify(not md5 size mtime) /var/log/tallylog
 %{_mandir}/man5/*
 %{_mandir}/man8/*
+%exclude /%{_lib}/security/pam_cracklib.so
+%exclude %{_mandir}/man8/pam_cracklib.8.*
 
 %files -n %{libname}
 /%{_lib}/libpam.so.%{major}*
@@ -326,6 +337,10 @@ fi
 /%{_lib}/libpamc.so
 %{_includedir}/security/*.h
 %{_mandir}/man3/*
+
+%files cracklib
+/%{_lib}/security/pam_cracklib.so
+%{_mandir}/man8/pam_cracklib.8.*
 
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright NEWS
