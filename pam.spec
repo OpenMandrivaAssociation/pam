@@ -7,13 +7,13 @@
 %bcond_with prelude
 %bcond_without bootstrap
 
-%define pam_redhat_version 0.99.11
+%define pam_redhat_version 1.0.0
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.1
-Release:	3
+Release:	4
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -24,7 +24,7 @@ Url:		http://linux-pam.org/
 # (tpg) new url
 Source0:	http://www.linux-pam.org/library/Linux-PAM-%{version}.tar.xz
 
-Source2:	https://fedorahosted.org/releases/p/a/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
+Source2:	https://releases.pagure.org/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
 
 Source5:	other.pamd
 Source6:	system-auth.pamd
@@ -39,24 +39,40 @@ Source16:	postlogin.pamd
 Source17:	postlogin.5
 
 # RedHat patches
-Patch1:		pam-1.2.0-redhat-modules.patch
-Patch4:		pam-1.1.0-console-nochmod.patch
-Patch5:		pam-1.1.0-notally.patch
-Patch8:		pam-1.2.1-faillock.patch
-Patch9:		pam-1.1.6-noflex.patch
-Patch10:	pam-1.1.3-nouserenv.patch
-Patch13:	pam-1.1.6-limits-user.patch
-Patch15:	pam-1.1.8-full-relro.patch
-Patch16:	pam-1.2.0-fix-running-in-containers.patch
-# FIPS related - non upstreamable
-Patch20:	pam-1.2.0-unix-no-fallback.patch
-Patch21:	pam-1.1.1-console-errmsg.patch
+Patch1:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-redhat-modules.patch
+Patch9:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-noflex.patch
+Patch10:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.3-nouserenv.patch
+Patch13:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.6-limits-user.patch
+Patch15:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.8-full-relro.patch
+	
 # Upstreamed partially
-Patch29:	pam-1.3.0-pwhistory-helper.patch
-Patch30:	pam-1.1.8-audit-user-mgmt.patch
-Patch31:	pam-1.2.1-console-devname.patch
+Patch29:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.0-pwhistory-helper.patch
+Patch31:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.8-audit-user-mgmt.patch
+Patch33:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.0-unix-nomsg.patch
+Patch34:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-coverity.patch
+# https://github.com/linux-pam/linux-pam/commit/a2b72aeb86f297d349bc9e6a8f059fedf97a499a
+Patch36:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-remove-obsolete-_unix_read_password-prototype.patch
+# https://github.com/linux-pam/linux-pam/commit/f7abb8c1ef3aa31e6c2564a8aaf69683a77c2016.patch
+Patch37:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-bcrypt_b.patch
+# https://github.com/linux-pam/linux-pam/commit/dce80b3f11b3c3aa137d18f22699809094dd64b6
+Patch38:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-gensalt-autoentropy.patch
+# https://github.com/linux-pam/linux-pam/commit/4da9febc39b955892a30686e8396785b96bb8ba5
+Patch39:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-crypt_checksalt.patch
+# https://github.com/linux-pam/linux-pam/commit/16bd523f85ede9fa9115f80e826f2d803d7e61d4
+Patch40:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-yescrypt.patch
+# To be upstreamed soon.
+Patch41:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-no-fallback.patch
+# https://github.com/linux-pam/linux-pam/commit/f9c9c72121eada731e010ab3620762bcf63db08f
+# https://github.com/linux-pam/linux-pam/commit/8eaf5570cf011148a0b55c53570df5edaafebdb0
+Patch42:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-motd-multiple-paths.patch
+# https://github.com/linux-pam/linux-pam/commit/86eed7ca01864b9fd17099e57f10f2b9b6b568a1
+Patch43:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-checksalt_syslog.patch
+# https://github.com/linux-pam/linux-pam/commit/d8d11db2cef65da5d2afa7acf21aa9c8cd88abed
+Patch44:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-fix_checksalt_syslog.patch
 
-# Mandriva specific sources/patches
+# OpenMandriva specific sources/patches
+# (bero) fix running in docker and systemd-nspawn
+Patch500:	pam-1.2.0-fix-running-in-containers.patch
 # (fl) fix infinite loop
 Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
@@ -84,7 +100,7 @@ BuildRequires:	linuxdoc-tools
 %endif
 BuildRequires:	audit-devel >= 2.2.2
 BuildRequires:	cracklib-devel
-BuildRequires:	db-devel
+BuildRequires:	db-devel >= 18.1
 BuildRequires:	gettext-devel
 BuildRequires:	glibc-crypt_blowfish-devel
 BuildRequires:	glibc-devel
@@ -230,6 +246,7 @@ done
 for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
     [[ "${dir}" = "modules/pam_tally" ]] && continue
+    [[ "${dir}" = "modules/pam_tally2" ]] && continue
     if ! ls -1 %{buildroot}/%{_lib}/security/`basename ${dir}`*.so ; then
 	echo ERROR `basename ${dir}` did not build a module.
 	exit 1
@@ -292,7 +309,6 @@ fi
 /sbin/faillock
 /sbin/mkhomedir_helper
 /sbin/pam_console_apply
-/sbin/pam_tally2
 %attr(0755,root,root) /sbin/pwhistory_helper
 %attr(4755,root,root) /sbin/unix_chkpwd
 %attr(4755,root,root) /sbin/unix_update
