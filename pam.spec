@@ -258,6 +258,7 @@ done
 for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
     [[ "${dir}" = "modules/pam_tally" ]] && continue
+    [[ "${dir}" = "modules/pam_tally2" ]] && continue
     if ! ls -1 %{buildroot}/%{_lib}/security/$(basename ${dir})*.so ; then
 	echo ERROR $(basename ${dir}) did not build a module.
 	exit 1
