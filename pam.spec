@@ -7,7 +7,7 @@
 %bcond_with prelude
 %bcond_without bootstrap
 
-%define pam_redhat_version 1.0.0
+%define pam_redhat_version 1.1.1
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
@@ -109,7 +109,7 @@ BuildRequires:	audit-devel >= 2.2.2
 BuildRequires:	cracklib-devel
 BuildRequires:	db-devel >= 18.1
 BuildRequires:	gettext-devel
-BuildRequires:	glibc-crypt_blowfish-devel
+BuildRequires:	pkgconfig(libxcrypt)
 BuildRequires:	glibc-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libnsl)
@@ -200,12 +200,15 @@ PAM module to enable cracklib support.
 # Add custom modules.
 mv pam-redhat-%{pam_redhat_version}/* modules
 
-%apply_patches
+%autopatch -p1
 
 mkdir -p doc/txts
 for readme in modules/pam_*/README ; do
-    cp -f ${readme} doc/txts/README.`dirname ${readme} | sed -e 's|^modules/||'`
+    cp -f ${readme} doc/txts/README.$(dirname ${readme} | sed -e 's|^modules/||')
 done
+
+rm -rf doc/txts/README.pam_tally*
+rm -rf doc/sag/html/*pam_tally* 
 
 touch ChangeLog # to make autoreconf happy
 autoreconf -fi -I m4
@@ -235,9 +238,11 @@ install -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/pam.d/config-util
 install -m 644 %{SOURCE16} %{buildroot}%{_sysconfdir}/pam.d/postlogin
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
-install -m 600 /dev/null %{buildroot}/var/log/tallylog
+install -d -m 755 %{buildroot}/var/run/faillock
+install -d -m 755 %{buildroot}%{_sysconfdir}/motd.d
+install -d -m 755 %{buildroot}/usr/lib/motd.d
+install -d -m 755 %{buildroot}/run/motd.d
 install -D -p -m 644 %{SOURCE15} %{buildroot}%{_tmpfilesdir}/%{name}.conf
-install -d %{buildroot}/run/faillock
 
 # Install man pages.
 install -m 644 %{SOURCE12} %{SOURCE13} %{SOURCE17} %{buildroot}%{_mandir}/man5/
@@ -253,9 +258,8 @@ done
 for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
     [[ "${dir}" = "modules/pam_tally" ]] && continue
-    [[ "${dir}" = "modules/pam_tally2" ]] && continue
-    if ! ls -1 %{buildroot}/%{_lib}/security/`basename ${dir}`*.so ; then
-	echo ERROR `basename ${dir}` did not build a module.
+    if ! ls -1 %{buildroot}/%{_lib}/security/$(basename ${dir})*.so ; then
+	echo ERROR $(basename ${dir}) did not build a module.
 	exit 1
     fi
 fi
@@ -298,9 +302,6 @@ if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
 	echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
 fi
 
-if [ ! -a /var/log/tallylog ]; then
-	install -m 600 /dev/null /var/log/tallylog
-fi
 
 %files -f Linux-PAM.lang
 %docdir %{_docdir}/%{name}
@@ -324,6 +325,7 @@ fi
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
 %config(noreplace) %{_sysconfdir}/security/console.perms
 %config(noreplace) %{_sysconfdir}/security/console.handlers
+%config(noreplace) %{_sysconfdir}/security/faillock.conf
 %config(noreplace) %{_sysconfdir}/security/group.conf
 %config(noreplace) %{_sysconfdir}/security/limits.conf
 %dir %{_sysconfdir}/security/limits.d
@@ -339,7 +341,9 @@ fi
 /%{_lib}/security/pam_filter
 %ghost %dir /run/console
 %ghost %dir /run/faillock
-%ghost %verify(not md5 size mtime) /var/log/tallylog
+%dir %{_sysconfdir}/motd.d
+%dir /run/motd.d
+%dir /usr/lib/motd.d
 %{_mandir}/man5/*
 %{_mandir}/man8/*
 %exclude /%{_lib}/security/pam_cracklib.so
