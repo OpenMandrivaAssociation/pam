@@ -1,6 +1,18 @@
-diff -Naur Linux-PAM-1.3.0/modules/pam_console/Makefile.am Linux-PAM-1.3.0.tpg/modules/pam_console/Makefile.am
---- Linux-PAM-1.3.0/modules/pam_console/Makefile.am	2016-05-08 18:02:04.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_console/Makefile.am	2016-05-08 18:14:26.980236496 +0000
+diff -Naur Linux-PAM-1.3.1/libpam/include/security/_pam_macros.h Linux-PAM-1.3.1.tpg/libpam/include/security/_pam_macros.h
+--- Linux-PAM-1.3.1/libpam/include/security/_pam_macros.h	2017-02-10 10:10:15.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/libpam/include/security/_pam_macros.h	2019-11-05 15:16:37.308119619 +0000
+@@ -86,7 +86,7 @@
+  */
+ 
+ #ifndef _PAM_LOGFILE
+-#define _PAM_LOGFILE "/var/run/pam-debug.log"
++#define _PAM_LOGFILE "/run/pam-debug.log"
+ #endif
+ 
+ static void _pam_output_debug_info(const char *file, const char *fn
+diff -Naur Linux-PAM-1.3.1/modules/pam_console/Makefile.am Linux-PAM-1.3.1.tpg/modules/pam_console/Makefile.am
+--- Linux-PAM-1.3.1/modules/pam_console/Makefile.am	2019-11-05 15:11:43.887117889 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_console/Makefile.am	2019-11-05 15:16:37.323119619 +0000
 @@ -13,7 +13,7 @@
  
  EXTRA_DIST = README $(man_MANS) $(CONFFILES) sed-static configfile.y configfile.l
@@ -10,9 +22,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_console/Makefile.am Linux-PAM-1.3.0.tpg/m
  LOCKMODE = 755
  
  securelibdir = $(SECUREDIR)
-diff -Naur Linux-PAM-1.3.0/modules/pam_console/console.handlers Linux-PAM-1.3.0.tpg/modules/pam_console/console.handlers
---- Linux-PAM-1.3.0/modules/pam_console/console.handlers	2016-05-08 18:02:04.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_console/console.handlers	2016-05-08 18:14:53.505952906 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_console/console.handlers Linux-PAM-1.3.1.tpg/modules/pam_console/console.handlers
+--- Linux-PAM-1.3.1/modules/pam_console/console.handlers	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_console/console.handlers	2019-11-05 15:16:37.323119619 +0000
 @@ -12,6 +12,6 @@
  # Example:
  # console consoledevs tty[0-9][0-9]* vc/[0-9][0-9]* :[0-9]\.[0-9] :[0-9]
@@ -21,9 +33,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_console/console.handlers Linux-PAM-1.3.0.
 +# touch unlock wait /run/console-unlocked
  
  console consoledevs /dev/tty[0-9][0-9]* tty[0-9][0-9]* vc/[0-9][0-9]* :[0-9]+\.[0-9]+ :[0-9]+
-diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console.8 Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console.8
---- Linux-PAM-1.3.0/modules/pam_console/pam_console.8	2014-01-31 13:17:53.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console.8	2016-05-08 18:15:22.955748383 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_console/pam_console.8 Linux-PAM-1.3.1.tpg/modules/pam_console/pam_console.8
+--- Linux-PAM-1.3.1/modules/pam_console/pam_console.8	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_console/pam_console.8	2019-11-05 15:16:37.323119619 +0000
 @@ -73,9 +73,9 @@
  session optional pam_console.so
  .br
@@ -36,9 +48,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console.8 Linux-PAM-1.3.0.tpg
  .br
  \fI/etc/security/console.apps\fP
  .br
-diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console.c Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console.c
---- Linux-PAM-1.3.0/modules/pam_console/pam_console.c	2014-01-31 13:17:53.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console.c	2016-05-08 18:17:17.503843360 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_console/pam_console.c Linux-PAM-1.3.1.tpg/modules/pam_console/pam_console.c
+--- Linux-PAM-1.3.1/modules/pam_console/pam_console.c	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_console/pam_console.c	2019-11-05 15:16:37.323119619 +0000
 @@ -2,7 +2,7 @@
   * This software may be used under the terms of the GNU General Public
   * License, available in the file COPYING accompanying this file.
@@ -107,9 +119,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console.c Linux-PAM-1.3.0.tpg
     *   in any case.
     */
      int fd;
-diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console_apply.8 Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console_apply.8
---- Linux-PAM-1.3.0/modules/pam_console/pam_console_apply.8	2014-01-31 13:17:53.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_console/pam_console_apply.8	2016-05-08 18:15:40.772229676 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_console/pam_console_apply.8 Linux-PAM-1.3.1.tpg/modules/pam_console/pam_console_apply.8
+--- Linux-PAM-1.3.1/modules/pam_console/pam_console_apply.8	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_console/pam_console_apply.8	2019-11-05 15:16:37.323119619 +0000
 @@ -9,7 +9,7 @@
  \fBpam_console_apply\fP is a helper executable which sets or resets permissions
  on device nodes.
@@ -137,9 +149,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_console/pam_console_apply.8 Linux-PAM-1.3
  .br
  \fI/etc/security/console.perms\fP
  .br
-diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/faillock.8.xml Linux-PAM-1.3.0.tpg/modules/pam_faillock/faillock.8.xml
---- Linux-PAM-1.3.0/modules/pam_faillock/faillock.8.xml	2016-05-08 18:02:04.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_faillock/faillock.8.xml	2016-05-08 18:19:11.458923597 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_faillock/faillock.8.xml Linux-PAM-1.3.1.tpg/modules/pam_faillock/faillock.8.xml
+--- Linux-PAM-1.3.1/modules/pam_faillock/faillock.8.xml	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_faillock/faillock.8.xml	2019-11-05 15:16:37.309119619 +0000
 @@ -62,7 +62,7 @@
                <listitem>
                  <para>
@@ -158,22 +170,24 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/faillock.8.xml Linux-PAM-1.3.0.t
          <listitem>
            <para>the files logging the authentication failures for users</para>
          </listitem>
-diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/faillock.h Linux-PAM-1.3.0.tpg/modules/pam_faillock/faillock.h
---- Linux-PAM-1.3.0/modules/pam_faillock/faillock.h	2016-05-08 18:02:04.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_faillock/faillock.h	2016-05-08 18:19:30.947450494 +0000
-@@ -64,7 +64,7 @@
- 	unsigned int count;		/* number of records */
- };
- 
--#define FAILLOCK_DEFAULT_TALLYDIR "/var/run/faillock"
-+#define FAILLOCK_DEFAULT_TALLYDIR "/run/faillock"
- 
- int open_tally(const char *dir, const char *user, uid_t uid, int create);
- int read_tally(int fd, struct tally_data *tallies);
-diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/pam_faillock.8.xml Linux-PAM-1.3.0.tpg/modules/pam_faillock/pam_faillock.8.xml
---- Linux-PAM-1.3.0/modules/pam_faillock/pam_faillock.8.xml	2016-05-08 18:02:04.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_faillock/pam_faillock.8.xml	2016-05-08 18:19:57.394165569 +0000
-@@ -130,7 +130,7 @@
+diff -Naur Linux-PAM-1.3.1/modules/pam_faillock/faillock.conf Linux-PAM-1.3.1.tpg/modules/pam_faillock/faillock.conf
+--- Linux-PAM-1.3.1/modules/pam_faillock/faillock.conf	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_faillock/faillock.conf	2019-11-05 15:16:37.309119619 +0000
+@@ -2,8 +2,8 @@
+ # authentication attempts.
+ #
+ # The directory where the user files with the failure records are kept.
+-# The default is /var/run/faillock.
+-# dir = /var/run/faillock
++# The default is /run/faillock.
++# dir = /run/faillock
+ #
+ # Will log the user name into the system log if the user is not found.
+ # Enabled if option is present.
+diff -Naur Linux-PAM-1.3.1/modules/pam_faillock/faillock.conf.5.xml Linux-PAM-1.3.1.tpg/modules/pam_faillock/faillock.conf.5.xml
+--- Linux-PAM-1.3.1/modules/pam_faillock/faillock.conf.5.xml	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_faillock/faillock.conf.5.xml	2019-11-05 15:16:37.310119619 +0000
+@@ -42,7 +42,7 @@
                <listitem>
                  <para>
                    The directory where the user files with the failure records are kept. The
@@ -182,7 +196,22 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/pam_faillock.8.xml Linux-PAM-1.3
                  </para>
                </listitem>
              </varlistentry>
-@@ -372,7 +372,7 @@
+diff -Naur Linux-PAM-1.3.1/modules/pam_faillock/faillock.h Linux-PAM-1.3.1.tpg/modules/pam_faillock/faillock.h
+--- Linux-PAM-1.3.1/modules/pam_faillock/faillock.h	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_faillock/faillock.h	2019-11-05 15:16:37.309119619 +0000
+@@ -64,7 +64,7 @@
+ 	unsigned int count;		/* number of records */
+ };
+ 
+-#define FAILLOCK_DEFAULT_TALLYDIR "/var/run/faillock"
++#define FAILLOCK_DEFAULT_TALLYDIR "/run/faillock"
+ #define FAILLOCK_DEFAULT_CONF "/etc/security/faillock.conf"
+ 
+ int open_tally(const char *dir, const char *user, uid_t uid, int create);
+diff -Naur Linux-PAM-1.3.1/modules/pam_faillock/pam_faillock.8.xml Linux-PAM-1.3.1.tpg/modules/pam_faillock/pam_faillock.8.xml
+--- Linux-PAM-1.3.1/modules/pam_faillock/pam_faillock.8.xml	2019-10-16 14:26:05.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_faillock/pam_faillock.8.xml	2019-11-05 15:16:37.309119619 +0000
+@@ -277,7 +277,7 @@
      <title>FILES</title>
      <variablelist>
        <varlistentry>
@@ -191,9 +220,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_faillock/pam_faillock.8.xml Linux-PAM-1.3
          <listitem>
            <para>the files logging the authentication failures for users</para>
          </listitem>
-diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/README Linux-PAM-1.3.0.tpg/modules/pam_nologin/README
---- Linux-PAM-1.3.0/modules/pam_nologin/README	2016-04-01 13:23:08.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_nologin/README	2016-05-08 18:20:35.769203271 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_nologin/README Linux-PAM-1.3.1.tpg/modules/pam_nologin/README
+--- Linux-PAM-1.3.1/modules/pam_nologin/README	2017-05-18 07:45:41.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_nologin/README	2019-11-05 15:16:37.308119619 +0000
 @@ -5,7 +5,7 @@
  DESCRIPTION
  
@@ -212,9 +241,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/README Linux-PAM-1.3.0.tpg/module
  
  successok
  
-diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8 Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.8
---- Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8	2016-04-01 13:23:07.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.8	2016-05-08 18:20:48.193539264 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_nologin/pam_nologin.8 Linux-PAM-1.3.1.tpg/modules/pam_nologin/pam_nologin.8
+--- Linux-PAM-1.3.1/modules/pam_nologin/pam_nologin.8	2017-05-18 07:45:41.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_nologin/pam_nologin.8	2019-11-05 15:16:37.309119619 +0000
 @@ -35,7 +35,7 @@
  .SH "DESCRIPTION"
  .PP
@@ -233,9 +262,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8 Linux-PAM-1.3.0.tpg
  or
  /etc/nologin\&.
  .RE
-diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8.xml Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.8.xml
---- Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8.xml	2016-03-24 11:45:42.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.8.xml	2016-05-08 18:21:03.975966087 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_nologin/pam_nologin.8.xml Linux-PAM-1.3.1.tpg/modules/pam_nologin/pam_nologin.8.xml
+--- Linux-PAM-1.3.1/modules/pam_nologin/pam_nologin.8.xml	2017-02-10 10:10:15.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_nologin/pam_nologin.8.xml	2019-11-05 15:16:37.309119619 +0000
 @@ -33,7 +33,7 @@
  
      <para>
@@ -254,9 +283,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.8.xml Linux-PAM-1.3.0
              <filename>/etc/nologin</filename>.
            </para>
          </listitem>
-diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.c Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.c
---- Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.c	2016-03-24 11:50:21.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_nologin/pam_nologin.c	2016-05-08 18:21:10.840151729 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_nologin/pam_nologin.c Linux-PAM-1.3.1.tpg/modules/pam_nologin/pam_nologin.c
+--- Linux-PAM-1.3.1/modules/pam_nologin/pam_nologin.c	2017-02-10 10:10:15.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_nologin/pam_nologin.c	2019-11-05 15:16:37.309119619 +0000
 @@ -33,7 +33,7 @@
  #include <security/pam_modutil.h>
  #include <security/pam_ext.h>
@@ -266,9 +295,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_nologin/pam_nologin.c Linux-PAM-1.3.0.tpg
  #define COMPAT_NOLOGIN_PATH "/etc/nologin"
  
  /*
-diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8 Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp.8
---- Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8	2016-04-01 13:23:24.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp.8	2016-05-08 18:22:00.447493475 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_timestamp/pam_timestamp.8 Linux-PAM-1.3.1.tpg/modules/pam_timestamp/pam_timestamp.8
+--- Linux-PAM-1.3.1/modules/pam_timestamp/pam_timestamp.8	2017-05-18 07:45:50.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_timestamp/pam_timestamp.8	2019-11-05 15:16:37.310119619 +0000
 @@ -115,7 +115,7 @@
  .\}
  .SH "FILES"
@@ -278,9 +307,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8 Linux-PAM-1.3.0
  .RS 4
  timestamp files and directories
  .RE
-diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8.xml Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp.8.xml
---- Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8.xml	2016-03-24 11:45:42.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp.8.xml	2016-05-08 18:22:17.197946573 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_timestamp/pam_timestamp.8.xml Linux-PAM-1.3.1.tpg/modules/pam_timestamp/pam_timestamp.8.xml
+--- Linux-PAM-1.3.1/modules/pam_timestamp/pam_timestamp.8.xml	2017-02-10 10:10:15.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_timestamp/pam_timestamp.8.xml	2019-11-05 15:16:37.310119619 +0000
 @@ -167,7 +167,7 @@
      <title>FILES</title>
      <variablelist>
@@ -290,9 +319,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp.8.xml Linux-PAM-1
          <listitem>
            <para>timestamp files and directories</para>
          </listitem>
-diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8 Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp_check.8
---- Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8	2016-04-01 13:23:24.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp_check.8	2016-05-08 18:22:30.182297811 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_timestamp/pam_timestamp_check.8 Linux-PAM-1.3.1.tpg/modules/pam_timestamp/pam_timestamp_check.8
+--- Linux-PAM-1.3.1/modules/pam_timestamp/pam_timestamp_check.8	2017-05-18 07:45:50.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_timestamp/pam_timestamp_check.8	2019-11-05 15:16:37.310119619 +0000
 @@ -118,7 +118,7 @@
  .\}
  .SH "FILES"
@@ -302,9 +331,9 @@ diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8 Linux-PAM
  .RS 4
  timestamp files and directories
  .RE
-diff -Naur Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8.xml Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp_check.8.xml
---- Linux-PAM-1.3.0/modules/pam_timestamp/pam_timestamp_check.8.xml	2016-03-24 11:45:42.000000000 +0000
-+++ Linux-PAM-1.3.0.tpg/modules/pam_timestamp/pam_timestamp_check.8.xml	2016-05-08 18:22:45.237705088 +0000
+diff -Naur Linux-PAM-1.3.1/modules/pam_timestamp/pam_timestamp_check.8.xml Linux-PAM-1.3.1.tpg/modules/pam_timestamp/pam_timestamp_check.8.xml
+--- Linux-PAM-1.3.1/modules/pam_timestamp/pam_timestamp_check.8.xml	2017-02-10 10:10:15.000000000 +0000
++++ Linux-PAM-1.3.1.tpg/modules/pam_timestamp/pam_timestamp_check.8.xml	2019-11-05 15:16:37.310119619 +0000
 @@ -171,7 +171,7 @@
      <title>FILES</title>
      <variablelist>
