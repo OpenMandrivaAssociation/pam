@@ -13,7 +13,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.1
-Release:	4
+Release:	5
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -44,7 +44,7 @@ Patch9:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-noflex.pa
 Patch10:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.3-nouserenv.patch
 Patch13:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.6-limits-user.patch
 Patch15:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.8-full-relro.patch
-	
+
 # Upstreamed partially
 Patch29:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.0-pwhistory-helper.patch
 Patch31:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.8-audit-user-mgmt.patch
@@ -69,6 +69,13 @@ Patch42:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-motd-mult
 Patch43:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-checksalt_syslog.patch
 # https://github.com/linux-pam/linux-pam/commit/d8d11db2cef65da5d2afa7acf21aa9c8cd88abed
 Patch44:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-fix_checksalt_syslog.patch
+Patch45:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-namespace-mntopts.patch
+Patch46:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-lastlog-no-showfailed.patch
+Patch47:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-lastlog-unlimited-fsize.patch
+Patch48:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-improve-logging.patch
+Patch49:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-tty-audit-manfix.patch
+Patch50:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-fds-closing.patch
+Patch51:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-authtok-verify-fix.patch
 
 # OpenMandriva specific sources/patches
 # (bero) fix running in docker and systemd-nspawn
