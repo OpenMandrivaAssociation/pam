@@ -3,6 +3,7 @@
 %define libnamec %mklibname %{name}c %{major}
 %define libname_misc %mklibname %{name}_misc %{major}
 %define devname %mklibname %{name} -d
+%global optflags %{optflags} -Oz
 
 %bcond_with prelude
 %bcond_without bootstrap
@@ -13,7 +14,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.3.1
-Release:	5
+Release:	6
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
