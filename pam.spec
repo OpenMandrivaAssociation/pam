@@ -157,7 +157,7 @@ done
 
 touch ChangeLog # to make autoreconf happy
 # (tpg) adjust service dir
-sed -i -e 's#servicedir = $(prefix)/lib/systemd/system#servicedir = %{_unitdir}#g' systemmodules/pam_namespace/Makefile.*
+sed -i -e 's#servicedir = $(prefix)/lib/systemd/system#servicedir = %{_unitdir}#g' modules/pam_namespace/Makefile.*
 
 autoreconf -fi -I m4
 
