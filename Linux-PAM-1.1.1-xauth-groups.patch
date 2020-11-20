@@ -1,6 +1,7 @@
---- Linux-PAM-1_2_0/modules/pam_xauth/pam_xauth.c.0512~	2015-04-27 16:57:39.000000000 +0200
-+++ Linux-PAM-1_2_0/modules/pam_xauth/pam_xauth.c	2015-06-11 17:30:15.830251670 +0200
-@@ -90,7 +90,7 @@ static const char * const xauthpaths[] =
+diff -Naur Linux-PAM-1.5.0/modules/pam_xauth/pam_xauth.c Linux-PAM-1.5.0.tpg/modules/pam_xauth/pam_xauth.c
+--- Linux-PAM-1.5.0/modules/pam_xauth/pam_xauth.c	2020-11-10 15:46:13.000000000 +0000
++++ Linux-PAM-1.5.0.tpg/modules/pam_xauth/pam_xauth.c	2020-11-20 12:40:50.898000000 +0000
+@@ -91,7 +91,7 @@
   * given input on stdin, and storing any output it generates. */
  static int
  run_coprocess(pam_handle_t *pamh, const char *input, char **output,
@@ -9,12 +10,12 @@
  {
  	int ipipe[2], opipe[2], i;
  	char buf[LINE_MAX];
-@@ -142,6 +142,12 @@ run_coprocess(pam_handle_t *pamh, const
+@@ -143,6 +143,12 @@
  		    pam_syslog (pamh, LOG_ERR, "setgroups() failed: %m");
  		    _exit (err);
  		  }
 +
-+               /* Mandriva Linux specific:
++               /* Mageia specific:
 +                * we need to set the extra groups because in high security levels
 +                * access to /usr/X11R6/bin dir is controlled by a group */
 +                initgroups(name, gid);
@@ -22,15 +23,15 @@
  		if (setuid(uid) == -1)
  		  {
  		    int err = errno;
-@@ -180,6 +186,7 @@ run_coprocess(pam_handle_t *pamh, const
- 		}
- 		/* Run the command. */
+@@ -183,6 +189,7 @@
+ 		DIAG_PUSH_IGNORE_CAST_QUAL;
  		execv(command, (char *const *) args);
+ 		DIAG_POP_IGNORE_CAST_QUAL;
 +		syslog(LOG_ERR, "pam_xauth: execvp of %s failed: %m", command);
  		/* Never reached. */
  		_exit(1);
  	}
-@@ -524,7 +531,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+@@ -528,7 +535,7 @@
  			   (unsigned long) getuid(), (unsigned long) getgid());
  	}
  	if (run_coprocess(pamh, NULL, &cookie,
@@ -39,7 +40,7 @@
  			  xauth, "-f", cookiefile, "nlist", display,
  			  NULL) == 0) {
  #ifdef WITH_SELINUX
-@@ -583,7 +590,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+@@ -587,7 +594,7 @@
  						       (unsigned long) getgid());
  					}
  					run_coprocess(pamh, NULL, &cookie,
@@ -48,7 +49,7 @@
  						      xauth, "-f", cookiefile,
  						      "nlist", t, NULL);
  				}
-@@ -725,7 +732,7 @@ pam_sm_open_session (pam_handle_t *pamh,
+@@ -729,7 +736,7 @@
  				  (unsigned long) tpwd->pw_gid);
  		}
  		run_coprocess(pamh, cookie, &tmp,

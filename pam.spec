@@ -6,25 +6,21 @@
 %global optflags %{optflags} -Oz
 
 %bcond_with prelude
-%bcond_without bootstrap
+%bcond_with bootstrap
 
-%define pam_redhat_version 1.1.1
+%define pam_redhat_version 1.1.4
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.4.0
+Version:	1.5.0
 Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
 Group:		System/Libraries
 Url:		http://linux-pam.org/
-#Source0:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2
-#Source1:	ftp://ftp.kernel.org/pub/linux/libs/pam/library/Linux-PAM-%{version}.tar.bz2.sign
-# (tpg) new url
 Source0:	http://www.linux-pam.org/library/Linux-PAM-%{version}.tar.xz
-
 Source2:	https://releases.pagure.org/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
 
 Source5:	other.pamd
@@ -40,47 +36,12 @@ Source16:	postlogin.pamd
 Source17:	postlogin.5
 
 # RedHat patches
-Patch1:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-redhat-modules.patch
-Patch9:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-noflex.patch
-Patch10:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.3-nouserenv.patch
-Patch13:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.6-limits-user.patch
-Patch15:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.8-full-relro.patch
-
-# Upstreamed partially
-Patch29:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.0-pwhistory-helper.patch
-Patch31:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.1.8-audit-user-mgmt.patch
-Patch33:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.0-unix-nomsg.patch
-Patch34:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-coverity.patch
-# https://github.com/linux-pam/linux-pam/commit/a2b72aeb86f297d349bc9e6a8f059fedf97a499a
-Patch36:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-remove-obsolete-_unix_read_password-prototype.patch
-# https://github.com/linux-pam/linux-pam/commit/f7abb8c1ef3aa31e6c2564a8aaf69683a77c2016.patch
-Patch37:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-bcrypt_b.patch
-# https://github.com/linux-pam/linux-pam/commit/dce80b3f11b3c3aa137d18f22699809094dd64b6
-Patch38:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-gensalt-autoentropy.patch
-# https://github.com/linux-pam/linux-pam/commit/4da9febc39b955892a30686e8396785b96bb8ba5
-Patch39:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-crypt_checksalt.patch
-# https://github.com/linux-pam/linux-pam/commit/16bd523f85ede9fa9115f80e826f2d803d7e61d4
-Patch40:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-yescrypt.patch
-# To be upstreamed soon.
-Patch41:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-no-fallback.patch
-# https://github.com/linux-pam/linux-pam/commit/f9c9c72121eada731e010ab3620762bcf63db08f
-# https://github.com/linux-pam/linux-pam/commit/8eaf5570cf011148a0b55c53570df5edaafebdb0
-Patch42:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-motd-multiple-paths.patch
-# https://github.com/linux-pam/linux-pam/commit/86eed7ca01864b9fd17099e57f10f2b9b6b568a1
-Patch43:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-checksalt_syslog.patch
-# https://github.com/linux-pam/linux-pam/commit/d8d11db2cef65da5d2afa7acf21aa9c8cd88abed
-Patch44:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-fix_checksalt_syslog.patch
-Patch45:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-namespace-mntopts.patch
-Patch46:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-lastlog-no-showfailed.patch
-Patch47:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-lastlog-unlimited-fsize.patch
-Patch48:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-unix-improve-logging.patch
-Patch49:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-tty-audit-manfix.patch
-Patch50:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-fds-closing.patch
-Patch51:	https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.1-authtok-verify-fix.patch
+Patch1:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.5.0-redhat-modules.patch
+Patch2:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.5.0-noflex.patch
+Patch3:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.0-unix-nomsg.patch
+Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.7-unix-build.patch
 
 # OpenMandriva specific sources/patches
-# (bero) fix running in docker and systemd-nspawn
-Patch500:	pam-1.2.0-fix-running-in-containers.patch
 # (fl) fix infinite loop
 Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
@@ -93,13 +54,10 @@ Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
 Patch700:	pam_fix_static_pam_console.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
-# (proyvind): move from /var/run/console to /run/console
-Patch703:	Linux-PAM-1.1.8-move-from-varrun-to-run.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
-# use html2text instead of w3m
-Patch802:	pam-1.3.0-browser.patch
 
+%if 0
 BuildRequires:	bison
 BuildRequires:	flex
 %if !%{with bootstrap}
@@ -107,7 +65,6 @@ BuildRequires:	flex
 BuildRequires:	linuxdoc-tools
 %endif
 BuildRequires:	audit-devel >= 2.2.2
-BuildRequires:	cracklib-devel
 BuildRequires:	db-devel >= 18.1
 BuildRequires:	gettext-devel
 BuildRequires:	pkgconfig(libxcrypt)
@@ -132,7 +89,8 @@ BuildRequires:	docbook-dtds
 Requires:	setup >= 2.7.12-2
 Requires:	filesystem
 Conflicts:	%{_lib}pam0 < 1.1.4-5
-Suggests:	%{name}-cracklib >= %{EVRD}
+%endif
+%rename %{name}-cracklib
 
 %description
 PAM (Pluggable Authentication Modules) is a system security tool that
@@ -186,15 +144,6 @@ having to recompile programs that handle authentication.
 
 This package contains the development libraries for %{name}.
 
-%package cracklib
-Summary:	PAM module to enable cracklib support
-Group:		System/Libraries
-Requires:	%{name}
-Requires:	cracklib-dicts
-
-%description cracklib
-PAM module to enable cracklib support.
-
 %prep
 %setup -q -n Linux-PAM-%{version} -a 2
 
@@ -208,9 +157,6 @@ for readme in modules/pam_*/README ; do
     cp -f ${readme} doc/txts/README.$(dirname ${readme} | sed -e 's|^modules/||')
 done
 
-rm -rf doc/txts/README.pam_tally*
-rm -rf doc/sag/html/*pam_tally* 
-
 touch ChangeLog # to make autoreconf happy
 autoreconf -fi -I m4
 
@@ -220,16 +166,19 @@ export BROWSER=""
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
+	--enable-vendordir=%{_datadir} \
 	--docdir=%{_docdir}/%{name} \
-	--enable-docu --enable-regenerate-docu \
+	--enable-docu \
+	--enable-regenerate-docu \
 	--disable-selinux
 
-%make
+%make_build
 
 %install
 mkdir -p %{buildroot}%{_includedir}/security
 mkdir -p %{buildroot}/%{_lib}/security
-%makeinstall_std LDCONFIG=:
+%make_install LDCONFIG=:
+install -d -m 755 %{buildroot}%{_datadir}/pam.d
 install -d -m 755 %{buildroot}%{_sysconfdir}/pam.d
 install -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/pam.d/other
 install -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/pam.d/system-auth
@@ -258,8 +207,6 @@ done
 # Make sure every module subdirectory gave us a module.  Yes, this is hackish.
 for dir in modules/pam_* ; do
 if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
-    [[ "${dir}" = "modules/pam_tally" ]] && continue
-    [[ "${dir}" = "modules/pam_tally2" ]] && continue
     if ! ls -1 %{buildroot}/%{_lib}/security/$(basename ${dir})*.so ; then
 	echo ERROR $(basename ${dir}) did not build a module.
 	exit 1
@@ -316,13 +263,19 @@ fi
 %config %{_sysconfdir}/pam.d/config-util
 %config(noreplace) %{_sysconfdir}/pam.d/postlogin
 %{_tmpfilesdir}/%{name}.conf
+%{_unitdir}/pam_namespace.service
 /sbin/faillock
 /sbin/mkhomedir_helper
 /sbin/pam_console_apply
+/sbin/pam_namespace_helper
 %attr(0755,root,root) /sbin/pwhistory_helper
 %attr(4755,root,root) /sbin/unix_chkpwd
 %attr(4755,root,root) /sbin/unix_update
 %attr(4755,root,root) /sbin/pam_timestamp_check
+%attr(4755,root,root) %{_sbindir}/unix_chkpwd
+%attr(0700,root,root) %{_sbindir}/unix_update
+%attr(0755,root,root) %{_sbindir}/mkhomedir_helper
+%attr(0755,root,root) %{_sbindir}/pwhistory_helper
 %config(noreplace) %{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
 %config(noreplace) %{_sysconfdir}/security/console.perms
@@ -348,8 +301,6 @@ fi
 %dir /usr/lib/motd.d
 %{_mandir}/man5/*
 %{_mandir}/man8/*
-%exclude /%{_lib}/security/pam_cracklib.so
-%exclude %{_mandir}/man8/pam_cracklib.8.*
 
 %files -n %{libname}
 /%{_lib}/libpam.so.%{major}*
@@ -366,10 +317,6 @@ fi
 /%{_lib}/libpamc.so
 %{_includedir}/security/*.h
 %{_mandir}/man3/*
-
-%files cracklib
-/%{_lib}/security/pam_cracklib.so
-%{_mandir}/man8/pam_cracklib.8.*
 
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright NEWS

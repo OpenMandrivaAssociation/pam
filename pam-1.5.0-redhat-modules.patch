@@ -1,0 +1,25 @@
+diff -up Linux-PAM-1.5.0/configure.ac.redhat-modules Linux-PAM-1.5.0/configure.ac
+--- Linux-PAM-1.5.0/configure.ac.redhat-modules	2020-11-11 11:21:21.947857371 +0100
++++ Linux-PAM-1.5.0/configure.ac	2020-11-11 11:22:58.638193747 +0100
+@@ -639,6 +639,8 @@ AC_CONFIG_FILES([Makefile libpam/Makefil
+ 	po/Makefile.in \
+ 	Make.xml.rules \
+ 	modules/Makefile \
++	modules/pam_chroot/Makefile modules/pam_console/Makefile \
++	modules/pam_postgresok/Makefile \
+ 	modules/pam_access/Makefile \
+         modules/pam_debug/Makefile modules/pam_deny/Makefile \
+ 	modules/pam_echo/Makefile modules/pam_env/Makefile \
+diff -up Linux-PAM-1.5.0/modules/Makefile.am.redhat-modules Linux-PAM-1.5.0/modules/Makefile.am
+--- Linux-PAM-1.5.0/modules/Makefile.am.redhat-modules	2020-11-10 16:46:13.000000000 +0100
++++ Linux-PAM-1.5.0/modules/Makefile.am	2020-11-11 11:21:21.947857371 +0100
+@@ -47,6 +47,9 @@ SUBDIRS := \
+ 	pam_debug \
+ 	pam_deny \
+ 	pam_echo \
++	pam_chroot \
++	pam_console \
++	pam_postgresok \
+ 	pam_env \
+ 	pam_exec \
+ 	pam_faildelay \
