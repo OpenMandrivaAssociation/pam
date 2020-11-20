@@ -57,7 +57,6 @@ Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
 
-%if 0
 BuildRequires:	bison
 BuildRequires:	flex
 %if !%{with bootstrap}
@@ -89,7 +88,6 @@ BuildRequires:	docbook-dtds
 Requires:	setup >= 2.7.12-2
 Requires:	filesystem
 Conflicts:	%{_lib}pam0 < 1.1.4-5
-%endif
 %rename %{name}-cracklib
 
 %description
