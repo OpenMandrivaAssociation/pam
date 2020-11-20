@@ -270,10 +270,7 @@ fi
 %attr(4755,root,root) /sbin/unix_chkpwd
 %attr(4755,root,root) /sbin/unix_update
 %attr(4755,root,root) /sbin/pam_timestamp_check
-%attr(4755,root,root) %{_sbindir}/unix_chkpwd
-%attr(0700,root,root) %{_sbindir}/unix_update
-%attr(0755,root,root) %{_sbindir}/mkhomedir_helper
-%attr(0755,root,root) %{_sbindir}/pwhistory_helper
+%attr(0755,root,root) /sbin/mkhomedir_helper
 %config(noreplace) %{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
 %config(noreplace) %{_sysconfdir}/security/console.perms
