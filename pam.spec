@@ -14,7 +14,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.5.1
-Release:	1
+Release:	2
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -63,7 +63,6 @@ BuildRequires:	flex
 # this pulls in the mega texlive load
 BuildRequires:	linuxdoc-tools
 %endif
-BuildRequires:	audit-devel >= 2.2.2
 BuildRequires:	db-devel >= 18.1
 BuildRequires:	gettext-devel
 BuildRequires:	pkgconfig(libxcrypt)
@@ -171,7 +170,8 @@ export BROWSER=""
 	--docdir=%{_docdir}/%{name} \
 	--enable-docu \
 	--enable-regenerate-docu \
-	--disable-selinux
+	--disable-selinux \
+	--disable-audit
 
 %make_build
 
@@ -207,7 +207,10 @@ done
 # (blino) we don't want to test if SE Linux is built, it's disabled
 # Make sure every module subdirectory gave us a module.  Yes, this is hackish.
 for dir in modules/pam_* ; do
-if [ -d ${dir} ] && [[ "${dir}" != "modules/pam_selinux" ]] && [[ "${dir}" != "modules/pam_sepermit" ]]; then
+if [ -d ${dir} ] ; then
+    [ ${dir} = "modules/pam_selinux" ] && continue
+    [ ${dir} = "modules/pam_sepermit" ] && continue
+    [ ${dir} = "modules/pam_tty_audit" ] && continue
     if ! ls -1 %{buildroot}/%{_lib}/security/$(basename ${dir})*.so ; then
 	echo ERROR $(basename ${dir}) did not build a module.
 	exit 1
@@ -227,20 +230,6 @@ for module in %{buildroot}/%{_lib}/security/pam*.so ; do
     fi
 done
 
-%triggerprein -- dbus < 1.1.8-7
-if [ -d %{_varrun}/console ]; then
-    if [ -d /run/console ]; then
-	if [ -e /run/console/console.lock ]; then
-	    rm -rf %{_varrun}/console
-	else
-	    rm -rf /run/console
-	    mv %{_varrun}/console /run/
-	fi
-    else
-	mv %{_varrun}/console /run/
-    fi
-fi
-
 %triggerin -- %{name} < 1:1.3.0-10
 sed -i -re 's/(^auth[ \t]+sufficient[ \t]+pam_tcb.so.*)/auth        sufficient    pam_unix.so try_first_pass likeauth nullok/' /etc/pam.d/system-auth
 sed -i -re 's/(^account[ \t]+required[ \t]+pam_tcb.so.*)/account     required      pam_unix.so/' /etc/pam.d/system-auth
@@ -251,7 +240,6 @@ sed -i -re 's/(^session[ \t]+required[ \t]+pam_tcb.so)/session     required     
 if ! grep -q "pam_systemd\.so" %{_sysconfdir}/pam.d/system-auth; then
 	echo "-session    optional      pam_systemd.so" >>%{_sysconfdir}/pam.d/system-auth
 fi
-
 
 %files -f Linux-PAM.lang
 %docdir %{_docdir}/%{name}
