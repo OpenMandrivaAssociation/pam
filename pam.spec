@@ -13,14 +13,15 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.5.1
-Release:	3
+Version:	1.5.2
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
 Group:		System/Libraries
 Url:		http://linux-pam.org/
-Source0:	http://www.linux-pam.org/library/Linux-PAM-%{version}.tar.xz
+Source0:	https://github.com/linux-pam/linux-pam/releases/download/v%{version}/Linux-PAM-%{version}.tar.xz
+# https://releases.pagure.org/pam-redhat/
 Source2:	https://releases.pagure.org/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
 
 Source5:	other.pamd
@@ -36,9 +37,9 @@ Source16:	postlogin.pamd
 Source17:	postlogin.5
 
 # RedHat patches
-Patch1:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.5.0-redhat-modules.patch
-Patch2:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.5.0-noflex.patch
-Patch3:		https://src.fedoraproject.org/rpms/pam/raw/master/f/pam-1.3.0-unix-nomsg.patch
+Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.0-redhat-modules.patch
+Patch2:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.0-noflex.patch
+Patch3:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.3.0-unix-nomsg.patch
 Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.7-unix-build.patch
 
 # OpenMandriva specific sources/patches
@@ -70,9 +71,10 @@ BuildRequires:	glibc-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libnsl)
 BuildRequires:	pkgconfig(openssl)
+BuildRequires:	pkgconfig(systemd)
 BuildRequires:	xauth
-# For _tmpfilesdir macro
-BuildRequires:	systemd-macros
+# For _tmpfilesdir and _unitdir macros
+BuildRequires:	systemd-rpm-macros
 %if %{with prelude}
 BuildRequires:	pkgconfig(libprelude)
 %else
@@ -155,9 +157,6 @@ for readme in modules/pam_*/README ; do
 done
 
 touch ChangeLog # to make autoreconf happy
-# (tpg) adjust service dir
-sed -i -e 's#servicedir = $(prefix)/lib/systemd/system#servicedir = %{_unitdir}#g' modules/pam_namespace/Makefile.*
-
 autoreconf -fi -I m4
 
 %build
@@ -166,6 +165,7 @@ export BROWSER=""
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
+	--with-systemdunitdir=%{_unitdir} \
 	--enable-vendordir=%{_datadir} \
 	--docdir=%{_docdir}/%{name} \
 	--enable-docu \
@@ -200,6 +200,11 @@ install -m 644 %{SOURCE12} %{SOURCE13} %{SOURCE17} %{buildroot}%{_mandir}/man5/
 for phase in auth acct passwd session ; do
     ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
 done
+
+if [ "/%{_lib}" != "%{_libdir}" ]; then
+	mkdir -p %{buildroot}%{_libdir}
+	mv %{buildroot}/%{_lib}/pkgconfig %{buildroot}%{_libdir}/
+fi
 
 %find_lang Linux-PAM
 
@@ -254,7 +259,6 @@ fi
 %{_tmpfilesdir}/%{name}.conf
 %{_unitdir}/pam_namespace.service
 /sbin/faillock
-/sbin/mkhomedir_helper
 /sbin/pam_console_apply
 /sbin/pam_namespace_helper
 %attr(0755,root,root) /sbin/pwhistory_helper
@@ -301,7 +305,8 @@ fi
 /%{_lib}/libpam.so
 /%{_lib}/libpam_misc.so
 /%{_lib}/libpamc.so
-%{_includedir}/security/*.h
+%{_libdir}/pkgconfig/*.pc
+%{_includedir}/security
 %{_mandir}/man3/*
 
 %files doc
