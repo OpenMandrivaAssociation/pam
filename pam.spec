@@ -14,7 +14,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.5.2
-Release:	1
+Release:	2
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -64,7 +64,6 @@ BuildRequires:	flex
 # this pulls in the mega texlive load
 BuildRequires:	linuxdoc-tools
 %endif
-BuildRequires:	db-devel >= 18.1
 BuildRequires:	gettext-devel
 BuildRequires:	pkgconfig(libxcrypt)
 BuildRequires:	glibc-devel
@@ -171,7 +170,8 @@ export BROWSER=""
 	--enable-docu \
 	--enable-regenerate-docu \
 	--disable-selinux \
-	--disable-audit
+	--disable-audit \
+	--enable-db=no
 
 %make_build
 
@@ -289,8 +289,8 @@ fi
 %dir %{_sysconfdir}/motd.d
 %dir /run/motd.d
 %dir /usr/lib/motd.d
-%{_mandir}/man5/*
-%{_mandir}/man8/*
+%doc %{_mandir}/man5/*
+%doc %{_mandir}/man8/*
 
 %files -n %{libname}
 /%{_lib}/libpam.so.%{major}*
@@ -306,8 +306,8 @@ fi
 /%{_lib}/libpam_misc.so
 /%{_lib}/libpamc.so
 %{_libdir}/pkgconfig/*.pc
-%{_includedir}/security
-%{_mandir}/man3/*
+%doc %{_includedir}/security
+%doc %{_mandir}/man3/*
 
 %files doc
 %doc doc/txts doc/specs/rfc86.0.txt Copyright NEWS
