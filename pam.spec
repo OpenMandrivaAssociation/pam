@@ -5,16 +5,13 @@
 %define devname %mklibname %{name} -d
 %global optflags %{optflags} -Oz
 
-%bcond_with prelude
-%bcond_with bootstrap
-
-%define pam_redhat_version 1.1.4
+%define pam_redhat_version 1.1.5
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.5.2
-Release:	2
+Release:	5
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -47,7 +44,6 @@ Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.
 Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
 Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
-Patch509:	Linux-PAM-0.99.3.0-pbuild-rh.patch
 # (fl) pam_xauth: set extra groups because in high security levels
 #      access to /usr/X11R6/bin dir is controlled by a group
 Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
@@ -60,10 +56,6 @@ Patch801:	Linux-PAM-1.1.4-group_add_users.patch
 
 BuildRequires:	bison
 BuildRequires:	flex
-%if !%{with bootstrap}
-# this pulls in the mega texlive load
-BuildRequires:	linuxdoc-tools
-%endif
 BuildRequires:	gettext-devel
 BuildRequires:	pkgconfig(libxcrypt)
 BuildRequires:	glibc-devel
@@ -74,16 +66,6 @@ BuildRequires:	pkgconfig(systemd)
 BuildRequires:	xauth
 # For _tmpfilesdir and _unitdir macros
 BuildRequires:	systemd-rpm-macros
-%if %{with prelude}
-BuildRequires:	pkgconfig(libprelude)
-%else
-BuildConflicts:	pkgconfig(libprelude)
-%endif
-# Following deps are necessary only to build the pam library documentation.
-BuildRequires:	xsltproc
-BuildRequires:	html2text
-BuildRequires:	docbook-style-xsl
-BuildRequires:	docbook-dtds
 
 Requires:	setup >= 2.7.12-2
 Requires:	filesystem
@@ -167,18 +149,23 @@ export BROWSER=""
 	--with-systemdunitdir=%{_unitdir} \
 	--enable-vendordir=%{_datadir} \
 	--docdir=%{_docdir}/%{name} \
-	--enable-docu \
-	--enable-regenerate-docu \
+	--disable-doc \
+	--disable-regenerate-docu \
 	--disable-selinux \
 	--disable-audit \
+	--disable-prelude \
 	--enable-db=no
 
 %make_build
 
 %install
+# (tpg) this is disabled
+rm -rf modules/pam_userdb
+
 mkdir -p %{buildroot}%{_includedir}/security
 mkdir -p %{buildroot}/%{_lib}/security
 %make_install LDCONFIG=:
+
 install -d -m 755 %{buildroot}%{_datadir}/pam.d
 install -d -m 755 %{buildroot}%{_sysconfdir}/pam.d
 install -m 644 %{SOURCE5} %{buildroot}%{_sysconfdir}/pam.d/other
