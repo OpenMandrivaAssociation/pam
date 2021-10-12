@@ -11,7 +11,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.5.2
-Release:	5
+Release:	6
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -293,7 +293,7 @@ fi
 /%{_lib}/libpam_misc.so
 /%{_lib}/libpamc.so
 %{_libdir}/pkgconfig/*.pc
-%doc %{_includedir}/security
+%{_includedir}/security
 %doc %{_mandir}/man3/*
 
 %files doc
