@@ -11,7 +11,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.5.2
-Release:	7
+Release:	8
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -44,10 +44,6 @@ Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.
 Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
 Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
-# (fl) pam_xauth: set extra groups because in high security levels
-#      access to /usr/X11R6/bin dir is controlled by a group
-Patch512:	Linux-PAM-1.1.1-xauth-groups.patch
-
 Patch700:	pam_fix_static_pam_console.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
@@ -143,8 +139,6 @@ autoreconf -fi -I m4
 %build
 export BROWSER=""
 %configure \
-	--sbindir=/sbin \
-	--libdir=/%{_lib} \
 	--includedir=%{_includedir}/security \
 	--with-systemdunitdir=%{_unitdir} \
 	--enable-vendordir=%{_datadir} \
@@ -163,7 +157,6 @@ export BROWSER=""
 rm -rf modules/pam_userdb
 
 mkdir -p %{buildroot}%{_includedir}/security
-mkdir -p %{buildroot}/%{_lib}/security
 %make_install LDCONFIG=:
 
 install -d -m 755 %{buildroot}%{_datadir}/pam.d
@@ -184,14 +177,10 @@ install -D -p -m 644 %{SOURCE15} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
 # Install man pages.
 install -m 644 %{SOURCE12} %{SOURCE13} %{SOURCE17} %{buildroot}%{_mandir}/man5/
-for phase in auth acct passwd session ; do
-    ln -sf pam_unix.so %{buildroot}/%{_lib}/security/pam_unix_${phase}.so
-done
 
-if [ "/%{_lib}" != "%{_libdir}" ]; then
-	mkdir -p %{buildroot}%{_libdir}
-	mv %{buildroot}/%{_lib}/pkgconfig %{buildroot}%{_libdir}/
-fi
+for phase in auth acct passwd session ; do
+    ln -sf pam_unix.so %{buildroot}%{_libdir}/security/pam_unix_${phase}.so
+done
 
 %find_lang Linux-PAM
 
@@ -203,7 +192,7 @@ if [ -d ${dir} ] ; then
     [ ${dir} = "modules/pam_selinux" ] && continue
     [ ${dir} = "modules/pam_sepermit" ] && continue
     [ ${dir} = "modules/pam_tty_audit" ] && continue
-    if ! ls -1 %{buildroot}/%{_lib}/security/$(basename ${dir})*.so ; then
+    if ! ls -1 %{buildroot}%{_libdir}/security/$(basename ${dir})*.so ; then
 	echo ERROR $(basename ${dir}) did not build a module.
 	exit 1
     fi
@@ -212,11 +201,11 @@ done
 
 # Check for module problems.  Specifically, check that every module we just
 # installed can actually be loaded by a minimal PAM-aware application.
-/sbin/ldconfig -n %{buildroot}/%{_lib}
+/sbin/ldconfig -n %{buildroot}%{_libdir}
 chmod +x %{SOURCE11}
-for module in %{buildroot}/%{_lib}/security/pam*.so ; do
-    if ! env LD_LIBRARY_PATH=%{buildroot}/%{_lib} \
-	sh %{SOURCE11} -ldl -lpam -L%{buildroot}/%{_lib} ${module} ; then
+for module in %{buildroot}%{_libdir}/security/pam*.so ; do
+    if ! env LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
+	sh %{SOURCE11} -ldl -lpam -L%{buildroot}%{_libdir} ${module} ; then
 	echo ERROR module: ${module} cannot be loaded.
 	exit 1
     fi
@@ -245,14 +234,14 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/postlogin
 %{_tmpfilesdir}/%{name}.conf
 %{_unitdir}/pam_namespace.service
-/sbin/faillock
-/sbin/pam_console_apply
-/sbin/pam_namespace_helper
-%attr(0755,root,root) /sbin/pwhistory_helper
-%attr(4755,root,root) /sbin/unix_chkpwd
-%attr(4755,root,root) /sbin/unix_update
-%attr(4755,root,root) /sbin/pam_timestamp_check
-%attr(0755,root,root) /sbin/mkhomedir_helper
+%{_sbindir}/faillock
+%{_sbindir}/pam_console_apply
+%{_sbindir}/pam_namespace_helper
+%attr(0755,root,root) %{_sbindir}/pwhistory_helper
+%attr(4755,root,root) %{_sbindir}/unix_chkpwd
+%attr(4755,root,root) %{_sbindir}/unix_update
+%attr(4755,root,root) %{_sbindir}/pam_timestamp_check
+%attr(0755,root,root) %{_sbindir}/mkhomedir_helper
 %config(noreplace) %{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
 %config(noreplace) %{_sysconfdir}/security/console.perms
@@ -268,9 +257,9 @@ fi
 %config(noreplace) %{_sysconfdir}/security/opasswd
 %dir %{_sysconfdir}/security/console.apps
 %dir %{_sysconfdir}/security/console.perms.d
-%dir /%{_lib}/security
-/%{_lib}/security/*.so
-/%{_lib}/security/pam_filter
+%dir %{_libdir}/security
+%{_libdir}/security/*.so
+%{_libdir}/security/pam_filter
 %ghost %dir /run/console
 %ghost %dir /run/faillock
 %dir %{_sysconfdir}/motd.d
@@ -280,18 +269,18 @@ fi
 %doc %{_mandir}/man8/*
 
 %files -n %{libname}
-/%{_lib}/libpam.so.%{major}*
+%{_libdir}/libpam.so.%{major}*
 
 %files -n %{libnamec}
-/%{_lib}/libpamc.so.%{major}*
+%{_libdir}/libpamc.so.%{major}*
 
 %files -n %{libname_misc}
-/%{_lib}/libpam_misc.so.%{major}*
+%{_libdir}/libpam_misc.so.%{major}*
 
 %files -n %{devname}
-/%{_lib}/libpam.so
-/%{_lib}/libpam_misc.so
-/%{_lib}/libpamc.so
+%{_libdir}/libpam.so
+%{_libdir}/libpam_misc.so
+%{_libdir}/libpamc.so
 %{_libdir}/pkgconfig/*.pc
 %{_includedir}/security
 %doc %{_mandir}/man3/*
