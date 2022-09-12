@@ -11,7 +11,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.5.2
-Release:	10
+Release:	11
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -49,6 +49,9 @@ Patch700:	pam_fix_static_pam_console.patch
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
+
+# Upstream
+Patch1000:	https://github.com/linux-pam/linux-pam/pull/490.patch
 
 BuildRequires:	bison
 BuildRequires:	flex
