@@ -5,21 +5,21 @@
 %define devname %mklibname %{name} -d
 %global optflags %{optflags} -Oz
 
-%define pam_redhat_version 1.1.5
+%define pam_redhat_version 1.2.0
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.5.2
-Release:	11
+Release:	12
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
-# as the BSD license allows that anyway. pam_timestamp and pam_console modules are GPLv2+,
+# as the BSD license allows that anyway. pam_timestamp and pam_loginuid modules are GPLv2+,
 License:	BSD and GPLv2+
 Group:		System/Libraries
 Url:		http://linux-pam.org/
 Source0:	https://github.com/linux-pam/linux-pam/releases/download/v%{version}/Linux-PAM-%{version}.tar.xz
 # https://releases.pagure.org/pam-redhat/
-Source2:	https://releases.pagure.org/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.bz2
+Source2:	https://releases.pagure.org/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.xz
 
 Source5:	other.pamd
 Source6:	system-auth.pamd
@@ -34,17 +34,16 @@ Source16:	postlogin.pamd
 Source17:	postlogin.5
 
 # RedHat patches
-Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.0-redhat-modules.patch
+Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.2-redhat-modules.patch
 Patch2:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.0-noflex.patch
 Patch3:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.3.0-unix-nomsg.patch
+Patch4:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.2-pwhistory-config.patch
+
 Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.7-unix-build.patch
 
 # OpenMandriva specific sources/patches
-# (fl) fix infinite loop
-Patch507:	pam-0.74-loop.patch
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
 Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
-Patch700:	pam_fix_static_pam_console.patch
 # (proyvind): add missing constant that went with rpc removal from glibc 2.14
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (akdengi> add user to default group users which need for Samba
@@ -174,8 +173,6 @@ install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
 install -d -m 755 %{buildroot}/var/log
 install -d -m 755 %{buildroot}/var/run/faillock
 install -d -m 755 %{buildroot}%{_sysconfdir}/motd.d
-install -d -m 755 %{buildroot}/usr/lib/motd.d
-install -d -m 755 %{buildroot}/run/motd.d
 install -D -p -m 644 %{SOURCE15} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 
 # Install man pages.
@@ -238,7 +235,6 @@ fi
 %{_tmpfilesdir}/%{name}.conf
 %{_unitdir}/pam_namespace.service
 %{_sbindir}/faillock
-%{_sbindir}/pam_console_apply
 %{_sbindir}/pam_namespace_helper
 %attr(0755,root,root) %{_sbindir}/pwhistory_helper
 %attr(4755,root,root) %{_sbindir}/unix_chkpwd
@@ -247,8 +243,6 @@ fi
 %attr(0755,root,root) %{_sbindir}/mkhomedir_helper
 %config(noreplace) %{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
-%config(noreplace) %{_sysconfdir}/security/console.perms
-%config(noreplace) %{_sysconfdir}/security/console.handlers
 %config(noreplace) %{_sysconfdir}/security/faillock.conf
 %config(noreplace) %{_sysconfdir}/security/group.conf
 %config(noreplace) %{_sysconfdir}/security/limits.conf
@@ -256,18 +250,14 @@ fi
 %config(noreplace) %{_sysconfdir}/security/namespace.conf
 %attr(755,root,root) %config(noreplace) %{_sysconfdir}/security/namespace.init
 %config(noreplace) %{_sysconfdir}/security/pam_env.conf
+%config(noreplace) %{_sysconfdir}/security/pwhistory.conf
 %config(noreplace) %{_sysconfdir}/security/time.conf
 %config(noreplace) %{_sysconfdir}/security/opasswd
-%dir %{_sysconfdir}/security/console.apps
-%dir %{_sysconfdir}/security/console.perms.d
 %dir %{_libdir}/security
 %{_libdir}/security/*.so
 %{_libdir}/security/pam_filter
-%ghost %dir /run/console
 %ghost %dir /run/faillock
 %dir %{_sysconfdir}/motd.d
-%dir /run/motd.d
-%dir /usr/lib/motd.d
 %doc %{_mandir}/man5/*
 %doc %{_mandir}/man8/*
 
