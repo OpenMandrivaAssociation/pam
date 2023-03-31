@@ -11,7 +11,7 @@ Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
 Version:	1.5.2
-Release:	12
+Release:	13
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_loginuid modules are GPLv2+,
 License:	BSD and GPLv2+
