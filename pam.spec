@@ -202,6 +202,7 @@ done
 # Check for module problems.  Specifically, check that every module we just
 # installed can actually be loaded by a minimal PAM-aware application.
 /sbin/ldconfig -n %{buildroot}%{_libdir}
+%if ! %{cross_compiling}
 chmod +x %{SOURCE11}
 for module in %{buildroot}%{_libdir}/security/pam*.so ; do
     if ! env LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
@@ -210,6 +211,7 @@ for module in %{buildroot}%{_libdir}/security/pam*.so ; do
 	exit 1
     fi
 done
+%endif
 
 %triggerin -- %{name} < 1:1.3.0-10
 sed -i -re 's/(^auth[ \t]+sufficient[ \t]+pam_tcb.so.*)/auth        sufficient    pam_unix.so try_first_pass likeauth nullok/' /etc/pam.d/system-auth
