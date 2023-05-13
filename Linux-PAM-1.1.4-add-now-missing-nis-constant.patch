@@ -1,8 +1,9 @@
---- Linux-PAM-1.1.4/modules/pam_unix/support.c.yp_const~	2011-07-19 14:31:36.081046306 +0200
-+++ Linux-PAM-1.1.4/modules/pam_unix/support.c	2011-07-19 14:31:38.058067705 +0200
-@@ -21,6 +21,8 @@
+diff -up Linux-PAM-1.5.3/modules/pam_unix/support.c.6~ Linux-PAM-1.5.3/modules/pam_unix/support.c
+--- Linux-PAM-1.5.3/modules/pam_unix/support.c.6~	2023-05-09 15:49:24.122698637 +0200
++++ Linux-PAM-1.5.3/modules/pam_unix/support.c	2023-05-09 15:49:58.588969909 +0200
+@@ -22,6 +22,8 @@
  #include <sys/resource.h>
- #ifdef HAVE_RPCSVC_YPCLNT_H
+ #ifdef HAVE_NIS
  #include <rpcsvc/ypclnt.h>
 +#else
 +#define YPERR_SUCCESS 0

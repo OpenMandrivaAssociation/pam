@@ -37,7 +37,6 @@ Source17:	postlogin.5
 Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.2-redhat-modules.patch
 Patch2:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.0-noflex.patch
 Patch3:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.3.0-unix-nomsg.patch
-Patch4:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.2-pwhistory-config.patch
 
 Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.7-unix-build.patch
 
@@ -48,9 +47,6 @@ Patch508:	Linux-PAM-0.99.3.0-pamtimestampadm.patch
 Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 # (akdengi> add user to default group users which need for Samba
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
-
-# Upstream
-Patch1000:	https://github.com/linux-pam/linux-pam/pull/490.patch
 
 BuildRequires:	bison
 BuildRequires:	flex
@@ -150,7 +146,8 @@ export BROWSER=""
 	--disable-selinux \
 	--disable-audit \
 	--disable-prelude \
-	--enable-db=no \
+	--disable-db \
+	--enable-lastlog \
 	--enable-logind
 
 %make_build
@@ -244,17 +241,18 @@ fi
 %attr(4755,root,root) %{_sbindir}/unix_update
 %attr(4755,root,root) %{_sbindir}/pam_timestamp_check
 %attr(0755,root,root) %{_sbindir}/mkhomedir_helper
-%config(noreplace) %{_sysconfdir}/security/access.conf
+%dir %{_datadir}/security
+%{_datadir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
-%config(noreplace) %{_sysconfdir}/security/faillock.conf
-%config(noreplace) %{_sysconfdir}/security/group.conf
-%config(noreplace) %{_sysconfdir}/security/limits.conf
+%{_datadir}/security/faillock.conf
+%{_datadir}/security/group.conf
+%{_datadir}/security/limits.conf
 %dir %{_sysconfdir}/security/limits.d
-%config(noreplace) %{_sysconfdir}/security/namespace.conf
-%attr(755,root,root) %config(noreplace) %{_sysconfdir}/security/namespace.init
-%config(noreplace) %{_sysconfdir}/security/pam_env.conf
-%config(noreplace) %{_sysconfdir}/security/pwhistory.conf
-%config(noreplace) %{_sysconfdir}/security/time.conf
+%{_datadir}/security/namespace.conf
+%attr(755,root,root) %{_datadir}/security/namespace.init
+%{_datadir}/security/pam_env.conf
+%{_datadir}/security/pwhistory.conf
+%{_datadir}/security/time.conf
 %config(noreplace) %{_sysconfdir}/security/opasswd
 %dir %{_libdir}/security
 %{_libdir}/security/*.so
