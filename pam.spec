@@ -1,3 +1,9 @@
+%if %{cross_compiling}
+# Workaround for libtool being a broken pile of **** that
+# adds -rpath /usr/lib64 and similar harmful flags while
+# relinking at install time
+%define prefer_gcc 1
+%endif
 %define major 0
 %define libname %mklibname %{name} %{major}
 %define libnamec %mklibname %{name}c %{major}
