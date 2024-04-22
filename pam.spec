@@ -16,7 +16,7 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.5.3
+Version:	1.6.1
 Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_loginuid modules are GPLv2+,
@@ -40,9 +40,9 @@ Source16:	postlogin.pamd
 Source17:	postlogin.5
 
 # RedHat patches
-Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.2-redhat-modules.patch
-Patch2:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.0-noflex.patch
-Patch3:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.3.0-unix-nomsg.patch
+Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.6.0-redhat-modules.patch
+Patch2:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.6.1-noflex.patch
+Patch3:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.3-unix-nomsg.patch
 
 Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.7-unix-build.patch
 
@@ -242,9 +242,11 @@ fi
 %{_unitdir}/pam_namespace.service
 %{_sbindir}/faillock
 %{_sbindir}/pam_namespace_helper
-%attr(0755,root,root) %{_sbindir}/pwhistory_helper
+# pwhistory_helper and unix_update are for selinux integration
+# and are built only if selinux support is requested
+%optional %attr(0755,root,root) %{_sbindir}/pwhistory_helper
+%optional %attr(4755,root,root) %{_sbindir}/unix_update
 %attr(4755,root,root) %{_sbindir}/unix_chkpwd
-%attr(4755,root,root) %{_sbindir}/unix_update
 %attr(4755,root,root) %{_sbindir}/pam_timestamp_check
 %attr(0755,root,root) %{_sbindir}/mkhomedir_helper
 %dir %{_datadir}/security
