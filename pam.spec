@@ -1,3 +1,7 @@
+# Disables systemd/logind support because of circular
+# dependency
+%bcond_with bootstrap
+
 %if %{cross_compiling}
 # Workaround for libtool being a broken pile of **** that
 # adds -rpath /usr/lib64 and similar harmful flags while
@@ -62,7 +66,9 @@ BuildRequires:	glibc-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libnsl)
 BuildRequires:	pkgconfig(openssl)
+%if ! %{with bootstrap}
 BuildRequires:	pkgconfig(systemd)
+%endif
 BuildRequires:	xauth
 # For _tmpfilesdir and _unitdir macros
 BuildRequires:	systemd-rpm-macros
@@ -154,7 +160,9 @@ export BROWSER=""
 	--disable-prelude \
 	--disable-db \
 	--enable-lastlog \
+%if ! %{with bootstrap}
 	--enable-logind
+%endif
 
 %make_build
 
