@@ -26,7 +26,7 @@ Release:	1
 # as the BSD license allows that anyway. pam_timestamp and pam_loginuid modules are GPLv2+,
 License:	BSD and GPLv2+
 Group:		System/Libraries
-Url:		http://linux-pam.org/
+Url:		https://linux-pam.org/
 Source0:	https://github.com/linux-pam/linux-pam/releases/download/v%{version}/Linux-PAM-%{version}.tar.xz
 # https://releases.pagure.org/pam-redhat/
 Source2:	https://releases.pagure.org/pam-redhat/pam-redhat-%{pam_redhat_version}.tar.xz
