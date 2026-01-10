@@ -146,14 +146,15 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 %build
 export BROWSER=""
 %meson \
-	-Daudit=enabled \
 	-Delogind=disabled \
 	-Deconf=disabled \
 	-Dnis=enabled \
 %if ! %{with bootstrap}
+	-Daudit=enabled \
 	-Dlogind=enabled \
 %else
 	-Dlogind=disabled \
+	-Daudit=disabled \
 %endif
 	-Dopenssl=enabled \
 	-Dpam_lastlog=enabled \
