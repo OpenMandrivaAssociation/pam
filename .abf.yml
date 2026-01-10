@@ -1,3 +1,3 @@
 sources:
-  pam-redhat-1.2.0.tar.xz: d84f186748f6b9ff84980a39acdaf76531c4990e
-  Linux-PAM-1.6.1.tar.xz: 633dfd431955044f7a4087553a5b00b509897197
+  Linux-PAM-1.7.1.tar.xz: cc1c48e18aadc97a69c14cb6882e15cf6f356f05
+  pam-redhat-1.3.0.tar.xz: 4fa104680954028506adb00b0abe8d4d9b225e9c

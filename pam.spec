@@ -15,12 +15,12 @@
 %define devname %mklibname %{name} -d
 %global optflags %{optflags} -Oz
 
-%define pam_redhat_version 1.2.0
+%define pam_redhat_version 1.3.0
 
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.6.1
+Version:	1.7.1
 Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_loginuid modules are GPLv2+,
@@ -44,9 +44,8 @@ Source16:	postlogin.pamd
 Source17:	postlogin.5
 
 # RedHat patches
-Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.6.0-redhat-modules.patch
-Patch2:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.6.1-noflex.patch
-Patch3:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.3-unix-nomsg.patch
+Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.7.0-redhat-modules.patch
+Patch2:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.3-unix-nomsg.patch
 
 Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.7-unix-build.patch
 
@@ -75,6 +74,7 @@ BuildRequires:	pkgconfig(openssl)
 BuildRequires:	pkgconfig(systemd)
 %endif
 BuildRequires:	xauth
+BuildRequires:	docbook5-schemas
 # For _tmpfilesdir and _unitdir macros
 BuildRequires:	systemd-rpm-macros
 
@@ -143,40 +143,32 @@ mv pam-redhat-%{pam_redhat_version}/* modules
 
 %autopatch -p1
 
-mkdir -p doc/txts
-for readme in modules/pam_*/README ; do
-    cp -f ${readme} doc/txts/README.$(dirname ${readme} | sed -e 's|^modules/||')
-done
-
-touch ChangeLog # to make autoreconf happy
-autoreconf -fi -I m4
-
 %build
 export BROWSER=""
-%configure \
-	--includedir=%{_includedir}/security \
-	--with-systemdunitdir=%{_unitdir} \
-	--enable-vendordir=%{_datadir} \
-	--docdir=%{_docdir}/%{name} \
-	--disable-doc \
-	--disable-regenerate-docu \
-	--disable-selinux \
-	--disable-audit \
-	--disable-prelude \
-	--disable-db \
-	--enable-lastlog \
+%meson \
+	-Daudit=enabled \
+	-Delogind=disabled \
+	-Deconf=disabled \
+	-Dnis=enabled \
 %if ! %{with bootstrap}
-	--enable-logind
+	-Dlogind=enabled \
+%else
+	-Dlogind=disabled \
 %endif
+	-Dopenssl=enabled \
+	-Dpam_lastlog=enabled \
+	-Dpam_userdb=enabled \
+	-Ddb=gdbm \
+	-Dselinux=disabled
 
-%make_build
+%meson_build
 
 %install
 # (tpg) this is disabled
 rm -rf modules/pam_userdb
 
 mkdir -p %{buildroot}%{_includedir}/security
-%make_install LDCONFIG=:
+%meson_install
 
 install -d -m 755 %{buildroot}%{_datadir}/pam.d
 install -d -m 755 %{buildroot}%{_sysconfdir}/pam.d
@@ -262,18 +254,18 @@ fi
 %attr(4755,root,root) %{_sbindir}/unix_chkpwd
 %attr(4755,root,root) %{_sbindir}/pam_timestamp_check
 %attr(0755,root,root) %{_sbindir}/mkhomedir_helper
-%dir %{_datadir}/security
-%{_datadir}/security/access.conf
+%dir %{_sysconfdir}/security
+%{_sysconfdir}/security/access.conf
 %config(noreplace) %{_sysconfdir}/security/chroot.conf
-%{_datadir}/security/faillock.conf
-%{_datadir}/security/group.conf
-%{_datadir}/security/limits.conf
+%{_sysconfdir}/security/faillock.conf
+%{_sysconfdir}/security/group.conf
+%{_sysconfdir}/security/limits.conf
 %dir %{_sysconfdir}/security/limits.d
-%{_datadir}/security/namespace.conf
-%attr(755,root,root) %{_datadir}/security/namespace.init
-%{_datadir}/security/pam_env.conf
-%{_datadir}/security/pwhistory.conf
-%{_datadir}/security/time.conf
+%{_sysconfdir}/security/namespace.conf
+%attr(755,root,root) %{_sysconfdir}/security/namespace.init
+%{_sysconfdir}/security/pam_env.conf
+%{_sysconfdir}/security/pwhistory.conf
+%{_sysconfdir}/security/time.conf
 %config(noreplace) %{_sysconfdir}/security/opasswd
 %dir %{_libdir}/security
 %{_libdir}/security/*.so
@@ -301,5 +293,5 @@ fi
 %doc %{_mandir}/man3/*
 
 %files doc
-%doc doc/txts doc/specs/rfc86.0.txt Copyright NEWS
-%doc %{_docdir}/%{name}/*
+%doc doc/specs/rfc86.0.txt Copyright NEWS
+%doc %{_docdir}/Linux-PAM
