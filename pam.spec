@@ -192,6 +192,15 @@ for phase in auth acct passwd session ; do
     ln -sf pam_unix.so %{buildroot}%{_libdir}/security/pam_unix_${phase}.so
 done
 
+%if %{cross_compiling}
+# systemd unit files might get installed in wrong locations
+# while crosscompiling
+if [ -d %{buildroot}%{_prefix}/%{_target_platform} ]; then
+	mv %{buildroot}%{_prefix}/%{_target_platform}%{_prefix}/lib/systemd %{buildroot}%{_prefix}/lib
+	rm -rf %{buildroot}%{_prefix}%{_target_platform}
+fi
+%endif
+
 %find_lang Linux-PAM
 
 %check
