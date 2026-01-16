@@ -65,6 +65,7 @@ BuildRequires:	pkgconfig(libxcrypt)
 BuildRequires:	glibc-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libnsl)
+BuildRequires:	pkgconfig(audit)
 BuildRequires:	pkgconfig(openssl)
 %if ! %{with bootstrap}
 BuildRequires:	pkgconfig(systemd)
