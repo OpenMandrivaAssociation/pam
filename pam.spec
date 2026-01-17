@@ -67,7 +67,7 @@ BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libnsl)
 BuildRequires:	pkgconfig(audit)
 BuildRequires:	pkgconfig(openssl)
-BuildRequires:	pkgconfig(gdbm)
+BuildRequires:	gdbm-devel
 %if ! %{with bootstrap}
 BuildRequires:	pkgconfig(systemd)
 %endif
