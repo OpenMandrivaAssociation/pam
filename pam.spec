@@ -73,6 +73,7 @@ BuildRequires:	pkgconfig(systemd)
 %endif
 BuildRequires:	xauth
 BuildRequires:	xsltproc
+BuildRequires:	elinks
 BuildRequires:	docbook5-schemas
 # For _tmpfilesdir and _unitdir macros
 BuildRequires:	systemd-rpm-macros
