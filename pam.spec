@@ -75,7 +75,7 @@ BuildRequires:	xauth
 BuildRequires:	xsltproc
 BuildRequires:	elinks
 BuildRequires:	docbook5-schemas
-BuildRequires:	docbook-style-xml-ns
+BuildRequires:	docbook-style-xsl-ns
 # For _tmpfilesdir and _unitdir macros
 BuildRequires:	systemd-rpm-macros
 
