@@ -72,6 +72,7 @@ BuildRequires:	gdbm-devel
 BuildRequires:	pkgconfig(systemd)
 %endif
 BuildRequires:	xauth
+BuildRequires:	xsltproc
 BuildRequires:	docbook5-schemas
 # For _tmpfilesdir and _unitdir macros
 BuildRequires:	systemd-rpm-macros
