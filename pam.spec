@@ -20,8 +20,8 @@
 Summary:	A security tool which provides authentication for applications
 Name:		pam
 Epoch:		1
-Version:	1.7.1
-Release:	2
+Version:	1.7.2
+Release:	1
 # The library is BSD licensed with option to relicense as GPLv2+ - this option is redundant
 # as the BSD license allows that anyway. pam_timestamp and pam_loginuid modules are GPLv2+,
 License:	BSD and GPLv2+
@@ -137,7 +137,7 @@ having to recompile programs that handle authentication.
 This package contains the development libraries for %{name}.
 
 %prep
-%setup -q -n Linux-PAM-%{version} -a 2
+%setup -q -n Linux-PAM-1.7.2 -a 2
 
 # Add custom modules.
 mv pam-redhat-%{pam_redhat_version}/* modules
