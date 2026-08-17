@@ -137,12 +137,17 @@ having to recompile programs that handle authentication.
 This package contains the development libraries for %{name}.
 
 %prep
-%setup -q -n Linux-PAM-1.7.2 -a 2
+%setup -q -n Linux-PAM-%{version} -a 2
 
 # Add custom modules.
 mv pam-redhat-%{pam_redhat_version}/* modules
 
 %autopatch -p1
+
+# pam-redhat modules reuse the generic meson template, which needs a
+# version script. Stock modules ship module.map; these do not.
+ln -sf ../maps/modules-session.map modules/pam_chroot/module.map
+ln -sf ../maps/modules-auth.map modules/pam_postgresok/module.map
 
 %build
 export BROWSER=""
@@ -150,6 +155,7 @@ export BROWSER=""
 	-Delogind=disabled \
 	-Deconf=disabled \
 	-Dnis=enabled \
+	-Dpwaccess=disabled \
 %if ! %{with bootstrap}
 	-Daudit=enabled \
 	-Dlogind=enabled \
@@ -181,6 +187,8 @@ install -m 644 %{SOURCE9} %{buildroot}%{_sysconfdir}/pam.d/smartcard-auth
 install -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/pam.d/config-util
 install -m 644 %{SOURCE16} %{buildroot}%{_sysconfdir}/pam.d/postlogin
 install -m 600 /dev/null %{buildroot}%{_sysconfdir}/security/opasswd
+# Linux-PAM 1.7 no longer installs /etc/environment (vendor copy is under %%{_datadir}/pam)
+[ -e %{buildroot}%{_sysconfdir}/environment ] || touch %{buildroot}%{_sysconfdir}/environment
 install -d -m 755 %{buildroot}/var/log
 install -d -m 755 %{buildroot}/var/run/faillock
 install -d -m 755 %{buildroot}%{_sysconfdir}/motd.d
@@ -265,18 +273,23 @@ fi
 %attr(4755,root,root) %{_sbindir}/unix_chkpwd
 %attr(4755,root,root) %{_sbindir}/pam_timestamp_check
 %attr(0755,root,root) %{_sbindir}/mkhomedir_helper
+# Linux-PAM 1.7+ installs default configs to the vendor directory
+%dir %{_datadir}/pam
+%dir %{_datadir}/pam/security
+%{_datadir}/pam/environment
+%{_datadir}/pam/security/access.conf
+%config(noreplace) %{_datadir}/pam/security/chroot.conf
+%{_datadir}/pam/security/faillock.conf
+%{_datadir}/pam/security/group.conf
+%{_datadir}/pam/security/limits.conf
+%{_datadir}/pam/security/namespace.conf
+%attr(755,root,root) %{_datadir}/pam/security/namespace.init
+%{_datadir}/pam/security/pam_env.conf
+%{_datadir}/pam/security/pwhistory.conf
+%{_datadir}/pam/security/time.conf
 %dir %{_sysconfdir}/security
-%{_sysconfdir}/security/access.conf
-%config(noreplace) %{_sysconfdir}/security/chroot.conf
-%{_sysconfdir}/security/faillock.conf
-%{_sysconfdir}/security/group.conf
-%{_sysconfdir}/security/limits.conf
 %dir %{_sysconfdir}/security/limits.d
-%{_sysconfdir}/security/namespace.conf
-%attr(755,root,root) %{_sysconfdir}/security/namespace.init
-%{_sysconfdir}/security/pam_env.conf
-%{_sysconfdir}/security/pwhistory.conf
-%{_sysconfdir}/security/time.conf
+%dir %{_sysconfdir}/security/namespace.d
 %config(noreplace) %{_sysconfdir}/security/opasswd
 %dir %{_libdir}/security
 %{_libdir}/security/*.so
