@@ -58,6 +58,7 @@ Patch702:	Linux-PAM-1.1.4-add-now-missing-nis-constant.patch
 Patch801:	Linux-PAM-1.1.4-group_add_users.patch
 
 BuildRequires:	meson
+BuildRequires:	atomic-devel
 BuildRequires:	bison
 BuildRequires:	flex
 BuildRequires:	gettext-devel
