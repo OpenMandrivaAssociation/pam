@@ -44,10 +44,10 @@ Source16:	postlogin.pamd
 Source17:	postlogin.5
 
 # RedHat patches
-Patch1:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.7.0-redhat-modules.patch
+Patch1:		pam-1.7.3-redhat-modules.patch
 Patch2:		https://src.fedoraproject.org/rpms/pam/raw/rawhide/f/pam-1.5.3-unix-nomsg.patch
 
-Patch22:	http://svnweb.mageia.org/packages/cauldron/pam/current/SOURCES/pam-1.1.7-unix-build.patch
+Patch22:	pam-1.1.7-unix-build.patch
 
 # OpenMandriva specific sources/patches
 # (fc) 0.75-29mdk don't complain when / is owned by root.adm
